@@ -241,6 +241,7 @@ function renderFilteredTopPicks() {
     return;
   }
 
+  // Strictly limits dashboard view to 4 items
   displayPicks = displayPicks.slice(0, 4);
 
   let cardsHtml = "";
@@ -1076,10 +1077,8 @@ function executeGlobalSearch() {
     return;
   }
 
-  // Search static index
   let matches = GLOBAL_HUB_INDEX.filter(item => item.text.toLowerCase().includes(query) || item.category.toLowerCase().includes(query));
 
-  // Fallback: search dynamic links from DOM
   const domLinks = Array.from(document.querySelectorAll('#dashboardApp a')).map(el => {
     return {
       text: el.textContent.trim().replace(/\s+/g, ' '),
@@ -1110,7 +1109,7 @@ function executeGlobalSearch() {
   `).join('');
 }
 
-/* --- ALERTS & HANDOVERS BOTTOM FEED RENDER LOGIC --- */
+/* --- ALERTS & HANDOVERS BOTTOM FEED RENDER LOGIC (INTERACTIVE & DELETABLE) --- */
 function renderUnifiedAlertsFeed() {
   const HANDOVER_KEY = 'sbhub_urgent_handovers';
   const handoverRaw = localStorage.getItem(HANDOVER_KEY) || '[]';
@@ -1119,15 +1118,18 @@ function renderUnifiedAlertsFeed() {
   const hModal = document.getElementById('handoverModalList');
 
   if (handovers.length > 0) {
-    let pillsHTML = handovers.map(item => {
+    let pillsHTML = handovers.map((item, idx) => {
       let colorClass = 'normal';
       if(item.priority === 'URGENT/CRITICAL') colorClass = 'urgent';
       if(item.priority === 'Need Attention') colorClass = 'attention';
       
-      return `<div class="handover-pill-item">
+      return `<div class="handover-pill-item" title="Click note or check icon to complete/delete" onclick="openHandoverModal()">
                 <span class="pill-brand">${item.brand.toUpperCase()}</span>
-                <span class="priority-tag ${colorClass}">${item.priority.toUpperCase()}</span>
-                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.msg}</span>
+                <div class="feed-text-content">
+                  <span class="priority-tag ${colorClass}" style="align-self: flex-start; margin-bottom: 2px;">${item.priority.toUpperCase()}</span>
+                  <div class="feed-msg-body">${item.msg}</div>
+                </div>
+                <i class="bx bx-check feed-delete-icon" onclick="event.stopPropagation(); deleteUrgentHandover(${idx})" title="Complete & Delete Note"></i>
               </div>`;
     }).join('');
     if(hFeed) hFeed.innerHTML = pillsHTML;
@@ -1162,15 +1164,31 @@ function renderUnifiedAlertsFeed() {
   const jFeed = document.getElementById('jiraFeedContainer');
   if (overdueTickets.length > 0) {
     let jHTML = `<div style="font-size:9.5px; font-weight:800; color:#fca5a5; margin-bottom:4px;">PENDING JIRA (>24H)</div>`;
-    jHTML += overdueTickets.map(t => {
-      return `<div class="jira-pill-item">
+    jHTML += overdueTickets.map((t, idx) => {
+      const ticketUrl = t.url || `https://ibet.atlassian.net/browse/${t.key}`;
+      return `<div class="jira-pill-item" onclick="window.open('${ticketUrl}', '_blank')" title="Click to open ticket in Atlassian">
                 <span class="pill-brand">${t.brand || 'KT'}</span>
-                <a href="#" class="jira-pill-key-link">${t.key}</a>
+                <div class="feed-text-content">
+                  <span style="font-weight: 800; color: #38bdf8;">${t.key}</span>
+                  <div class="feed-msg-body">${t.title || 'Overdue Pending Ticket'}</div>
+                </div>
+                <i class="bx bx-x feed-delete-icon" onclick="event.stopPropagation(); deleteJiraTicket(${idx})" title="Resolve/Dismiss Ticket"></i>
               </div>`;
     }).join('');
     if(jFeed) jFeed.innerHTML = jHTML;
   } else {
     if(jFeed) jFeed.innerHTML = '';
+  }
+}
+
+function deleteJiraTicket(index) {
+  const JIRA_KEY = 'jira_tracked_tickets';
+  const raw = localStorage.getItem(JIRA_KEY) || '[]';
+  const list = JSON.parse(raw);
+  if (index >= 0 && index < list.length) {
+    list.splice(index, 1);
+    localStorage.setItem(JIRA_KEY, JSON.stringify(list));
+    renderUnifiedAlertsFeed();
   }
 }
 
