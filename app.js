@@ -105,9 +105,7 @@ function loadCachedTopPicks() {
       cachedTopPicks = JSON.parse(stored);
       renderFilteredTopPicks();
     }
-  } catch (e) {
-    console.warn("Could not parse top picks cache:", e);
-  }
+  } catch (e) {}
 }
 
 function getGMT8DateObj(offsetDays = 0) {
@@ -133,8 +131,6 @@ async function fetchTopPicksAndBoosts() {
   try {
     const now = new Date();
     const seenMatchKeys = new Set();
-    
-    // Dynamic query: Today + next 3 days
     const targetDates = [0, 1, 2, 3].map(offset => getFormattedDateQuery(offset));
 
     const fetchPromises = [];
@@ -180,12 +176,7 @@ async function fetchTopPicksAndBoosts() {
           const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
 
           const kickOffStr = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Asia/Manila',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+            timeZone: 'Asia/Manila', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false
           }).format(evtDate).toUpperCase();
 
           const scriptedMarket = generateScriptedMarket(homeName, awayName, apiPicks.length);
@@ -513,7 +504,6 @@ function toggleMenu(menuId, btnElement) {
 function toggleDropdown(menuId) {
   const menu = document.getElementById(menuId);
   if (menu) {
-    // Close other open menus first
     document.querySelectorAll('.dropdown-menu.show').forEach(m => {
         if(m.id !== menuId) m.classList.remove('show');
     });
