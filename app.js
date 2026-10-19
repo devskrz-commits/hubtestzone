@@ -92,7 +92,7 @@ const SECONDARY_LEAGUES = [
 
 let cachedTopPicks = [];
 let currentFilterKey = 'eng.1'; 
-let isTopPicksExpanded = false;
+let modalFilterKey = 'eng.1';
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
@@ -218,24 +218,13 @@ async function fetchTopPicksAndBoosts() {
 
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
-  isTopPicksExpanded = false; 
-  const btn = document.getElementById('expandTopPicksBtn');
-  if (btn) btn.innerHTML = '<i class="bx bx-expand"></i> Expand All';
-  
-  document.querySelectorAll('.boost-filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.top-picks-filter-bar .boost-filter-btn').forEach(b => b.classList.remove('active'));
   if (btnElement) {
     btnElement.classList.add('active');
   } else {
     const defaultBtn = document.getElementById(`btn-boost-${leagueKey}`);
     if (defaultBtn) defaultBtn.classList.add('active');
   }
-  renderFilteredTopPicks();
-}
-
-function toggleTopPicksExpand() {
-  isTopPicksExpanded = !isTopPicksExpanded;
-  const btn = document.getElementById('expandTopPicksBtn');
-  if(btn) btn.innerHTML = isTopPicksExpanded ? '<i class="bx bx-collapse"></i> Collapse' : '<i class="bx bx-expand"></i> Expand All';
   renderFilteredTopPicks();
 }
 
@@ -252,14 +241,67 @@ function renderFilteredTopPicks() {
     return;
   }
 
-  if(!isTopPicksExpanded) {
-    displayPicks = displayPicks.slice(0, 4);
-    container.classList.remove('scrollable');
-    container.style.maxHeight = 'none';
-  } else {
-    displayPicks = displayPicks.slice(0, 20);
-    container.classList.add('scrollable');
-    container.style.maxHeight = '450px'; 
+  // Dashboard view limited strictly to 4 items
+  displayPicks = displayPicks.slice(0, 4);
+
+  let cardsHtml = "";
+  displayPicks.forEach(pick => {
+    const isTopPick = pick.badge === "TOP PICK";
+    cardsHtml += `
+      <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
+        <div class="flags-row">
+          <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+          <span class="vs-text">VS</span>
+          <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+        </div>
+        <div class="boost-match-info">
+          <div class="boost-match-title">${pick.homeName} <span class="vs-light">vs</span> ${pick.awayName}</div>
+          <div class="boost-league-sub">${pick.leagueName}</div>
+        </div>
+        <div><span class="boost-badge ${isTopPick ? 'top-pick' : 'hot'}">${pick.badge}</span></div>
+        <div class="boost-market-desc">${pick.market}</div>
+        <div class="boost-card-bottom">
+          <div class="boost-kickoff-pill"><i class='bx bx-time-five'></i> ${pick.kickOff}</div>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = cardsHtml;
+}
+
+/* --- FULL-SCREEN TOP PICKS EXPANDED MODAL LOGIC --- */
+function openTopPicksFullScreenModal() {
+  const modal = document.getElementById('topPicksFullScreenModal');
+  if (modal) {
+    modal.classList.add('show');
+    modalFilterKey = currentFilterKey;
+    renderModalTopPicks();
+  }
+}
+
+function closeTopPicksFullScreenModal() {
+  const modal = document.getElementById('topPicksFullScreenModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function filterModalTopPicks(leagueKey, btnElement) {
+  modalFilterKey = leagueKey;
+  document.querySelectorAll('#topPicksFullScreenModal .boost-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btnElement) btnElement.classList.add('active');
+  renderModalTopPicks();
+}
+
+function renderModalTopPicks() {
+  const container = document.getElementById('modalTopPicksContainer');
+  if (!container) return;
+
+  const now = new Date();
+  let activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime());
+  let displayPicks = activePicks.filter(pick => pick.leagueKey === modalFilterKey);
+
+  if (displayPicks.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:35px; width:100%; font-size:13px; font-weight:600; color:rgba(255,255,255,0.65);">No upcoming scheduled matches found for this category.</div>`;
+    return;
   }
 
   let cardsHtml = "";
