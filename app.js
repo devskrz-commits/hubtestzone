@@ -92,6 +92,7 @@ const SECONDARY_LEAGUES = [
 
 let cachedTopPicks = [];
 let currentFilterKey = 'eng.1'; 
+let isTopPicksExpanded = false;
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
@@ -217,6 +218,9 @@ async function fetchTopPicksAndBoosts() {
 
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
+  isTopPicksExpanded = false; 
+  document.getElementById('expandTopPicksBtn').innerHTML = '<i class="bx bx-expand"></i> Expand All';
+  
   document.querySelectorAll('.boost-filter-btn').forEach(btn => btn.classList.remove('active'));
   if (btnElement) {
     btnElement.classList.add('active');
@@ -224,6 +228,13 @@ function filterTopPicks(leagueKey, btnElement) {
     const defaultBtn = document.getElementById(`btn-boost-${leagueKey}`);
     if (defaultBtn) defaultBtn.classList.add('active');
   }
+  renderFilteredTopPicks();
+}
+
+function toggleTopPicksExpand() {
+  isTopPicksExpanded = !isTopPicksExpanded;
+  const btn = document.getElementById('expandTopPicksBtn');
+  if(btn) btn.innerHTML = isTopPicksExpanded ? '<i class="bx bx-collapse"></i> Collapse' : '<i class="bx bx-expand"></i> Expand All';
   renderFilteredTopPicks();
 }
 
@@ -236,12 +247,20 @@ function renderFilteredTopPicks() {
   let displayPicks = activePicks.filter(pick => pick.leagueKey === currentFilterKey);
 
   if (displayPicks.length === 0) {
-    const categoryLabel = getLeagueDisplayName(currentFilterKey);
-    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:rgba(255,255,255,0.65);">No upcoming scheduled ${categoryLabel} matches available.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:rgba(255,255,255,0.65);">No upcoming scheduled matches available.</div>`;
     return;
   }
 
-  displayPicks = displayPicks.slice(0, 12);
+  if(!isTopPicksExpanded) {
+    displayPicks = displayPicks.slice(0, 4);
+    container.classList.remove('scrollable');
+    container.style.maxHeight = 'none';
+  } else {
+    displayPicks = displayPicks.slice(0, 20);
+    container.classList.add('scrollable');
+    container.style.maxHeight = '400px'; 
+  }
+
   let cardsHtml = "";
   displayPicks.forEach(pick => {
     const isTopPick = pick.badge === "TOP PICK";
@@ -402,7 +421,7 @@ async function fetchManilaWeather() {
       iconEl.style.color = weatherMeta.color;
     }
   } catch (err) {
-    console.warn('Weather fetch fallback triggered:', err);
+    console.warn('Weather fetch fallback:', err);
     tempEl.textContent = '32°C';
     if (condEl) condEl.textContent = 'OVERCAST';
   }
@@ -523,8 +542,6 @@ function toggleWidget(widgetId, show) {
   } catch(e) {}
 }
 
-function hideWidgetDirect(widgetId) { toggleWidget(widgetId, false); }
-
 function restoreSavedWidgets() {
   try {
     const savedWidgets = JSON.parse(localStorage.getItem('sbhub_widgets') || '{}');
@@ -564,20 +581,13 @@ function setGradient(theme) {
     backgroundStyle = theme.startsWith('url(') ? theme : `url("${theme}")`;
   } else {
     switch(theme) {
-      case 'plain-slate':
-        backgroundStyle = 'linear-gradient(rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.95)), #0f172a'; break;
-      case 'plain-navy':
-        backgroundStyle = 'linear-gradient(rgba(11, 19, 41, 0.95), rgba(11, 19, 41, 0.95)), #0b1329'; break;
-      case 'plain-onyx':
-        backgroundStyle = 'linear-gradient(rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), #121212'; break;
-      case 'plain-daylight':
-        backgroundStyle = 'linear-gradient(rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0.95)), #f8fafc'; break;
-      case 'plain-sky-light':
-        backgroundStyle = 'linear-gradient(rgba(224, 242, 254, 0.95), rgba(224, 242, 254, 0.95)), #e0f2fe'; break;
-      case 'plain-warm-light':
-        backgroundStyle = 'linear-gradient(rgba(245, 245, 244, 0.95), rgba(245, 245, 244, 0.95)), #f5f5f4'; break;
-      default:
-        backgroundStyle = `url("${ABSTRACT_WALLPAPERS['3d-chrome-swirl']}")`;
+      case 'plain-slate': backgroundStyle = 'linear-gradient(rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.95)), #0f172a'; break;
+      case 'plain-navy': backgroundStyle = 'linear-gradient(rgba(11, 19, 41, 0.95), rgba(11, 19, 41, 0.95)), #0b1329'; break;
+      case 'plain-onyx': backgroundStyle = 'linear-gradient(rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), #121212'; break;
+      case 'plain-daylight': backgroundStyle = 'linear-gradient(rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0.95)), #f8fafc'; break;
+      case 'plain-sky-light': backgroundStyle = 'linear-gradient(rgba(224, 242, 254, 0.95), rgba(224, 242, 254, 0.95)), #e0f2fe'; break;
+      case 'plain-warm-light': backgroundStyle = 'linear-gradient(rgba(245, 245, 244, 0.95), rgba(245, 245, 244, 0.95)), #f5f5f4'; break;
+      default: backgroundStyle = `url("${ABSTRACT_WALLPAPERS['3d-chrome-swirl']}")`;
     }
   }
 
@@ -860,6 +870,103 @@ function calculateActiveTraders() {
   if (el) el.textContent = activeCount + ' Working';
 }
 
+/* --- ALERTS & HANDOVERS BOTTOM FEED RENDER LOGIC --- */
+function renderUnifiedAlertsFeed() {
+  const HANDOVER_KEY = 'sbhub_urgent_handovers';
+  const handoverRaw = localStorage.getItem(HANDOVER_KEY) || '[]';
+  const handovers = JSON.parse(handoverRaw);
+  const hFeed = document.getElementById('handoverFeedContainer');
+  const hModal = document.getElementById('handoverModalList');
+
+  if (handovers.length > 0) {
+    let pillsHTML = handovers.map(item => {
+      let colorClass = 'normal';
+      if(item.priority === 'URGENT/CRITICAL') colorClass = 'urgent';
+      if(item.priority === 'Need Attention') colorClass = 'attention';
+      
+      return `<div class="handover-pill-item">
+                <span class="pill-brand">${item.brand.toUpperCase()}</span>
+                <span class="priority-tag ${colorClass}">${item.priority.toUpperCase()}</span>
+                <span>${item.msg}</span>
+              </div>`;
+    }).join('');
+    if(hFeed) hFeed.innerHTML = pillsHTML;
+    
+    if(hModal) {
+      hModal.innerHTML = handovers.map((item, idx) => `
+        <div class="handover-manage-row">
+          <div class="handover-manage-left">
+            <span class="handover-manage-brand">${item.brand.toUpperCase()}</span>
+            <span class="handover-manage-text">${item.msg}</span>
+          </div>
+          <button type="button" class="handover-delete-btn" onclick="deleteUrgentHandover(${idx})"><i class="bx bx-check"></i> Complete</button>
+        </div>
+      `).join('');
+    }
+  } else {
+    if(hFeed) hFeed.innerHTML = '<div style="font-size:11px; opacity:0.6; padding:10px;">No active handover notes.</div>';
+    if(hModal) hModal.innerHTML = '<div style="font-size:11px; opacity:0.6; padding:10px;">No active handover notes.</div>';
+  }
+
+  const JIRA_KEY = 'jira_tracked_tickets';
+  const jiraRaw = localStorage.getItem(JIRA_KEY) || '[]';
+  const tickets = JSON.parse(jiraRaw);
+  const now = new Date();
+  const overdueTickets = tickets.filter(t => {
+    const isNotResolved = String(t.status).toLowerCase() !== 'resolved';
+    const createdDate = new Date(t.createdAt);
+    const hoursOld = isNaN(createdDate.getTime()) ? 25 : (now - createdDate) / (1000 * 60 * 60);
+    return isNotResolved && hoursOld >= 24;
+  });
+
+  const jFeed = document.getElementById('jiraFeedContainer');
+  if (overdueTickets.length > 0) {
+    let jHTML = `<div style="font-size:10px; font-weight:800; color:#fca5a5; margin-bottom:5px;">PENDING JIRA (>24H)</div>`;
+    jHTML += overdueTickets.map(t => {
+      return `<div class="jira-pill-item">
+                <span class="pill-brand">${t.brand || 'KT'}</span>
+                <a href="#" class="jira-pill-key-link">${t.key}</a>
+              </div>`;
+    }).join('');
+    if(jFeed) jFeed.innerHTML = jHTML;
+  } else {
+    if(jFeed) jFeed.innerHTML = '';
+  }
+}
+
+function openHandoverModal() { document.getElementById('handoverModal').classList.add('show'); }
+function closeHandoverModal() { document.getElementById('handoverModal').classList.remove('show'); }
+
+function addUrgentHandover(event) {
+  event.preventDefault();
+  const pEl = document.getElementById('handoverPriorityInput');
+  const bEl = document.getElementById('handoverBrandInput');
+  const mEl = document.getElementById('handoverMsgInput');
+  
+  if(!bEl || !mEl) return;
+  const brand = bEl.value.trim();
+  const msg = mEl.value.trim();
+  if(!brand || !msg) return;
+
+  const raw = localStorage.getItem('sbhub_urgent_handovers') || '[]';
+  const list = JSON.parse(raw);
+  list.unshift({ priority: pEl.value, brand, msg, timestamp: new Date().toISOString() });
+  
+  localStorage.setItem('sbhub_urgent_handovers', JSON.stringify(list));
+  bEl.value = ''; mEl.value = '';
+  renderUnifiedAlertsFeed();
+}
+
+function deleteUrgentHandover(index) {
+  const raw = localStorage.getItem('sbhub_urgent_handovers') || '[]';
+  const list = JSON.parse(raw);
+  if(index >= 0 && index < list.length) {
+    list.splice(index, 1);
+    localStorage.setItem('sbhub_urgent_handovers', JSON.stringify(list));
+    renderUnifiedAlertsFeed();
+  }
+}
+
 function initDashboardApp() {
   const savedTheme = localStorage.getItem('sbhub_theme');
   if (savedTheme) {
@@ -874,7 +981,6 @@ function initDashboardApp() {
 
   switchBrandTab('ibet');
   restoreSavedWidgets();
-
   loadCachedTopPicks();
 
   fetchTopPicksAndBoosts();
@@ -885,6 +991,10 @@ function initDashboardApp() {
   calculateActiveTraders();
   fetchManilaWeather();
   setInterval(fetchManilaWeather, 15 * 60 * 1000);
+
+  renderUnifiedAlertsFeed();
+  window.addEventListener('storage', renderUnifiedAlertsFeed);
+  setInterval(renderUnifiedAlertsFeed, 10000);
 }
 
 if (document.readyState === 'loading') {
