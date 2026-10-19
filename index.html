@@ -21,12 +21,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=14.0.0">
+  <link rel="stylesheet" href="./styles.css?v=15.0.0">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="./app.js?v=14.0.0" defer></script>
+  <script src="./app.js?v=15.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -93,8 +93,8 @@
   <!-- DASHBOARD APP CONTAINER -->
   <div id="dashboardApp">
 
-    <!-- HOVER-EXPANDABLE INTERACTIVE SIDEBAR -->
-    <div class="sidebar-wrapper">
+    <!-- PUSH-SHIFT INTERACTIVE SIDEBAR WRAPPER -->
+    <div class="sidebar-wrapper" id="sidebarWrapper">
       <aside class="sidebar hover-expandable-sidebar" id="mainSidebar">
         <div class="sidebar-menu-scroll">
           <div class="sidebar-logo">
@@ -339,7 +339,7 @@
               <i class="bx bxs-flame" style="font-size: 16px;"></i> TOP PICKS
             </span>
             <div class="actions">
-              <button id="expandTopPicksBtn" onclick="toggleTopPicksExpand()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <button onclick="openTopPicksModal()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
                 <i class="bx bx-expand"></i> Expand All
               </button>
             </div>
@@ -500,9 +500,6 @@
       <div class="glass-card alerts-feed-card" id="widget-alerts-dock" style="flex: 1; display: flex; flex-direction: column;">
         <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
           <span style="color:#eab308; font-size: 11px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS</span>
-          <div class="actions">
-            <button class="handover-manage-btn" onclick="openHandoverModal()" style="font-size: 9.5px; padding: 3px 8px;"><i class="bx bx-plus"></i> Note</button>
-          </div>
         </div>
         <div class="alerts-feed-content" style="flex: 1; overflow-y: auto; padding-right: 2px;">
           <div id="jiraFeedContainer" style="display:flex; flex-direction: column; gap:8px; margin-bottom: 10px;"></div>
@@ -512,6 +509,27 @@
 
     </aside>
 
+  </div>
+
+  <!-- FULL-SCREEN EXPANDED TOP PICKS MODAL -->
+  <div id="topPicksModal" class="handover-modal-overlay">
+    <div class="handover-modal-card" style="max-width: 90vw; height: 88vh; display: flex; flex-direction: column;">
+      <div class="handover-modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+        <span class="handover-modal-title" style="color: #f87171;"><i class="bx bxs-flame"></i> TOP PICKS - FULL SCHEDULE</span>
+        <i class="bx bx-x handover-modal-close" onclick="closeTopPicksModal()"></i>
+      </div>
+      <div class="top-picks-filter-bar" style="margin-top: 10px;">
+        <button class="boost-filter-btn active" id="modal-btn-boost-eng.1" onclick="filterModalTopPicks('eng.1', this)">EPL</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-esp.1" onclick="filterModalTopPicks('esp.1', this)">LA LIGA</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-ita.1" onclick="filterModalTopPicks('ita.1', this)">SERIE A</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-fra.1" onclick="filterModalTopPicks('fra.1', this)">LIGUE 1</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-ger.1" onclick="filterModalTopPicks('ger.1', this)">BUNDESLIGA</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-uefa.champions" onclick="filterModalTopPicks('uefa.champions', this)">UEFA</button>
+      </div>
+      <div id="modalTopPicksContainer" class="top-picks-grid-row" style="flex: 1; overflow-y: auto; padding: 10px 0; margin-top: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+        <!-- Rendered Dynamically -->
+      </div>
+    </div>
   </div>
 
   <!-- INTERACTIVE URGENT HANDOVER MODAL -->
@@ -538,24 +556,47 @@
     </div>
   </div>
 
-  <!-- QUICK ACTION MODAL (CREATE) -->
+  <!-- QUICK ACTION MODAL (UNIFIED CREATE ENGINE) -->
   <div id="createModal" class="handover-modal-overlay">
-    <div class="handover-modal-card" style="max-width: 380px; text-align: center;">
+    <div class="handover-modal-card" style="max-width: 440px;">
       <div class="handover-modal-header">
-        <span class="handover-modal-title"><i class="bx bx-plus-circle"></i> Create Action</span>
+        <span class="handover-modal-title"><i class="bx bx-plus-circle" style="color:#38bdf8;"></i> Create New Item</span>
         <i class="bx bx-x handover-modal-close" onclick="closeActionModal('createModal')"></i>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 10px; padding: 15px 0;">
-        <button class="action-row" onclick="window.open('jira.html', '_blank'); closeActionModal('createModal');" style="justify-content: center; gap: 8px;">
-          <i class="bx bx-task" style="color:#38bdf8;"></i> New Jira Ticket
-        </button>
-        <button class="action-row" onclick="closeActionModal('createModal'); openHandoverModal();" style="justify-content: center; gap: 8px;">
-          <i class="bx bx-edit" style="color:#facc15;"></i> Draft Handover Note
-        </button>
-        <button class="action-row" onclick="window.open('rota.html', '_blank'); closeActionModal('createModal');" style="justify-content: center; gap: 8px;">
-          <i class="bx bx-calendar-event" style="color:#34d399;"></i> Schedule Duty
-        </button>
+      
+      <div class="tab-pills" style="margin-top: 10px;">
+        <div class="tab-pill active" id="tab-create-handover" onclick="switchCreateTab('handover')">HANDOVER</div>
+        <div class="tab-pill" id="tab-create-jira" onclick="switchCreateTab('jira')">JIRA TICKET</div>
+        <div class="tab-pill" id="tab-create-task" onclick="switchCreateTab('task')">TASK</div>
       </div>
+
+      <!-- HANDOVER FORM -->
+      <form id="createHandoverForm" onsubmit="handleUnifiedCreate(event, 'handover')" class="handover-modal-form" style="margin-top: 10px;">
+        <select id="createHandoverPriority" class="handover-field select-priority" style="width: 100%; margin-bottom: 8px;">
+          <option value="URGENT/CRITICAL" selected>🚨 URGENT / CRITICAL</option>
+          <option value="Need Attention">⚠️ Need Attention</option>
+          <option value="Normal">ℹ️ Normal</option>
+        </select>
+        <input type="text" id="createHandoverBrand" placeholder="Brand / Category (e.g. IBET, QBET)" required class="handover-field" style="margin-bottom: 8px;">
+        <textarea id="createHandoverMsg" placeholder="Handover note details..." required class="handover-field" style="height: 80px; resize: none; margin-bottom: 10px;"></textarea>
+        <button type="submit" class="handover-post-btn"><i class="bx bx-check"></i> Post Handover Note</button>
+      </form>
+
+      <!-- JIRA TICKET FORM -->
+      <form id="createJiraForm" onsubmit="handleUnifiedCreate(event, 'jira')" class="handover-modal-form" style="margin-top: 10px; display: none;">
+        <input type="text" id="createJiraKey" placeholder="Jira Ticket ID (e.g. KT-1042)" required class="handover-field" style="margin-bottom: 8px;">
+        <input type="text" id="createJiraBrand" placeholder="Brand / Project (e.g. BETSSON, EDGE)" required class="handover-field" style="margin-bottom: 8px;">
+        <input type="url" id="createJiraUrl" placeholder="Direct Atlassian URL (Optional)" class="handover-field" style="margin-bottom: 10px;">
+        <button type="submit" class="handover-post-btn"><i class="bx bx-check"></i> Track Jira Ticket</button>
+      </form>
+
+      <!-- TASK FORM -->
+      <form id="createTaskForm" onsubmit="handleUnifiedCreate(event, 'task')" class="handover-modal-form" style="margin-top: 10px; display: none;">
+        <input type="text" id="createTaskTitle" placeholder="Task Title" required class="handover-field" style="margin-bottom: 8px;">
+        <input type="text" id="createTaskAssigned" placeholder="Assignee (Optional)" class="handover-field" style="margin-bottom: 10px;">
+        <button type="submit" class="handover-post-btn"><i class="bx bx-check"></i> Add General Task</button>
+      </form>
+
     </div>
   </div>
 
