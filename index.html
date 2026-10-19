@@ -9,12 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=11.0.0">
+  <link rel="stylesheet" href="./styles.css?v=12.0.0">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="./app.js?v=11.0.0" defer></script>
+  <script src="./app.js?v=12.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -79,8 +79,8 @@
       <aside class="sidebar hover-expandable-sidebar" id="mainSidebar">
         <div class="sidebar-menu-scroll">
           <div class="sidebar-logo" style="margin-bottom: 20px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <i class="bx bx-cube" style="color: #38bdf8; font-size: 28px;"></i>
-            <span class="nav-text" style="font-weight: 800; font-size: 14px; color: #ffffff; letter-spacing: 0.5px;">SPORTSBOOK</span>
+            <i class="bx bx-cube" style="color: #38bdf8; font-size: 24px;"></i>
+            <span class="nav-text" style="font-weight: 800; font-size: 13px; color: #ffffff; letter-spacing: 0.5px;">SPORTSBOOK</span>
           </div>
 
           <!-- INTERNAL -->
@@ -253,14 +253,14 @@
             <div class="quick-dock-buttons">
               <a href="https://claude.ai" target="_blank" rel="noreferrer" class="quick-launch-btn">
                 <div class="btn-left">
-                  <div class="icon-badge icon-claude"><i class="bx bx-bot"></i></div>
+                  <div class="icon-badge icon-claude" style="width:20px; height:20px; min-width:20px; font-size:11px;"><i class="bx bx-bot"></i></div>
                   <span>Claude AI</span>
                 </div>
                 <i class="bx bx-export" style="font-size: 13px; opacity: 0.7;"></i>
               </a>
               <a href="Edge_Gaming_Client_Risk_Segmentation_Tool_July_2026_Dashboard.html" target="_blank" rel="noreferrer" class="quick-launch-btn">
                 <div class="btn-left">
-                  <div class="icon-badge icon-risk"><i class="bx bx-shield-quarter"></i></div>
+                  <div class="icon-badge icon-risk" style="width:20px; height:20px; min-width:20px; font-size:11px;"><i class="bx bx-shield-quarter"></i></div>
                   <span>Risk Seg. Tool</span>
                 </div>
                 <i class="bx bx-export" style="font-size: 13px; opacity: 0.7;"></i>
@@ -273,7 +273,7 @@
         <div class="sidebar-admin-footer" style="padding: 10px;">
           <div class="nav-main-btn" onclick="handleLogout()" style="background: rgba(127,29,29,0.5); border: none; justify-content: center;">
             <div class="nav-main-left" style="justify-content: center;">
-              <i class="bx bx-log-out" style="color:#fca5a5; font-size: 20px;"></i>
+              <i class="bx bx-log-out" style="color:#fca5a5; font-size: 18px;"></i>
               <span class="nav-text" style="color:#fca5a5;">LOCK SESSION</span>
             </div>
           </div>
@@ -284,28 +284,6 @@
     <!-- MAIN WORKSPACE -->
     <main class="main-workspace">
       
-      <!-- SLIM TOP ALERTS BAR -->
-      <div class="top-alerts-bar">
-        <!-- STATIC INLINE RED GLOWING JIRA PENDING TICKETS BANNER -->
-        <div id="jiraAlertBanner" class="jira-static-alert-banner" style="margin-bottom: 10px;">
-          <div class="jira-alert-badge"><i class="bx bx-error-circle"></i> PENDING JIRA (>24H)</div>
-          <div class="jira-ticket-pills-container" id="jiraPillsContainer"></div>
-          <a href="jira.html" target="_blank" rel="noreferrer" class="jira-open-btn">View Tracker <i class="bx bx-right-arrow-alt"></i></a>
-        </div>
-
-        <!-- URGENT HANDOVER YELLOW BANNER (Slim Version) -->
-        <div id="urgentHandoverBanner" class="urgent-handover-banner active slim">
-          <div class="handover-header-row">
-            <div class="handover-alert-badge" id="handoverAlertBadge">
-              <i class="bx bx-check-circle" style="color: #eab308;"></i> ALL CAUGHT UP
-            </div>
-            <span style="font-size: 11px; opacity: 0.6; flex: 1; padding-left: 10px;">No active handover notes.</span>
-            <button type="button" class="handover-manage-btn" onclick="openHandoverModal()"><i class="bx bx-plus"></i> Manage</button>
-          </div>
-          <div class="handover-pills-container" id="handoverPillsContainer" style="margin-top: 8px;"></div>
-        </div>
-      </div>
-
       <!-- 3-COLUMN DASHBOARD GRID -->
       <div class="dashboard-grid">
         
@@ -338,8 +316,16 @@
         <!-- COLUMN 2: TOP PICKS -->
         <div class="glass-card" id="widget-top-picks" style="height: 100%;">
           <div class="card-header">
-            <span style="color: #f87171;"><i class="bx bxs-flame"></i> TOP PICKS</span>
+            <span style="color: #f87171; display: flex; align-items: center; gap: 8px;">
+              <i class="bx bxs-flame" style="font-size: 16px;"></i> TOP PICKS
+            </span>
+            <div class="actions">
+              <button id="expandTopPicksBtn" onclick="toggleTopPicksExpand()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                <i class="bx bx-expand"></i> Expand All
+              </button>
+            </div>
           </div>
+
           <div class="top-picks-filter-bar">
             <button class="boost-filter-btn active" id="btn-boost-eng.1" onclick="filterTopPicks('eng.1', this)">EPL</button>
             <button class="boost-filter-btn" id="btn-boost-esp.1" onclick="filterTopPicks('esp.1', this)">LA LIGA</button>
@@ -348,6 +334,7 @@
             <button class="boost-filter-btn" id="btn-boost-ger.1" onclick="filterTopPicks('ger.1', this)">BUND</button>
             <button class="boost-filter-btn" id="btn-boost-uefa.champions" onclick="filterTopPicks('uefa.champions', this)">UEFA</button>
           </div>
+
           <div id="topPicksContainer" class="top-picks-grid-row">
             <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
           </div>
@@ -388,25 +375,54 @@
             </div>
           </div>
         </div>
-
       </div>
+
+      <!-- BOTTOM WIDGET: UNIFIED ALERTS FEED (NEWS STYLE) -->
+      <div class="glass-card alerts-feed-card" style="margin-top: 20px;">
+        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+          <span style="color:#eab308; font-size: 12px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS FEED</span>
+          <div class="actions">
+            <button class="handover-manage-btn" onclick="openHandoverModal()" style="font-size: 10px; padding: 4px 10px;"><i class="bx bx-plus"></i> Add Note</button>
+          </div>
+        </div>
+        <div class="alerts-feed-content" style="max-height: 220px; overflow-y: auto; padding-right: 5px;">
+          
+          <div id="jiraFeedContainer" style="display:flex; flex-direction: column; gap:8px; margin-bottom: 10px;">
+            <!-- Rendered by JS -->
+          </div>
+          
+          <div id="handoverFeedContainer" style="display:flex; flex-direction: column; gap:8px;">
+            <!-- Rendered by JS -->
+          </div>
+
+        </div>
+      </div>
+
     </main>
 
     <!-- NEW RIGHT PANEL (CONTROLS & CLOCKS) -->
     <aside class="right-panel">
+      
+      <!-- Top Action Row (Strictly Aligned) -->
       <div class="right-panel-actions">
-        <button class="action-btn create-btn" onclick="openActionModal('createModal')"><i class="bx bx-plus"></i> Create</button>
-        <button class="action-btn icon-btn" onclick="openActionModal('searchModal')"><i class="bx bx-search"></i></button>
+        <button class="action-btn create-btn" onclick="openActionModal('createModal')">
+          <i class="bx bx-plus" style="font-size: 16px;"></i> Create
+        </button>
+        <button class="action-btn icon-btn" onclick="openActionModal('searchModal')">
+          <i class="bx bx-search"></i>
+        </button>
         
-        <div class="dropdown-container">
-          <button class="action-btn icon-btn" onclick="toggleDropdown('notificationMenu')"><i class="bx bx-bell"></i></button>
+        <div class="dropdown-container" style="display: flex;">
+          <button class="action-btn icon-btn" onclick="toggleDropdown('notificationMenu')">
+            <i class="bx bx-bell"></i>
+          </button>
           <div class="dropdown-menu" id="notificationMenu" style="right: 0; width: 280px;">
             <div class="dropdown-section-title">NOTIFICATIONS</div>
             <div style="padding: 15px; font-size: 11px; color: #94a3b8; text-align: center;">You have no new alerts.</div>
           </div>
         </div>
         
-        <div class="dropdown-container">
+        <div class="dropdown-container" style="display: flex;">
           <div class="avatar-circle" style="cursor:pointer;" onclick="toggleDropdown('profileMenu')">AD</div>
           <div class="dropdown-menu" id="profileMenu" style="right: 0; width: 200px;">
             <div class="dropdown-section-title">ADMINISTRATOR</div>
@@ -416,6 +432,7 @@
         </div>
       </div>
 
+      <!-- Controls Card -->
       <div class="glass-card controls-card" style="padding: 15px;">
         <div class="world-clocks" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; text-align: center; margin-bottom: 15px;">
           <div>
@@ -530,36 +547,6 @@
   </div>
 
   <script>
-    // Embedded Jira and Handover scripts
-    (function() {
-      var JIRA_KEY = 'jira_tracked_tickets';
-      function checkJiraSLA() {
-        var rawData = localStorage.getItem(JIRA_KEY);
-        var tickets = JSON.parse(rawData || '[]');
-        var now = new Date();
-        var overdueTickets = tickets.filter(function(t) {
-          var isNotResolved = String(t.status).toLowerCase() !== 'resolved';
-          var createdDate = new Date(t.createdAt);
-          var hoursOld = isNaN(createdDate.getTime()) ? 25 : (now - createdDate) / (1000 * 60 * 60);
-          return isNotResolved && hoursOld >= 24;
-        });
-
-        var banner = document.getElementById('jiraAlertBanner');
-        var pillsContainer = document.getElementById('jiraPillsContainer');
-        if (overdueTickets.length > 0) {
-          var pillsHTML = overdueTickets.map(function(t) {
-            return '<div class="jira-pill-item"><span class="jira-pill-brand">' + (t.brand||'KT') + '</span> <a href="#" class="jira-pill-key-link">' + t.key + '</a></div>';
-          }).join('');
-          if (pillsContainer) pillsContainer.innerHTML = pillsHTML;
-          if (banner) banner.classList.add('active');
-        } else {
-          if (banner) banner.classList.remove('active');
-        }
-      }
-      setInterval(checkJiraSLA, 10000);
-    })();
-
-    /* Quick Action Modals logic */
     function openActionModal(id) { document.getElementById(id).classList.add('show'); }
     function closeActionModal(id) { document.getElementById(id).classList.remove('show'); }
   </script>
