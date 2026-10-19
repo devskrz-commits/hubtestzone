@@ -219,9 +219,10 @@ async function fetchTopPicksAndBoosts() {
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
   isTopPicksExpanded = false; 
-  document.getElementById('expandTopPicksBtn').innerHTML = '<i class="bx bx-expand"></i> Expand All';
+  const btn = document.getElementById('expandTopPicksBtn');
+  if (btn) btn.innerHTML = '<i class="bx bx-expand"></i> Expand All';
   
-  document.querySelectorAll('.boost-filter-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.boost-filter-btn').forEach(b => b.classList.remove('active'));
   if (btnElement) {
     btnElement.classList.add('active');
   } else {
@@ -341,7 +342,7 @@ if (canvas) animateCanvas();
 document.addEventListener('mousemove', (e) => {
   const robotStage = document.getElementById('sittingRobotStage');
   const authOverlay = document.getElementById('authOverlay');
-  if (!robotStage || (authOverlay && authOverlay.classList.contains('unlocked'))) return;
+  if (!robotStage || (authOverlay && (authOverlay.classList.contains('unlocked') || document.documentElement.classList.contains('authenticated-session')))) return;
 
   const leftEye = document.getElementById('leftEye');
   const rightEye = document.getElementById('rightEye');
@@ -471,6 +472,7 @@ function handleLogin(event) {
     } else {
       sessionStorage.setItem('sbhub_auth', 'true');
     }
+    document.documentElement.classList.add('authenticated-session');
     unlockDashboard();
   } else {
     if (errorMsg) errorMsg.textContent = "ACCESS DENIED: Invalid Security Key";
@@ -495,6 +497,8 @@ function unlockDashboard() {
 function handleLogout() {
   localStorage.removeItem('sbhub_auth');
   sessionStorage.removeItem('sbhub_auth');
+  document.documentElement.classList.remove('authenticated-session');
+  
   const passInput = document.getElementById('passwordInput');
   if (passInput) passInput.value = '';
   const errorMsg = document.getElementById('loginErrorMsg');
@@ -823,22 +827,14 @@ async function fetchLeagueList(leagueList, dateQuery) {
         if (evt.date || comp.date) {
           const dObj = new Date(evt.date || comp.date);
           kickOffTime = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Asia/Manila',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+            timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hour12: false
           }).format(dObj);
         }
 
         const displayedLeagueName = item.data.leagues?.[0]?.name || item.defaultName;
 
         matches.push({
-          homeName,
-          awayName,
-          homeLogo,
-          awayLogo,
-          leagueName: displayedLeagueName,
-          kickOffTime
+          homeName, awayName, homeLogo, awayLogo, leagueName: displayedLeagueName, kickOffTime
         });
       }
     }
@@ -887,7 +883,7 @@ function renderUnifiedAlertsFeed() {
       return `<div class="handover-pill-item">
                 <span class="pill-brand">${item.brand.toUpperCase()}</span>
                 <span class="priority-tag ${colorClass}">${item.priority.toUpperCase()}</span>
-                <span>${item.msg}</span>
+                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.msg}</span>
               </div>`;
     }).join('');
     if(hFeed) hFeed.innerHTML = pillsHTML;
@@ -904,8 +900,8 @@ function renderUnifiedAlertsFeed() {
       `).join('');
     }
   } else {
-    if(hFeed) hFeed.innerHTML = '<div style="font-size:11px; opacity:0.6; padding:10px;">No active handover notes.</div>';
-    if(hModal) hModal.innerHTML = '<div style="font-size:11px; opacity:0.6; padding:10px;">No active handover notes.</div>';
+    if(hFeed) hFeed.innerHTML = '<div style="font-size:10.5px; opacity:0.6; padding:5px 0;">No active handover notes.</div>';
+    if(hModal) hModal.innerHTML = '<div style="font-size:10.5px; opacity:0.6; padding:5px 0;">No active handover notes.</div>';
   }
 
   const JIRA_KEY = 'jira_tracked_tickets';
@@ -921,7 +917,7 @@ function renderUnifiedAlertsFeed() {
 
   const jFeed = document.getElementById('jiraFeedContainer');
   if (overdueTickets.length > 0) {
-    let jHTML = `<div style="font-size:10px; font-weight:800; color:#fca5a5; margin-bottom:5px;">PENDING JIRA (>24H)</div>`;
+    let jHTML = `<div style="font-size:9.5px; font-weight:800; color:#fca5a5; margin-bottom:4px;">PENDING JIRA (>24H)</div>`;
     jHTML += overdueTickets.map(t => {
       return `<div class="jira-pill-item">
                 <span class="pill-brand">${t.brand || 'KT'}</span>
