@@ -5,24 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sportsbook Hub - Secured Dashboard</title>
   
+  <!-- Preconnect & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Boxicons CSS -->
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  
+  <!-- Stylesheet -->
   <link rel="stylesheet" href="./styles.css?v=9.0.0">
 
+  <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
+  <!-- App JS -->
   <script src="./app.js?v=9.0.0" defer></script>
 </head>
 <body id="pageBody">
 
+  <!-- ANIMATED PLASMA BACKGROUND CANVAS -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- SECURITY LOGIN OVERLAY -->
+  <!-- FRONT SECURITY LOGIN OVERLAY MODAL -->
   <div id="authOverlay">
     <div class="login-container">
+
+      <!-- SITTING ROBOT STAGE -->
       <div class="sitting-robot-stage" id="sittingRobotStage">
         <div class="robot-body-wrapper" id="robotBodyWrapper">
           <div class="robot-antenna"></div>
@@ -40,14 +51,19 @@
         </div>
       </div>
 
+      <!-- SOLID LOGIN CARD -->
       <div class="login-card" id="loginCard">
         <div class="login-title">Security Gateway</div>
         <div class="login-subtitle">SPORTSBOOK HUB OPERATIONAL PORTAL</div>
+        
         <form class="login-input-group" onsubmit="handleLogin(event)">
+          <!-- USERNAME INPUT FIELD -->
           <div class="field-wrapper">
             <label class="login-label" for="usernameInput">Username or email</label>
             <input type="text" id="usernameInput" class="login-input" value="sportsbook2026" required autocomplete="username">
           </div>
+
+          <!-- PASSWORD INPUT FIELD -->
           <div class="field-wrapper">
             <div class="field-label-row">
               <label class="login-label" for="passwordInput">Security Key</label>
@@ -55,134 +71,176 @@
             </div>
             <div class="password-field-wrap">
               <input type="password" id="passwordInput" class="login-input" value="" placeholder="Enter password" required autocomplete="current-password">
-              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle Password">
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Toggle Password Visibility">
                 <i class="bx bx-show" id="togglePassIcon"></i>
               </button>
             </div>
           </div>
+
+          <!-- REMEMBER ME CHECKBOX -->
           <div class="remember-row">
             <input type="checkbox" id="rememberMe" checked>
             <label for="rememberMe">Maintain active session</label>
           </div>
+
           <div class="login-error" id="loginErrorMsg"></div>
-          <button type="submit" class="login-btn"><i class="bx bx-key"></i> ACCESS DASHBOARD</button>
+
+          <!-- SUBMIT BUTTON -->
+          <button type="submit" class="login-btn">
+            <i class="bx bx-key"></i> ACCESS DASHBOARD
+          </button>
         </form>
       </div>
+
     </div>
   </div>
 
   <!-- DASHBOARD APP CONTAINER -->
   <div id="dashboardApp">
 
+    <!-- MOBILE NAVIGATION HEADER -->
     <div class="mobile-nav-header">
-      <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+      <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation Menu">
         <i class="bx bx-menu"></i>
       </button>
       <div class="mobile-brand-title">SPORTSBOOK HUB</div>
-      <button type="button" class="mobile-lock-btn" onclick="handleLogout()">
+      <button type="button" class="mobile-lock-btn" onclick="handleLogout()" title="Lock Session">
         <i class="bx bx-log-out"></i>
       </button>
     </div>
 
+    <!-- SIDEBAR BACKDROP OVERLAY FOR MOBILE -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar(false)"></div>
 
-    <!-- ICON-ONLY SIDEBAR NAVIGATION -->
+    <!-- NARROW ICON-ONLY SIDEBAR -->
     <aside class="sidebar icon-sidebar" id="mainSidebar">
       <div class="sidebar-menu-scroll">
         <div class="sidebar-logo" style="margin-bottom: 20px; text-align: center;">
           <i class="bx bx-cube" style="color: #38bdf8; font-size: 28px;"></i>
         </div>
+        
         <a class="sidebar-icon-btn active" title="Internal"><div class="icon-badge icon-internal"><i class="bx bx-home-alt"></i></div></a>
         <a class="sidebar-icon-btn" title="Daily Tasks"><div class="icon-badge icon-tasks"><i class="bx bx-task"></i></div></a>
-        <a class="sidebar-icon-btn" title="Monitoring"><div class="icon-badge icon-monitor"><i class="bx bx-line-chart"></i></div></a>
+        <a class="sidebar-icon-btn" title="Daily Monitoring"><div class="icon-badge icon-monitor"><i class="bx bx-line-chart"></i></div></a>
         <a class="sidebar-icon-btn" title="Back Office"><div class="icon-badge icon-back"><i class="bx bx-briefcase-alt-2"></i></div></a>
         <a class="sidebar-icon-btn" title="Multi-Monitor"><div class="icon-badge icon-multi"><i class="bx bx-desktop"></i></div></a>
         <a class="sidebar-icon-btn" title="Betradar"><div class="icon-badge icon-radar"><i class="bx bx-radar"></i></div></a>
         <a class="sidebar-icon-btn" title="Own Brands"><div class="icon-badge icon-brands"><i class="bx bx-layer"></i></div></a>
         <a class="sidebar-icon-btn" title="Procedures"><div class="icon-badge icon-proc"><i class="bx bx-file"></i></div></a>
       </div>
+
       <div class="sidebar-admin-footer">
-        <div class="sidebar-icon-btn" onclick="handleLogout()" style="background: rgba(127,29,29,0.5);"><i class="bx bx-log-out" style="color:#fca5a5;"></i></div>
+        <div class="sidebar-icon-btn" onclick="handleLogout()" title="Lock Session" style="background: rgba(127,29,29,0.5);">
+          <i class="bx bx-log-out" style="color:#fca5a5;"></i>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN WORKSPACE -->
+    <!-- DASHBOARD WORKSPACE -->
     <main class="main-workspace">
-      
+
       <!-- SLIM TOP ALERTS BAR -->
       <div class="top-alerts-bar">
         <!-- STATIC INLINE RED GLOWING JIRA PENDING TICKETS BANNER -->
         <div id="jiraAlertBanner" class="jira-static-alert-banner" style="margin-bottom: 10px;">
-          <div class="jira-alert-badge"><i class="bx bx-error-circle"></i> PENDING JIRA (>24H)</div>
-          <div class="jira-ticket-pills-container" id="jiraPillsContainer"></div>
-          <a href="jira.html" target="_blank" rel="noreferrer" class="jira-open-btn">View Tracker <i class="bx bx-right-arrow-alt"></i></a>
+          <div class="jira-alert-badge">
+            <i class="bx bx-error-circle"></i> PENDING JIRA (&gt;24H)
+          </div>
+          <div class="jira-ticket-pills-container" id="jiraPillsContainer">
+            <!-- Rendered Dynamically -->
+          </div>
+          <a href="jira.html" target="_blank" rel="noreferrer" class="jira-open-btn">
+            View Tracker <i class="bx bx-right-arrow-alt"></i>
+          </a>
         </div>
 
-        <!-- URGENT HANDOVER (Slim Version) -->
+        <!-- URGENT HANDOVER YELLOW BANNER (Slim Version) -->
         <div id="urgentHandoverBanner" class="urgent-handover-banner active slim">
           <div class="handover-header-row">
             <div class="handover-alert-badge" id="handoverAlertBadge">
               <i class="bx bx-check-circle" style="color: #eab308;"></i> ALL CAUGHT UP
             </div>
             <span style="font-size: 11px; opacity: 0.6; flex: 1; padding-left: 10px;">No active handover notes.</span>
-            <button type="button" class="handover-manage-btn" onclick="openHandoverModal()"><i class="bx bx-plus"></i> Manage</button>
+            <button type="button" class="handover-manage-btn" onclick="openHandoverModal()">
+              <i class="bx bx-plus"></i> Manage
+            </button>
           </div>
-          <div class="handover-pills-container" id="handoverPillsContainer" style="margin-top: 8px;"></div>
+          <div class="handover-pills-container" id="handoverPillsContainer" style="margin-top: 8px;">
+            <!-- Rendered Dynamically -->
+          </div>
         </div>
       </div>
 
       <!-- 3-COLUMN DASHBOARD GRID -->
       <div class="dashboard-grid">
-        
+
         <!-- COLUMN 1: BRAND DIRECTORY & DAILY TASKS -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
+          
+          <!-- WIDGET: BRAND DIRECTORY -->
           <div class="glass-card" id="widget-brand-dock">
             <div class="card-header">
               <span style="color: #facc15;"><i class="bx bx-pin"></i> BRAND DIRECTORY</span>
+              <div class="actions"><i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-brand-dock')"></i></div>
             </div>
+            
             <div class="tab-pills">
               <div class="tab-pill active" id="tab-ibet" onclick="switchBrandTab('ibet')">IBET</div>
               <div class="tab-pill" id="tab-edge" onclick="switchBrandTab('edge')">EDGE</div>
               <div class="tab-pill" id="tab-pubs" onclick="switchBrandTab('pubs')">PUBS</div>
             </div>
+
             <div id="brandLinksContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
           </div>
 
+          <!-- WIDGET: DAILY TASK DOCK -->
           <div class="glass-card" id="widget-task-dock">
             <div class="card-header">
               <span style="color: #f87171;"><i class="bx bx-list-ul"></i> DAILY TASKS</span>
+              <div class="actions"><i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-task-dock')"></i></div>
             </div>
-            <a class="action-row" href="boostschedule.html" target="_blank"><span>TOP PICKS (SCHEDULE)</span><i class="bx bx-right-arrow-alt"></i></a>
-            <a class="action-row" href="#" target="_blank"><span>EDGE BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
-            <a class="action-row" href="#" target="_blank"><span>IBET BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
-            <a class="action-row" href="#" target="_blank"><span>KT SPORTS CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
-            <a class="action-row" href="#" target="_blank"><span>PREDICTION OFFER CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="boostschedule.html" target="_blank" rel="noreferrer"><span>TOP PICKS (SCHEDULE)</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" target="_blank" rel="noreferrer"><span>EDGE BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986" target="_blank" rel="noreferrer"><span>IBET BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0" target="_blank" rel="noreferrer"><span>KT SPORTS CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="https://polymarket.com/breaking" target="_blank" rel="noreferrer"><span>PREDICTION OFFER CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
           </div>
         </div>
 
         <!-- COLUMN 2: TOP PICKS -->
         <div class="glass-card" id="widget-top-picks" style="height: 100%;">
           <div class="card-header">
-            <span style="color: #f87171;"><i class="bx bxs-flame"></i> TOP PICKS</span>
+            <span style="color: #f87171; display: flex; align-items: center; gap: 8px;">
+              <i class="bx bxs-flame" style="font-size: 18px;"></i> TOP PICKS
+            </span>
+            <div class="actions">
+              <i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-top-picks')"></i>
+            </div>
           </div>
+
           <div class="top-picks-filter-bar">
             <button class="boost-filter-btn active" id="btn-boost-eng.1" onclick="filterTopPicks('eng.1', this)">EPL</button>
             <button class="boost-filter-btn" id="btn-boost-esp.1" onclick="filterTopPicks('esp.1', this)">LA LIGA</button>
+            <button class="boost-filter-btn" id="btn-boost-ger.1" onclick="filterTopPicks('ger.1', this)">BUND</button>
             <button class="boost-filter-btn" id="btn-boost-ita.1" onclick="filterTopPicks('ita.1', this)">SERIE A</button>
             <button class="boost-filter-btn" id="btn-boost-fra.1" onclick="filterTopPicks('fra.1', this)">LIGUE 1</button>
-            <button class="boost-filter-btn" id="btn-boost-ger.1" onclick="filterTopPicks('ger.1', this)">BUND</button>
             <button class="boost-filter-btn" id="btn-boost-uefa.champions" onclick="filterTopPicks('uefa.champions', this)">UEFA</button>
           </div>
+
           <div id="topPicksContainer" class="top-picks-grid-row">
-            <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
+            <div style="text-align:center; padding:15px; width:100%;">
+              <i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i>
+            </div>
           </div>
         </div>
 
-        <!-- COLUMN 3: DUTIES & TOP GAMES -->
+        <!-- COLUMN 3: LIVE TIME-SLOT DUTIES & TOP GAMES -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
+          
           <div class="glass-card" id="widget-duties-dock">
             <div class="card-header">
               <span style="color: #f97316;"><i class="bx bx-time"></i> TIME-SLOT DUTIES</span>
+              <div class="actions"><i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-duties-dock')"></i></div>
             </div>
             <div id="liveDutyContent" style="display: flex; flex-direction: column; gap: 8px;">
               <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
@@ -192,7 +250,7 @@
           <div class="glass-card" id="widget-games-dock">
             <div class="card-header">
               <span style="color: #38bdf8;"><i class="bx bx-play-circle"></i> TOP GAMES</span>
-              <span style="font-size:9px; opacity:0.6;">FLASHSCORE GMT+8</span>
+              <div class="actions"><span>FLASHSCORE GMT+8</span><i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-games-dock')"></i></div>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15);">
               <i class="bx bx-chevron-left" style="cursor: pointer;" onclick="navigateMatchDay(-1)"></i>
@@ -203,13 +261,16 @@
               <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
             </div>
           </div>
+
         </div>
 
       </div>
+
     </main>
 
-    <!-- NEW RIGHT PANEL (CONTROLS & CLOCKS) -->
+    <!-- NEW RIGHT PANEL -->
     <aside class="right-panel">
+      <!-- Top Action Row -->
       <div class="right-panel-actions">
         <button class="action-btn create-btn"><i class="bx bx-plus"></i> Create</button>
         <button class="action-btn icon-btn"><i class="bx bx-search"></i></button>
@@ -217,42 +278,61 @@
         <div class="avatar-circle">AD</div>
       </div>
 
+      <!-- Clocks, Weather, Controls Card -->
       <div class="glass-card controls-card" style="padding: 15px;">
+        
         <div class="world-clocks" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; text-align: center; margin-bottom: 15px;">
           <div>
             <div class="clock-label" style="font-size:9px; opacity:0.7;">GMT+8</div>
-            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800; color: #38bdf8;">00:00:00</div>
           </div>
           <div>
             <div class="clock-label" style="font-size:9px; opacity:0.7;">CET</div>
-            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800; color: #38bdf8;">00:00:00</div>
           </div>
           <div>
             <div class="clock-label" style="font-size:9px; opacity:0.7;">GMT+2</div>
-            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800; color: #38bdf8;">00:00:00</div>
           </div>
         </div>
         
-        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 15px;">
+        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08);">
+          <i class="bx bx-cloud" id="weatherIcon" style="font-size: 20px; color: #f59e0b;"></i>
           <span class="weather-banner-temp" id="weatherTemp" style="font-size: 16px; font-weight: 800;">--°C</span>
-          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600;">LOADING</span>
+          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600; opacity: 0.8;">LOADING...</span>
         </div>
 
         <div class="banner-controls-group" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-          <a href="jira.html" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-task"></i> Jira</a>
+          <a href="jira.html" target="_blank" rel="noreferrer" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px;">
+            <i class="bx bx-task"></i> Jira
+          </a>
           
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-slider-alt"></i> Widgets</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;">
+              <i class="bx bx-slider-alt"></i> Widgets
+            </button>
             <div class="dropdown-menu" id="widgetMenu">
               <label class="menu-option"><span>Top Picks</span><input type="checkbox" checked onchange="toggleWidget('widget-top-picks', this.checked)"></label>
+              <label class="menu-option"><span>Brand Directory</span><input type="checkbox" checked onchange="toggleWidget('widget-brand-dock', this.checked)"></label>
+              <label class="menu-option"><span>Daily Task</span><input type="checkbox" checked onchange="toggleWidget('widget-task-dock', this.checked)"></label>
+              <label class="menu-option"><span>Time-Slot Duties</span><input type="checkbox" checked onchange="toggleWidget('widget-duties-dock', this.checked)"></label>
+              <label class="menu-option"><span>Top Games</span><input type="checkbox" checked onchange="toggleWidget('widget-games-dock', this.checked)"></label>
             </div>
           </div>
 
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-palette"></i> Theme</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;">
+              <i class="bx bx-palette"></i> Theme
+            </button>
             <div class="dropdown-menu" id="themeMenu">
-              <button class="menu-option" onclick="setGradient('plain-slate')">Dark Slate</button>
-              <button class="menu-option" onclick="setGradient('3d-chrome-swirl')">Chrome Swirl</button>
+              <div class="dropdown-section-title">PLAIN COLORS</div>
+              <button class="menu-option" type="button" onclick="setGradient('plain-slate')"><span>Dark Slate</span><span class="color-dot" style="background: #0f172a;"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('plain-navy')"><span>Deep Navy</span><span class="color-dot" style="background: #0b1329;"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('plain-onyx')"><span>Onyx Black</span><span class="color-dot" style="background: #121212;"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('plain-daylight')"><span>Pure Daylight</span><span class="color-dot" style="background: #f8fafc;"></span></button>
+              <div class="dropdown-section-title">3D & ABSTRACT</div>
+              <button class="menu-option" type="button" onclick="setGradient('3d-chrome-swirl')"><span>Glossy Obsidian</span><span class="color-dot" style="background: radial-gradient(circle, #f97316, #0f172a, #020617);"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('cyan-liquid-glass')"><span>Turquoise Glass</span><span class="color-dot" style="background: radial-gradient(circle, #06b6d4, #083344, #020617);"></span></button>
             </div>
           </div>
 
@@ -272,6 +352,7 @@
         <span class="handover-modal-title"><i class="bx bx-alarm-exclamation" style="color: #facc15;"></i> Manage Handovers</span>
         <i class="bx bx-x handover-modal-close" onclick="closeHandoverModal()"></i>
       </div>
+      
       <form onsubmit="addUrgentHandover(event)" class="handover-modal-form">
         <div class="handover-form-group">
           <select id="handoverPriorityInput" class="handover-field select-priority" required>
@@ -279,24 +360,57 @@
             <option value="Need Attention">⚠️ Need Attention</option>
             <option value="Normal">ℹ️ Normal</option>
           </select>
-          <input type="text" id="handoverBrandInput" placeholder="Brand/Topic" required class="handover-field short">
-          <input type="text" id="handoverMsgInput" placeholder="Handover Note..." required class="handover-field flex-1">
-          <button type="submit" class="handover-post-btn"><i class="bx bx-plus"></i> Post</button>
+          <input type="text" id="handoverBrandInput" placeholder="Brand/Topic (e.g. IBET, QBET, MTS)" required class="handover-field short">
+          <input type="text" id="handoverMsgInput" placeholder="Handover Note / Issue Details..." required class="handover-field flex-1">
+          <button type="submit" class="handover-post-btn"><i class="bx bx-plus"></i> Post Note</button>
         </div>
       </form>
-      <div class="handover-modal-subtitle">ACTIVE HANDOVERS (Click <i class="bx bx-check"></i> to resolve)</div>
-      <div class="handover-items-list" id="handoverModalList"></div>
+
+      <div class="handover-modal-subtitle">ACTIVE HANDOVERS (Click <i class="bx bx-check"></i> when completed to delete)</div>
+      <div class="handover-items-list" id="handoverModalList">
+        <!-- Rendered Dynamically -->
+      </div>
     </div>
   </div>
 
+  <!-- REAL-TIME JIRA & URGENT HANDOVER SYNC SCRIPT (100% PRESERVED) -->
   <script>
-    // Embedded Jira and Handover scripts remain untouched here for functionality
     (function() {
+      /* --- JIRA SLA REAL-TIME ALERT --- */
       var JIRA_KEY = 'jira_tracked_tickets';
+      var jiraChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('jira_sync_channel') : null;
+
+      function sanitizeTicketKey(key) {
+        if (!key) return 'JIRA TICKET';
+        var keyMatch = key.match(/[A-Z0-9]{2,10}-\d+/i);
+        return keyMatch ? keyMatch[0].toUpperCase() : (key.length > 20 ? key.substring(0, 20) + '...' : key);
+      }
+
+      function constructFallbackJiraUrl(key, brand) {
+        var cleanK = sanitizeTicketKey(key) || 'JIRA-TICKET';
+        var cleanB = String(brand).toUpperCase();
+        if (cleanB === 'BETSSON') {
+          return 'https://betssongroup.atlassian.net/servicedesk/customer/portal/2019/' + cleanK;
+        }
+        return 'https://ibet.atlassian.net/browse/' + cleanK;
+      }
+
+      function formatElapsedTime(createdAt) {
+        var createdDate = new Date(createdAt);
+        if (isNaN(createdDate.getTime())) return '24h+ passed';
+        var diffMs = new Date() - createdDate;
+        var totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+        var days = Math.floor(totalHours / 24);
+        var hours = totalHours % 24;
+        if (days > 0) return days + 'd ' + hours + 'h passed';
+        return totalHours + 'h passed';
+      }
+
       function checkJiraSLA() {
         var rawData = localStorage.getItem(JIRA_KEY);
         var tickets = JSON.parse(rawData || '[]');
         var now = new Date();
+
         var overdueTickets = tickets.filter(function(t) {
           var isNotResolved = String(t.status).toLowerCase() !== 'resolved';
           var createdDate = new Date(t.createdAt);
@@ -306,18 +420,195 @@
 
         var banner = document.getElementById('jiraAlertBanner');
         var pillsContainer = document.getElementById('jiraPillsContainer');
+
         if (overdueTickets.length > 0) {
           var pillsHTML = overdueTickets.map(function(t) {
-            return '<div class="jira-pill-item"><span class="jira-pill-brand">' + (t.brand||'KT') + '</span> <a href="#" class="jira-pill-key-link">' + t.key + '</a></div>';
+            var cleanKey = sanitizeTicketKey(t.key);
+            var timeStr = formatElapsedTime(t.createdAt);
+            var brandStr = t.brand ? t.brand : 'KT PROJECTS';
+            var ticketUrl = (t.url && t.url.startsWith('http')) ? t.url : constructFallbackJiraUrl(cleanKey, brandStr);
+
+            return '<div class="jira-pill-item">' +
+                     '<span class="jira-pill-brand">' + brandStr + '</span> ' +
+                     '<a href="' + ticketUrl + '" target="_blank" rel="noreferrer" class="jira-pill-key-link" title="Open ' + cleanKey + ' in Atlassian">' +
+                       cleanKey + ' <i class="bx bx-external-link" style="font-size:11px;"></i>' +
+                     '</a> ' +
+                     '<span style="color:rgba(255,255,255,0.4); margin:0 2px;">•</span> ' +
+                     '<span class="jira-pill-time">' + timeStr + '</span>' +
+                   '</div>';
           }).join('');
+
           if (pillsContainer) pillsContainer.innerHTML = pillsHTML;
           if (banner) banner.classList.add('active');
         } else {
           if (banner) banner.classList.remove('active');
         }
       }
+
+      if (jiraChannel) jiraChannel.onmessage = checkJiraSLA;
+      window.addEventListener('storage', checkJiraSLA);
+      document.addEventListener('DOMContentLoaded', checkJiraSLA);
       setInterval(checkJiraSLA, 10000);
     })();
+
+    /* --- URGENT HANDOVER MANAGER SYSTEM WITH CATEGORIZATION & COUNT --- */
+    var HANDOVER_STORAGE_KEY = 'sbhub_urgent_handovers';
+    var handoverChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('handover_sync_channel') : null;
+
+    function getPriorityWeight(p) {
+      if (p === 'URGENT/CRITICAL') return 3;
+      if (p === 'Need Attention') return 2;
+      return 1; // Normal
+    }
+
+    function getPriorityBadgeHTML(p) {
+      if (p === 'URGENT/CRITICAL') return '<span class="priority-tag urgent"><i class="bx bx-error"></i> URGENT</span>';
+      if (p === 'Need Attention') return '<span class="priority-tag attention"><i class="bx bx-error-circle"></i> ATTENTION</span>';
+      return '<span class="priority-tag normal"><i class="bx bx-info-circle"></i> NORMAL</span>';
+    }
+
+    function getHandovers() {
+      var raw = localStorage.getItem(HANDOVER_STORAGE_KEY) || '[]';
+      var list = JSON.parse(raw);
+      return list.sort(function(a, b) {
+        var wA = getPriorityWeight(a.priority);
+        var wB = getPriorityWeight(b.priority);
+        if (wA !== wB) return wB - wA;
+        return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+      });
+    }
+
+    function saveHandovers(list) {
+      localStorage.setItem(HANDOVER_STORAGE_KEY, JSON.stringify(list));
+      if (handoverChannel) handoverChannel.postMessage('sync');
+      renderUrgentHandovers();
+    }
+
+    function renderUrgentHandovers() {
+      var list = getHandovers();
+      var container = document.getElementById('handoverPillsContainer');
+      var alertBadge = document.getElementById('handoverAlertBadge');
+      var banner = document.getElementById('urgentHandoverBanner');
+      var modalList = document.getElementById('handoverModalList');
+
+      if (list.length > 0) {
+        var highestPriority = list[0].priority || 'URGENT/CRITICAL';
+        var totalCount = list.length;
+        
+        var titleText = 'URGENT HANDOVER';
+        var titleIcon = 'bx-alarm-exclamation';
+        if (highestPriority === 'Need Attention') {
+          titleText = 'ATTENTION HANDOVER';
+          titleIcon = 'bx-error-circle';
+        } else if (highestPriority === 'Normal') {
+          titleText = 'HANDOVER NOTE';
+          titleIcon = 'bx-info-circle';
+        }
+
+        var countHTML = (totalCount >= 2) ? '<span class="handover-count-pill">' + totalCount + '</span>' : '';
+        if (alertBadge) {
+          alertBadge.innerHTML = '<i class="bx ' + titleIcon + '"></i> ' + titleText + countHTML;
+        }
+
+        var displayItems = [];
+        displayItems.push(list[0]);
+
+        if (list[0].msg.length <= 120) {
+          var accumulatedLength = list[0].msg.length;
+          for (var i = 1; i < list.length && i < 3; i++) {
+            if (list[i].msg.length > 120 || accumulatedLength + list[i].msg.length > 240) {
+              break;
+            }
+            displayItems.push(list[i]);
+            accumulatedLength += list[i].msg.length;
+          }
+        }
+
+        var pillsHTML = displayItems.map(function(item) {
+          var priorityBadge = getPriorityBadgeHTML(item.priority || 'URGENT/CRITICAL');
+          return '<div class="handover-pill-item">' +
+                   '<span class="handover-pill-brand">' + item.brand.toUpperCase() + '</span> ' +
+                   priorityBadge + ' ' +
+                   '<span class="handover-pill-msg">' + item.msg + '</span>' +
+                 '</div>';
+        }).join('');
+
+        if (container) container.innerHTML = pillsHTML;
+        if (banner) banner.style.display = 'flex';
+      } else {
+        if (container) container.innerHTML = '';
+        if (alertBadge) alertBadge.innerHTML = '<i class="bx bx-check-circle" style="color: #eab308;"></i> ALL CAUGHT UP';
+      }
+
+      if (modalList) {
+        if (list.length === 0) {
+          modalList.innerHTML = '<div style="text-align:center; padding:15px; font-size:11px; opacity:0.7;">No active handovers. Add one above!</div>';
+        } else {
+          modalList.innerHTML = list.map(function(item, idx) {
+            var badge = getPriorityBadgeHTML(item.priority || 'URGENT/CRITICAL');
+            return '<div class="handover-manage-row">' +
+                     '<div class="handover-manage-left">' +
+                       '<span class="handover-manage-brand">' + item.brand.toUpperCase() + '</span>' +
+                       badge +
+                       '<span class="handover-manage-text">' + item.msg + '</span>' +
+                     '</div>' +
+                     '<button type="button" class="handover-delete-btn" onclick="deleteUrgentHandover(' + idx + ')" title="Mark as Completed & Delete">' +
+                       '<i class="bx bx-check"></i> Complete' +
+                     '</button>' +
+                   '</div>';
+          }).join('');
+        }
+      }
+    }
+
+    function openHandoverModal() {
+      var modal = document.getElementById('handoverModal');
+      if (modal) modal.classList.add('show');
+      renderUrgentHandovers();
+    }
+
+    function closeHandoverModal() {
+      var modal = document.getElementById('handoverModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function addUrgentHandover(event) {
+      event.preventDefault();
+      var priorityEl = document.getElementById('handoverPriorityInput');
+      var brandEl = document.getElementById('handoverBrandInput');
+      var msgEl = document.getElementById('handoverMsgInput');
+      if (!brandEl || !msgEl) return;
+
+      var priority = priorityEl ? priorityEl.value : 'URGENT/CRITICAL';
+      var brand = brandEl.value.trim();
+      var msg = msgEl.value.trim();
+      if (!brand || !msg) return;
+
+      var list = getHandovers();
+      list.unshift({
+        priority: priority,
+        brand: brand,
+        msg: msg,
+        timestamp: new Date().toISOString()
+      });
+
+      saveHandovers(list);
+      brandEl.value = '';
+      msgEl.value = '';
+    }
+
+    function deleteUrgentHandover(index) {
+      var list = getHandovers();
+      if (index >= 0 && index < list.length) {
+        list.splice(index, 1);
+        saveHandovers(list);
+      }
+    }
+
+    if (handoverChannel) handoverChannel.onmessage = renderUrgentHandovers;
+    window.addEventListener('storage', renderUrgentHandovers);
+    document.addEventListener('DOMContentLoaded', renderUrgentHandovers);
   </script>
+
 </body>
 </html>
