@@ -490,6 +490,7 @@ function handleLogin(event) {
 function unlockDashboard() {
   const authOverlay = document.getElementById('authOverlay');
   const dashboardApp = document.getElementById('dashboardApp');
+  document.documentElement.classList.add('authenticated-session');
   if (authOverlay) authOverlay.classList.add('unlocked');
   if (dashboardApp) dashboardApp.classList.add('unlocked');
 }
@@ -728,4 +729,400 @@ async function fetchLiveGames() {
   container.innerHTML = `<div style="text-align:center; padding:15px;"><i class='bx bx-loader-alt bx-spin' style="font-size:20px; color:#38bdf8;"></i></div>`;
   
   try {
-    const
+    const targetDateQuery = getFormattedDateQuery(selectedGameDayOffset);
+    const targetDateObj = getGMT8DateObj(selectedGameDayOffset);
+    const dateLabelStr = targetDateObj.toLocaleDateString("en-US", { month: 'short', day: 'numeric' }).toUpperCase();
+    
+    let dayTag = `DAY ${selectedGameDayOffset + 1}`;
+    if (selectedGameDayOffset === 0) dayTag = `TODAY`;
+
+    const labelEl = document.getElementById("matchDayDisplay");
+    if (labelEl) labelEl.textContent = `${dayTag} (${dateLabelStr})`;
+
+    let matches = await fetchLeagueList(TOP_TIER_LEAGUES, targetDateQuery);
+
+    if (matches.length < 10) {
+      const secondaryMatches = await fetchLeagueList(SECONDARY_LEAGUES, targetDateQuery);
+      const seenMatchKeys = new Set(matches.map(m => `${m.homeName}-${m.awayName}`));
+      
+      for (const sm of secondaryMatches) {
+        const key = `${sm.homeName}-${sm.awayName}`;
+        if (!seenMatchKeys.has(key)) {
+          seenMatchKeys.add(key);
+          matches.push(sm);
+        }
+      }
+    }
+
+    if (matches.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
+      return;
+    }
+
+    matches = matches.slice(0, 10);
+
+    let gamesHtml = "";
+    matches.forEach(item => {
+      gamesHtml += `
+        <div class="top-game-card">
+          <div class="top-game-flags">
+            <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+            <span class="vs-text">vs</span>
+            <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+          </div>
+          <div class="top-game-title">${item.homeName} <span class="vs-light">vs</span> ${item.awayName}</div>
+          <div class="top-game-league">${item.leagueName}${item.kickOffTime ? ' &bull; <span style="color:#38bdf8;">' + item.kickOffTime + '</span>' : ''}</div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = gamesHtml;
+
+  } catch (e) {
+    console.error("Fetch Live Games Error:", e);
+    container.innerHTML = `<div style="text-align:center; padding:10px; font-size:11px; color:#f87171;">Failed to fetch live fixture data.</div>`;
+  }
+}
+
+async function fetchLeagueList(leagueList, dateQuery) {
+  const uniqueCodeToLeagues = new Map();
+  leagueList.forEach(league => {
+    if (!uniqueCodeToLeagues.has(league.code)) {
+      uniqueCodeToLeagues.set(league.code, league.name);
+    }
+  });
+
+  const fetchPromises = Array.from(uniqueCodeToLeagues.entries()).map(([code, defaultName]) =>
+    fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => data ? { code, defaultName, data } : null)
+      .catch(() => null)
+  );
+
+  const results = await Promise.all(fetchPromises);
+  let matches = [];
+  const seenMatchKeys = new Set();
+
+  for (const item of results) {
+    if (!item || !item.data || !item.data.events) continue;
+    for (const evt of item.data.events) {
+      if (matches.length >= 15) break;
+      const comp = evt.competitions?.[0];
+      if (!comp) continue;
+
+      const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
+      const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
+
+      if (homeTeam && awayTeam) {
+        const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+        const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+
+        const matchKey = evt.id || `${homeName}-${awayName}`;
+        if (seenMatchKeys.has(matchKey)) continue;
+        seenMatchKeys.add(matchKey);
+
+        const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+        const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+
+        let kickOffTime = "";
+        if (evt.date || comp.date) {
+          const dObj = new Date(evt.date || comp.date);
+          kickOffTime = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hour12: false
+          }).format(dObj);
+        }
+
+        const displayedLeagueName = item.data.leagues?.[0]?.name || item.defaultName;
+
+        matches.push({
+          homeName, awayName, homeLogo, awayLogo, leagueName: displayedLeagueName, kickOffTime
+        });
+      }
+    }
+  }
+
+  return matches;
+}
+
+function navigateMatchDay(dir) {
+  selectedGameDayOffset += dir;
+  if (selectedGameDayOffset < 0) selectedGameDayOffset = 6;
+  if (selectedGameDayOffset > 6) selectedGameDayOffset = 0;
+  fetchLiveGames();
+}
+
+function calculateActiveTraders() {
+  const dutyCards = document.querySelectorAll('.duty-card');
+  let activeCount = 0;
+  dutyCards.forEach(card => {
+    const timeBadge = card.querySelector('.badge-time');
+    if (timeBadge) {
+      const text = timeBadge.textContent.trim().toUpperCase();
+      if (!text.includes('OFF') && !text.includes('REST') && !text.includes('RD') && !text.includes('LEAVE')) {
+        activeCount++;
+      }
+    }
+  });
+  const el = document.getElementById('activeTraderCount');
+  if (el) el.textContent = activeCount + ' Working';
+}
+
+/* --- CREATE FORM MULTI-TAB SWITCHING --- */
+function switchCreateFormTab(tab) {
+  ['handover', 'jira', 'task'].forEach(t => {
+    const pill = document.getElementById(`create-tab-${t}`);
+    const form = document.getElementById(`createForm${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if (pill) pill.classList.remove('active');
+    if (form) form.style.display = 'none';
+  });
+
+  const activePill = document.getElementById(`create-tab-${tab}`);
+  const activeForm = document.getElementById(`createForm${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+  if (activePill) activePill.classList.add('active');
+  if (activeForm) activeForm.style.display = 'flex';
+}
+
+/* --- HANDOVER FORM SUBMISSION --- */
+function handleCreateHandoverSubmit(event) {
+  event.preventDefault();
+  const pVal = document.getElementById('createHandoverPriority')?.value || 'URGENT/CRITICAL';
+  const bVal = document.getElementById('createHandoverBrand')?.value.trim();
+  const mVal = document.getElementById('createHandoverMsg')?.value.trim();
+
+  if (!bVal || !mVal) return;
+
+  const raw = localStorage.getItem('sbhub_urgent_handovers') || '[]';
+  const list = JSON.parse(raw);
+  list.unshift({ priority: pVal, brand: bVal, msg: mVal, timestamp: new Date().toISOString() });
+  localStorage.setItem('sbhub_urgent_handovers', JSON.stringify(list));
+
+  document.getElementById('createHandoverBrand').value = '';
+  document.getElementById('createHandoverMsg').value = '';
+
+  closeActionModal('createModal');
+  renderUnifiedAlertsFeed();
+}
+
+/* --- JIRA FORM SUBMISSION --- */
+function handleCreateJiraSubmit(event) {
+  event.preventDefault();
+  const keyVal = document.getElementById('createJiraKey')?.value.trim();
+  const brandVal = document.getElementById('createJiraBrand')?.value.trim();
+  const titleVal = document.getElementById('createJiraTitle')?.value.trim();
+
+  if (!keyVal || !brandVal || !titleVal) return;
+
+  const raw = localStorage.getItem('jira_tracked_tickets') || '[]';
+  const list = JSON.parse(raw);
+  list.unshift({
+    key: keyVal.toUpperCase(),
+    brand: brandVal.toUpperCase(),
+    title: titleVal,
+    status: 'In Progress',
+    createdAt: new Date().toISOString()
+  });
+  localStorage.setItem('jira_tracked_tickets', JSON.stringify(list));
+
+  document.getElementById('createJiraKey').value = '';
+  document.getElementById('createJiraBrand').value = '';
+  document.getElementById('createJiraTitle').value = '';
+
+  closeActionModal('createModal');
+  renderUnifiedAlertsFeed();
+}
+
+/* --- CUSTOM TASK FORM SUBMISSION --- */
+function handleCreateTaskSubmit(event) {
+  event.preventDefault();
+  const titleVal = document.getElementById('createTaskTitle')?.value.trim();
+  const urlVal = document.getElementById('createTaskUrl')?.value.trim() || '#';
+
+  if (!titleVal) return;
+
+  const taskDock = document.getElementById('widget-task-dock');
+  if (taskDock) {
+    const newRow = document.createElement('a');
+    newRow.className = 'action-row';
+    newRow.href = urlVal;
+    if (urlVal !== '#') newRow.target = '_blank';
+    newRow.innerHTML = `<span>${titleVal.toUpperCase()}</span><i class="bx bx-right-arrow-alt"></i>`;
+    taskDock.appendChild(newRow);
+  }
+
+  document.getElementById('createTaskTitle').value = '';
+  document.getElementById('createTaskUrl').value = '';
+
+  closeActionModal('createModal');
+}
+
+/* --- GLOBAL SEARCH EXECUTION --- */
+function executeGlobalSearch() {
+  const query = document.getElementById('globalSearchInput')?.value.trim().toLowerCase();
+  const resultsContainer = document.getElementById('globalSearchResults');
+  if (!resultsContainer) return;
+
+  if (!query) {
+    resultsContainer.innerHTML = `<div style="font-size: 11px; opacity: 0.6; text-align: center; padding: 15px;">Type a keyword above to search across all links and tasks...</div>`;
+    return;
+  }
+
+  const searchableLinks = Array.from(document.querySelectorAll('a.nav-sub-btn, a.action-row')).map(el => {
+    return {
+      text: el.innerText.trim(),
+      url: el.href
+    };
+  });
+
+  const matches = searchableLinks.filter(item => item.text.toLowerCase().includes(query));
+
+  if (matches.length === 0) {
+    resultsContainer.innerHTML = `<div style="font-size: 11px; color: #f87171; text-align: center; padding: 15px;">No matching tasks or links found for "${query}".</div>`;
+    return;
+  }
+
+  resultsContainer.innerHTML = matches.map(item => `
+    <a href="${item.url}" target="_blank" class="action-row" style="padding: 8px 12px;">
+      <span>${item.text}</span>
+      <i class="bx bx-export" style="font-size: 12px; color: #38bdf8;"></i>
+    </a>
+  `).join('');
+}
+
+/* --- ALERTS & HANDOVERS BOTTOM FEED RENDER LOGIC --- */
+function renderUnifiedAlertsFeed() {
+  const HANDOVER_KEY = 'sbhub_urgent_handovers';
+  const handoverRaw = localStorage.getItem(HANDOVER_KEY) || '[]';
+  const handovers = JSON.parse(handoverRaw);
+  const hFeed = document.getElementById('handoverFeedContainer');
+  const hModal = document.getElementById('handoverModalList');
+
+  if (handovers.length > 0) {
+    let pillsHTML = handovers.map(item => {
+      let colorClass = 'normal';
+      if(item.priority === 'URGENT/CRITICAL') colorClass = 'urgent';
+      if(item.priority === 'Need Attention') colorClass = 'attention';
+      
+      return `<div class="handover-pill-item">
+                <span class="pill-brand">${item.brand.toUpperCase()}</span>
+                <span class="priority-tag ${colorClass}">${item.priority.toUpperCase()}</span>
+                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.msg}</span>
+              </div>`;
+    }).join('');
+    if(hFeed) hFeed.innerHTML = pillsHTML;
+    
+    if(hModal) {
+      hModal.innerHTML = handovers.map((item, idx) => `
+        <div class="handover-manage-row">
+          <div class="handover-manage-left">
+            <span class="handover-manage-brand">${item.brand.toUpperCase()}</span>
+            <span class="handover-manage-text">${item.msg}</span>
+          </div>
+          <button type="button" class="handover-delete-btn" onclick="deleteUrgentHandover(${idx})"><i class="bx bx-check"></i> Complete</button>
+        </div>
+      `).join('');
+    }
+  } else {
+    if(hFeed) hFeed.innerHTML = '<div style="font-size:10.5px; opacity:0.6; padding:5px 0;">No active handover notes.</div>';
+    if(hModal) hModal.innerHTML = '<div style="font-size:10.5px; opacity:0.6; padding:5px 0;">No active handover notes.</div>';
+  }
+
+  const JIRA_KEY = 'jira_tracked_tickets';
+  const jiraRaw = localStorage.getItem(JIRA_KEY) || '[]';
+  const tickets = JSON.parse(jiraRaw);
+  const now = new Date();
+  const overdueTickets = tickets.filter(t => {
+    const isNotResolved = String(t.status).toLowerCase() !== 'resolved';
+    const createdDate = new Date(t.createdAt);
+    const hoursOld = isNaN(createdDate.getTime()) ? 25 : (now - createdDate) / (1000 * 60 * 60);
+    return isNotResolved && hoursOld >= 24;
+  });
+
+  const jFeed = document.getElementById('jiraFeedContainer');
+  if (overdueTickets.length > 0) {
+    let jHTML = `<div style="font-size:9.5px; font-weight:800; color:#fca5a5; margin-bottom:4px;">PENDING JIRA (>24H)</div>`;
+    jHTML += overdueTickets.map(t => {
+      return `<div class="jira-pill-item">
+                <span class="pill-brand">${t.brand || 'KT'}</span>
+                <a href="#" class="jira-pill-key-link">${t.key}</a>
+              </div>`;
+    }).join('');
+    if(jFeed) jFeed.innerHTML = jHTML;
+  } else {
+    if(jFeed) jFeed.innerHTML = '';
+  }
+}
+
+function openHandoverModal() { document.getElementById('handoverModal').classList.add('show'); }
+function closeHandoverModal() { document.getElementById('handoverModal').classList.remove('show'); }
+
+function addUrgentHandover(event) {
+  event.preventDefault();
+  const pEl = document.getElementById('handoverPriorityInput');
+  const bEl = document.getElementById('handoverBrandInput');
+  const mEl = document.getElementById('handoverMsgInput');
+  
+  if(!bEl || !mEl) return;
+  const brand = bEl.value.trim();
+  const msg = mEl.value.trim();
+  if(!brand || !msg) return;
+
+  const raw = localStorage.getItem('sbhub_urgent_handovers') || '[]';
+  const list = JSON.parse(raw);
+  list.unshift({ priority: pEl.value, brand, msg, timestamp: new Date().toISOString() });
+  
+  localStorage.setItem('sbhub_urgent_handovers', JSON.stringify(list));
+  bEl.value = ''; mEl.value = '';
+  renderUnifiedAlertsFeed();
+}
+
+function deleteUrgentHandover(index) {
+  const raw = localStorage.getItem('sbhub_urgent_handovers') || '[]';
+  const list = JSON.parse(raw);
+  if(index >= 0 && index < list.length) {
+    list.splice(index, 1);
+    localStorage.setItem('sbhub_urgent_handovers', JSON.stringify(list));
+    renderUnifiedAlertsFeed();
+  }
+}
+
+function initDashboardApp() {
+  const savedTheme = localStorage.getItem('sbhub_theme');
+  if (savedTheme) {
+    setGradient(savedTheme);
+  } else {
+    setGradient('3d-chrome-swirl');
+  }
+
+  if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
+    unlockDashboard();
+  }
+
+  switchBrandTab('ibet');
+  restoreSavedWidgets();
+  loadCachedTopPicks();
+
+  fetchTopPicksAndBoosts();
+  setInterval(fetchTopPicksAndBoosts, 2 * 60 * 1000);
+
+  listenToLiveDutyRoster();
+  fetchLiveGames();
+  calculateActiveTraders();
+  fetchManilaWeather();
+  setInterval(fetchManilaWeather, 15 * 60 * 1000);
+
+  renderUnifiedAlertsFeed();
+  window.addEventListener('storage', renderUnifiedAlertsFeed);
+  setInterval(renderUnifiedAlertsFeed, 10000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDashboardApp);
+} else {
+  initDashboardApp();
+}
+
+window.addEventListener('click', function(e) {
+  if (!e.target.closest('.dropdown-container')) {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+  }
+});
