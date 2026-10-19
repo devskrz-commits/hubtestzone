@@ -136,22 +136,25 @@ body {
   position: absolute;
   top: 0; left: 0; bottom: 0;
   width: 80px;
-  background: rgba(10, 15, 30, 0.7);
+  background: rgba(10, 15, 30, 0.85);
   backdrop-filter: blur(25px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 15px 0;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px 0;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
   overflow-x: hidden;
   white-space: nowrap;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .sidebar.hover-expandable-sidebar:hover {
   width: 280px;
-  box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+  box-shadow: 10px 0 40px rgba(0,0,0,0.9);
 }
+
 .sidebar-menu-scroll {
   display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; padding: 0 10px 15px 10px; scrollbar-width: none;
 }
@@ -180,12 +183,16 @@ body {
 .icon-multi    { background: linear-gradient(135deg, #f59e0b, #b45309); }
 .icon-radar    { background: linear-gradient(135deg, #06b6d4, #0e7490); }
 .icon-brands   { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.icon-price    { background: linear-gradient(135deg, #84cc16, #4d7c0f); }
 .icon-proc     { background: linear-gradient(135deg, #ec4899, #be185d); }
+.icon-claude   { background: linear-gradient(135deg, #d97706, #b45309); }
+.icon-risk     { background: linear-gradient(135deg, #10b981, #047857); }
 
 /* Hide text when collapsed */
-.nav-text, .toggle-icon { opacity: 0; transition: opacity 0.2s; visibility: hidden; }
+.nav-text, .toggle-icon, .sidebar-quick-dock { opacity: 0; transition: opacity 0.2s; visibility: hidden; }
 .sidebar.hover-expandable-sidebar:hover .nav-text,
-.sidebar.hover-expandable-sidebar:hover .toggle-icon { opacity: 1; visibility: visible; }
+.sidebar.hover-expandable-sidebar:hover .toggle-icon,
+.sidebar.hover-expandable-sidebar:hover .sidebar-quick-dock { opacity: 1; visibility: visible; }
 
 .sub-menu {
   display: flex; flex-direction: column; gap: 3px; padding-left: 4px; margin-top: 3px;
@@ -197,8 +204,24 @@ body {
   padding: 5px 10px; min-height: 32px; height: 32px; background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; font-size: 10px;
   font-weight: 700; color: rgba(255, 255, 255, 0.85); text-decoration: none; transition: all 0.2s ease;
+  white-space: nowrap;
 }
 .nav-sub-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; border-color: rgba(56, 189, 248, 0.5); }
+
+/* Sidebar Quick Dock */
+.sidebar-quick-dock {
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+}
+.quick-dock-title { font-size: 10px; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+.quick-dock-buttons { display: flex; flex-direction: column; gap: 6px; }
+.quick-launch-btn {
+  display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; min-height: 34px; height: 34px;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 8px; font-size: 11px;
+  font-weight: 700; color: #ffffff; text-decoration: none; transition: all 0.2s ease;
+}
+.quick-launch-btn:hover { background: rgba(255, 255, 255, 0.22); border-color: rgba(56, 189, 248, 0.5); transform: translateX(3px); }
+.quick-launch-btn .btn-left { display: flex; align-items: center; gap: 8px; }
 
 /* 2. SLIM TOP ALERTS BAR */
 .top-alerts-bar { width: 100%; margin-bottom: 15px; }
@@ -263,7 +286,7 @@ body {
 .duty-card { background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.2s ease; }
 .duty-card:hover { border-color: rgba(255, 255, 255, 0.35); }
 .duty-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; }
-.badge-time { background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.25); padding: 1px 8px; border-radius: 999px; font-size: 9px; }
+.badge-time { background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.25); padding: 1px 8px; border-radius: 999px; font-size: 9px; text-transform: uppercase; }
 .duty-desc { font-size: 10px; opacity: 0.85; }
 
 /* TOP GAMES */
