@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sportsbook Hub - Secured Dashboard</title>
 
-  <!-- INSTANT AUTHENTICATION CHECK -->
+  <!-- INSTANT AUTHENTICATION CHECK (PREVENTS FLASH OF LOGIN OVERLAY ON F5 REFRESH) -->
   <script>
     (function() {
       try {
@@ -339,7 +339,7 @@
               <i class="bx bxs-flame" style="font-size: 16px;"></i> TOP PICKS
             </span>
             <div class="actions">
-              <button id="expandTopPicksBtn" onclick="toggleTopPicksExpand()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <button id="expandTopPicksBtn" onclick="openTopPicksFullScreenModal()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
                 <i class="bx bx-expand"></i> Expand All
               </button>
             </div>
@@ -496,13 +496,10 @@
         </div>
       </div>
 
-      <!-- ALERTS & HANDOVERS WIDGET -->
+      <!-- ALERTS & HANDOVERS WIDGET (NO REDUNDANT HEAD BUTTON) -->
       <div class="glass-card alerts-feed-card" id="widget-alerts-dock" style="flex: 1; display: flex; flex-direction: column;">
         <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
           <span style="color:#eab308; font-size: 11px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS</span>
-          <div class="actions">
-            <button class="handover-manage-btn" onclick="openHandoverModal()" style="font-size: 9.5px; padding: 3px 8px;"><i class="bx bx-plus"></i> Note</button>
-          </div>
         </div>
         <div class="alerts-feed-content" style="flex: 1; overflow-y: auto; padding-right: 2px;">
           <div id="jiraFeedContainer" style="display:flex; flex-direction: column; gap:8px; margin-bottom: 10px;"></div>
@@ -535,6 +532,29 @@
       </form>
       <div class="handover-modal-subtitle">ACTIVE HANDOVERS (Click <i class="bx bx-check"></i> to resolve)</div>
       <div class="handover-items-list" id="handoverModalList"></div>
+    </div>
+  </div>
+
+  <!-- FULL-SCREEN TOP PICKS EXPANDED MODAL -->
+  <div id="topPicksFullScreenModal" class="handover-modal-overlay">
+    <div class="handover-modal-card" style="max-width: 90vw; width: 1200px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="handover-modal-header">
+        <span class="handover-modal-title"><i class="bx bxs-flame" style="color: #f87171;"></i> Full Top Picks & Boosts Offering</span>
+        <i class="bx bx-x handover-modal-close" onclick="closeTopPicksFullScreenModal()"></i>
+      </div>
+      
+      <div class="top-picks-filter-bar" style="margin-top: 10px;">
+        <button class="boost-filter-btn active" id="modal-btn-boost-eng.1" onclick="filterModalTopPicks('eng.1', this)">EPL</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-esp.1" onclick="filterModalTopPicks('esp.1', this)">LA LIGA</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-ita.1" onclick="filterModalTopPicks('ita.1', this)">SERIE A</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-fra.1" onclick="filterModalTopPicks('fra.1', this)">LIGUE 1</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-ger.1" onclick="filterModalTopPicks('ger.1', this)">BUND</button>
+        <button class="boost-filter-btn" id="modal-btn-boost-uefa.champions" onclick="filterModalTopPicks('uefa.champions', this)">UEFA</button>
+      </div>
+
+      <div id="modalTopPicksContainer" class="top-picks-grid-row" style="flex: 1; overflow-y: auto; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); padding: 10px 4px;">
+        <!-- Dynamically Rendered -->
+      </div>
     </div>
   </div>
 
