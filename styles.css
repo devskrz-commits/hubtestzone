@@ -120,7 +120,7 @@ html.authenticated-session #dashboardApp,
 .sidebar-menu-scroll { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; padding: 15px 10px; scrollbar-width: none; }
 .sidebar-menu-scroll::-webkit-scrollbar { display: none; }
 
-/* Text & elements hidden while collapsed */
+/* Text & Quick Dock hidden while collapsed */
 .nav-text, .toggle-icon, .nav-sub-btn span, .quick-dock-title, .quick-launch-text {
   opacity: 0; visibility: hidden; transition: opacity 0.2s ease;
 }
