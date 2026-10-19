@@ -241,7 +241,6 @@ function renderFilteredTopPicks() {
     return;
   }
 
-  // Dashboard view limited strictly to 4 items
   displayPicks = displayPicks.slice(0, 4);
 
   let cardsHtml = "";
@@ -997,25 +996,103 @@ function handleCreateTaskSubmit(event) {
   closeActionModal('createModal');
 }
 
-/* --- GLOBAL SEARCH EXECUTION --- */
+/* --- GLOBAL SEARCH INDEX & EXECUTION ENGINE --- */
+const GLOBAL_HUB_INDEX = [
+  // Internal
+  { text: "DAILY DUTY", url: "duties.html", category: "Internal" },
+  { text: "ROTA", url: "rota.html", category: "Internal" },
+  { text: "DAILY BIG WINNERS", url: "https://reliancedigi-my.sharepoint.com/:x:/p/ann/IQCWP022FAMHSY-z3-eV0c9XAWFWLrVAPb9xSCUut_VuZ9U?rtime=BxZTEFXS3kg", category: "Internal" },
+  { text: "HANDOVER", url: "handover.html", category: "Internal" },
+  
+  // Daily Tasks
+  { text: "TOP PICKS (SCHEDULE)", url: "boostschedule.html", category: "Daily Tasks" },
+  { text: "EDGE BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096", category: "Daily Tasks" },
+  { text: "IBET BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986", category: "Daily Tasks" },
+  { text: "KT SPORTS CHECK", url: "https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0", category: "Daily Tasks" },
+  { text: "PREDICTION OFFER CHECK", url: "https://polymarket.com/breaking", category: "Daily Tasks" },
+  { text: "EDGE BOOST SYS", url: "edge_boosts.html", category: "Daily Tasks" },
+  { text: "IBET BOOST SYS", url: "ibet_boosts.html", category: "Daily Tasks" },
+  
+  // Daily Monitoring
+  { text: "GREEN TRACKER", url: "https://docs.google.com/spreadsheets/d/1qruVq-HZCyM0uDgnYSqFhccXKnMkqJ8z/edit?gid=1305147410#gid=1305147410", category: "Monitoring" },
+  { text: "RED TRACKER", url: "https://docs.google.com/spreadsheets/d/1OcaMz_AOUeRsWIVplbnk2XAna62m3IKa/edit?gid=457800468#gid=457800468", category: "Monitoring" },
+  { text: "ORANGE TRACKER", url: "https://docs.google.com/spreadsheets/d/1U-Dmc628kHQabzJGoBeEgRus5PiRhgSd/edit?pli=1&gid=1983372695#gid=1983372695", category: "Monitoring" },
+  { text: "7A TRACKER", url: "#7a", category: "Monitoring" },
+  { text: "GREEN CRM", url: "https://docs.google.com/spreadsheets/d/11STKO4Xsj0a8iTuUXSCXC-XEE4-7qmF9/edit?pli=1&gid=1701374259#gid=1701374259", category: "Monitoring" },
+  { text: "RED CRM", url: "https://docs.google.com/spreadsheets/d/1gPks2FdHyOOTiILvn553miz32WeEtOpx/edit?gid=1701374259#gid=1701374259", category: "Monitoring" },
+
+  // Back Office
+  { text: "QBET/55/30 BACK OFFICE", url: "https://betbook.center/qbet/bets", category: "Back Office" },
+  { text: "IBET BACK OFFICE", url: "https://mga-betbook.center/ibet/bets", category: "Back Office" },
+  { text: "PUBS BACK OFFICE", url: "https://eu-b7k.center/pubs8/bets", category: "Back Office" },
+
+  // Multi Monitor
+  { text: "EDGE PREDICTION TICKER", url: "https://betbook.center/monitor?providerIds=prediction_markets", category: "Multi-Monitor" },
+  { text: "PUBS PREDICTION TICKER", url: "https://eu-b7k.center/monitor?providerIds=prediction_markets", category: "Multi-Monitor" },
+  { text: "QBET/55/30 REJECTED", url: "https://betbook.center/monitor", category: "Multi-Monitor" },
+  { text: "PUBS REJECTED", url: "https://eu-b7k.center/monitor", category: "Multi-Monitor" },
+
+  // Betradar
+  { text: "MTS BETRADAR", url: "https://mtsc-its.betradar.com/", category: "Betradar" },
+  { text: "CTRL PORTAL", url: "https://portal.betradar.com/", category: "Betradar" },
+
+  // Own Brands
+  { text: "7A BET", url: "https://www.7abet.com/en-UN", category: "Own Brands" },
+  { text: "QBET", url: "https://www.qbet.com/en-UN", category: "Own Brands" },
+  { text: "55BET", url: "https://www.55bet.com/en-UN", category: "Own Brands" },
+  { text: "30BET", url: "https://www.30bet.com/en-UN", category: "Own Brands" },
+  { text: "GQBET", url: "https://www.gqbet.vip/en-UN/", category: "Own Brands" },
+  { text: "BVBET", url: "https://www.bvbet.com/en-UN", category: "Own Brands" },
+  { text: "IBET SPORTSBOOK", url: "https://www.ibet.com/en-UN/sportsbook/price-boost/football", category: "Own Brands" },
+
+  // Price References
+  { text: "FLASHSCORE", url: "https://www.flashscore.com/", category: "Price Ref" },
+  { text: "BETSAPI", url: "https://betsapi.com/", category: "Price Ref" },
+  { text: "ODDSPORTAL", url: "https://www.oddsportal.com/football/", category: "Price Ref" },
+  { text: "ODDSCHECKER", url: "https://www.oddschecker.com/", category: "Price Ref" },
+  { text: "BETFAIR EXCHANGE", url: "https://www.betfair.com/exchange/plus/", category: "Price Ref" },
+  { text: "BET365", url: "https://www.bet365.com/", category: "Price Ref" },
+  { text: "PINNACLE", url: "https://www.pinnacle.com/", category: "Price Ref" },
+  { text: "GGBET", url: "https://gg.bet/", category: "Price Ref" },
+  { text: "UNIBET", url: "https://www.unibet.com.au/", category: "Price Ref" },
+  { text: "SOFASCORE", url: "https://www.sofascore.com/", category: "Price Ref" },
+  { text: "MARATHONBET", url: "https://www.marathonbet.com/", category: "Price Ref" },
+  { text: "FONBET", url: "https://fonbet.com/", category: "Price Ref" },
+
+  // Procedures & Tools
+  { text: "CONFLUENCE WIKI", url: "https://ibet.atlassian.net/wiki/spaces/Sportsbook/overview", category: "Procedures" },
+  { text: "WORKSPACE", url: "workspace.html", category: "Procedures" },
+  { text: "CLAUDE AI", url: "https://claude.ai", category: "Quick Launch" },
+  { text: "RISK SEGMENTATION TOOL", url: "Edge_Gaming_Client_Risk_Segmentation_Tool_July_2026_Dashboard.html", category: "Quick Launch" }
+];
+
 function executeGlobalSearch() {
   const query = document.getElementById('globalSearchInput')?.value.trim().toLowerCase();
   const resultsContainer = document.getElementById('globalSearchResults');
   if (!resultsContainer) return;
 
   if (!query) {
-    resultsContainer.innerHTML = `<div style="font-size: 11px; opacity: 0.6; text-align: center; padding: 15px;">Type a keyword above to search across all links and tasks...</div>`;
+    resultsContainer.innerHTML = `<div style="font-size: 11px; opacity: 0.6; text-align: center; padding: 15px;">Type a keyword above to search across all links, tasks, and portals...</div>`;
     return;
   }
 
-  const searchableLinks = Array.from(document.querySelectorAll('a.nav-sub-btn, a.action-row')).map(el => {
-    return {
-      text: el.innerText.trim(),
-      url: el.href
-    };
-  });
+  // Search static index
+  let matches = GLOBAL_HUB_INDEX.filter(item => item.text.toLowerCase().includes(query) || item.category.toLowerCase().includes(query));
 
-  const matches = searchableLinks.filter(item => item.text.toLowerCase().includes(query));
+  // Fallback: search dynamic links from DOM
+  const domLinks = Array.from(document.querySelectorAll('#dashboardApp a')).map(el => {
+    return {
+      text: el.textContent.trim().replace(/\s+/g, ' '),
+      url: el.href,
+      category: "Hub Link"
+    };
+  }).filter(item => item.text.length > 1);
+
+  domLinks.forEach(dl => {
+    if (!matches.some(m => m.url === dl.url) && dl.text.toLowerCase().includes(query)) {
+      matches.push(dl);
+    }
+  });
 
   if (matches.length === 0) {
     resultsContainer.innerHTML = `<div style="font-size: 11px; color: #f87171; text-align: center; padding: 15px;">No matching tasks or links found for "${query}".</div>`;
@@ -1024,8 +1101,11 @@ function executeGlobalSearch() {
 
   resultsContainer.innerHTML = matches.map(item => `
     <a href="${item.url}" target="_blank" class="action-row" style="padding: 8px 12px;">
-      <span>${item.text}</span>
-      <i class="bx bx-export" style="font-size: 12px; color: #38bdf8;"></i>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 11px; font-weight: 800;">${item.text}</span>
+        <span style="font-size: 9px; color: #38bdf8; opacity: 0.8; text-transform: uppercase;">${item.category}</span>
+      </div>
+      <i class="bx bx-export" style="font-size: 14px; color: #38bdf8;"></i>
     </a>
   `).join('');
 }
