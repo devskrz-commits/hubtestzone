@@ -227,11 +227,10 @@ function renderFilteredTopPicks() {
   let displayPicks = activePicks.filter(pick => pick.leagueKey === currentFilterKey);
 
   if (displayPicks.length === 0) {
-    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:#64748b;">No upcoming scheduled matches available.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:var(--text-secondary);">No upcoming scheduled matches available.</div>`;
     return;
   }
 
-  // Strictly limits dashboard view to 4 items
   displayPicks = displayPicks.slice(0, 4);
 
   let cardsHtml = "";
@@ -245,7 +244,7 @@ function renderFilteredTopPicks() {
           <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
         </div>
         <div class="boost-match-info">
-          <div class="boost-match-title">${pick.homeName} <span class="vs-light">vs</span> ${pick.awayName}</div>
+          <div class="boost-match-title">${pick.homeName} <span class="vs-light" style="opacity:0.6;">vs</span> ${pick.awayName}</div>
           <div class="boost-league-sub">${pick.leagueName}</div>
         </div>
         <div><span class="boost-badge ${isTopPick ? 'top-pick' : 'hot'}">${pick.badge}</span></div>
@@ -259,7 +258,6 @@ function renderFilteredTopPicks() {
   container.innerHTML = cardsHtml;
 }
 
-/* --- FULL-SCREEN TOP PICKS EXPANDED MODAL LOGIC --- */
 function openTopPicksFullScreenModal() {
   const modal = document.getElementById('topPicksFullScreenModal');
   if (modal) {
@@ -290,7 +288,7 @@ function renderModalTopPicks() {
   let displayPicks = activePicks.filter(pick => pick.leagueKey === modalFilterKey);
 
   if (displayPicks.length === 0) {
-    container.innerHTML = `<div style="text-align:center; padding:35px; width:100%; font-size:13px; font-weight:600; color:#64748b;">No upcoming scheduled matches found for this category.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:35px; width:100%; font-size:13px; font-weight:600; color:var(--text-secondary);">No upcoming scheduled matches found for this category.</div>`;
     return;
   }
 
@@ -305,7 +303,7 @@ function renderModalTopPicks() {
           <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
         </div>
         <div class="boost-match-info">
-          <div class="boost-match-title">${pick.homeName} <span class="vs-light">vs</span> ${pick.awayName}</div>
+          <div class="boost-match-title">${pick.homeName} <span class="vs-light" style="opacity:0.6;">vs</span> ${pick.awayName}</div>
           <div class="boost-league-sub">${pick.leagueName}</div>
         </div>
         <div><span class="boost-badge ${isTopPick ? 'top-pick' : 'hot'}">${pick.badge}</span></div>
@@ -409,14 +407,14 @@ async function fetchManilaWeather() {
 }
 
 function parseWMOWeatherCode(code) {
-  if (code === 0) return { label: 'CLEAR SKY', icon: 'bx-sun', color: '#000000' };
-  if (code === 1 || code === 2) return { label: 'PARTLY CLOUDY', icon: 'bx-cloud-sun', color: '#000000' };
-  if (code === 3) return { label: 'OVERCAST', icon: 'bx-cloud', color: '#000000' };
-  if (code >= 45 && code <= 48) return { label: 'FOGGY', icon: 'bx-cloud-fog', color: '#64748b' };
-  if (code >= 51 && code <= 67) return { label: 'LIGHT RAIN', icon: 'bx-cloud-drizzle', color: '#000000' };
-  if (code >= 80 && code <= 82) return { label: 'HEAVY RAIN', icon: 'bx-cloud-showers-heavy', color: '#000000' };
-  if (code >= 95) return { label: 'THUNDERSTORM', icon: 'bx-cloud-lightning', color: '#000000' };
-  return { label: 'CLOUDY', icon: 'bx-cloud', color: '#000000' };
+  if (code === 0) return { label: 'CLEAR SKY', icon: 'bx-sun', color: 'var(--accent-gold)' };
+  if (code === 1 || code === 2) return { label: 'PARTLY CLOUDY', icon: 'bx-cloud-sun', color: 'var(--accent-gold)' };
+  if (code === 3) return { label: 'OVERCAST', icon: 'bx-cloud', color: 'var(--accent-gold)' };
+  if (code >= 45 && code <= 48) return { label: 'FOGGY', icon: 'bx-cloud-fog', color: 'var(--text-secondary)' };
+  if (code >= 51 && code <= 67) return { label: 'LIGHT RAIN', icon: 'bx-cloud-drizzle', color: 'var(--accent-blue)' };
+  if (code >= 80 && code <= 82) return { label: 'HEAVY RAIN', icon: 'bx-cloud-showers-heavy', color: 'var(--accent-blue)' };
+  if (code >= 95) return { label: 'THUNDERSTORM', icon: 'bx-cloud-lightning', color: 'var(--accent-gold)' };
+  return { label: 'CLOUDY', icon: 'bx-cloud', color: 'var(--accent-gold)' };
 }
 
 function togglePasswordVisibility() {
@@ -540,8 +538,11 @@ function setGradient(theme) {
   const body = document.getElementById('pageBody');
   if (!body) return;
 
-  body.classList.add('light-theme');
-  body.style.background = '#ffffff';
+  if (theme === 'soft-light') {
+    body.classList.add('light-theme');
+  } else {
+    body.classList.remove('light-theme');
+  }
 
   const themeMenu = document.getElementById('themeMenu');
   if (themeMenu) themeMenu.classList.remove('show');
@@ -581,7 +582,7 @@ function renderLiveDutyWidget() {
   if (!container) return;
 
   if (!globalRosterData) {
-    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:#64748b;">No roster data available.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:var(--text-secondary);">No roster data available.</div>`;
     return;
   }
 
@@ -605,7 +606,7 @@ function renderLiveDutyWidget() {
   }
 
   if (!activeDayKey || !globalRosterData[activeDayKey]) {
-    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:#64748b;">No active schedule found.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:var(--text-secondary);">No active schedule found.</div>`;
     return;
   }
 
@@ -621,7 +622,7 @@ function renderLiveDutyWidget() {
   const filteredMembers = filterVal === 'ALL' ? allTeamMembers : allTeamMembers.filter(m => m.id === filterVal);
 
   let html = `
-    <div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; color:#0f172a;">
+    <div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; color:var(--text-primary);">
       <span>📅 ${displayDate}</span>
       <span class="badge-time">⏰ ${slotLabel}</span>
     </div>
@@ -652,7 +653,7 @@ function renderLiveDutyWidget() {
     } else {
       tasks.forEach(t => {
         html += `<div class="duty-desc" style="display:flex; gap:4px; align-items:center;">
-          <i class='bx ${t.done ? 'bx-check-circle' : 'bx-time-five'}' style="color:#000000"></i>
+          <i class='bx ${t.done ? 'bx-check-circle' : 'bx-time-five'}' style="color:var(--accent-gold)"></i>
           <span style="${t.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">${t.text}</span>
         </div>`;
       });
@@ -843,7 +844,7 @@ function executeGlobalSearch() {
   });
 
   if (matches.length === 0) {
-    resultsContainer.innerHTML = `<div style="font-size: 11px; color: #ef4444; text-align: center; padding: 15px;">No matching tasks or links found for "${query}".</div>`;
+    resultsContainer.innerHTML = `<div style="font-size: 11px; color: var(--accent-red); text-align: center; padding: 15px;">No matching tasks or links found for "${query}".</div>`;
     return;
   }
 
@@ -851,9 +852,9 @@ function executeGlobalSearch() {
     <a href="${item.url}" target="_blank" class="action-row" style="padding: 8px 12px;">
       <div style="display: flex; flex-direction: column; gap: 2px;">
         <span style="font-size: 11px; font-weight: 800;">${item.text}</span>
-        <span style="font-size: 9px; color: #cbd5e1; opacity: 0.8; text-transform: uppercase;">${item.category}</span>
+        <span style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">${item.category}</span>
       </div>
-      <i class="bx bx-export" style="font-size: 14px; color: #ffffff;"></i>
+      <i class="bx bx-export" style="font-size: 14px; color: var(--text-primary);"></i>
     </a>
   `).join('');
 }
@@ -870,7 +871,7 @@ function renderUnifiedAlertsFeed() {
       return `<div class="handover-pill-item" title="Click note or check icon to complete/delete" onclick="openHandoverModal()">
                 <span class="pill-brand">${item.brand.toUpperCase()}</span>
                 <div class="feed-text-content">
-                  <span class="priority-tag" style="align-self: flex-start; margin-bottom: 2px; font-weight:800;">${item.priority.toUpperCase()}</span>
+                  <span class="priority-tag" style="align-self: flex-start; margin-bottom: 2px; font-weight:800; color:var(--accent-gold);">${item.priority.toUpperCase()}</span>
                   <div class="feed-msg-body">${item.msg}</div>
                 </div>
                 <i class="bx bx-check feed-delete-icon" onclick="event.stopPropagation(); deleteUrgentHandover(${idx})" title="Complete & Delete Note"></i>
@@ -890,8 +891,8 @@ function renderUnifiedAlertsFeed() {
       `).join('');
     }
   } else {
-    if(hFeed) hFeed.innerHTML = '<div style="font-size:10.5px; color:#64748b; padding:5px 0;">No active handover notes.</div>';
-    if(hModal) hModal.innerHTML = '<div style="font-size:10.5px; color:#64748b; padding:5px 0;">No active handover notes.</div>';
+    if(hFeed) hFeed.innerHTML = '<div style="font-size:10.5px; color:var(--text-secondary); padding:5px 0;">No active handover notes.</div>';
+    if(hModal) hModal.innerHTML = '<div style="font-size:10.5px; color:var(--text-secondary); padding:5px 0;">No active handover notes.</div>';
   }
 
   const JIRA_KEY = 'jira_tracked_tickets';
@@ -907,13 +908,13 @@ function renderUnifiedAlertsFeed() {
 
   const jFeed = document.getElementById('jiraFeedContainer');
   if (overdueTickets.length > 0) {
-    let jHTML = `<div style="font-size:9.5px; font-weight:800; color:#ef4444; margin-bottom:4px;">PENDING JIRA (>24H)</div>`;
+    let jHTML = `<div style="font-size:9.5px; font-weight:800; color:var(--accent-red); margin-bottom:4px;">PENDING JIRA (>24H)</div>`;
     jHTML += overdueTickets.map((t, idx) => {
       const ticketUrl = t.url || `https://ibet.atlassian.net/browse/${t.key}`;
       return `<div class="jira-pill-item" onclick="window.open('${ticketUrl}', '_blank')" title="Click to open ticket in Atlassian">
                 <span class="pill-brand">${t.brand || 'KT'}</span>
                 <div class="feed-text-content">
-                  <span style="font-weight: 800; color: #0f172a;">${t.key}</span>
+                  <span style="font-weight: 800; color: var(--text-primary);">${t.key}</span>
                   <div class="feed-msg-body">${t.title || 'Overdue Pending Ticket'}</div>
                 </div>
                 <i class="bx bx-x feed-delete-icon" onclick="event.stopPropagation(); deleteJiraTicket(${idx})" title="Resolve/Dismiss Ticket"></i>
@@ -970,7 +971,12 @@ function deleteUrgentHandover(index) {
 }
 
 function initDashboardApp() {
-  setGradient('plain-daylight');
+  const savedTheme = localStorage.getItem('sbhub_theme');
+  if (savedTheme) {
+    setGradient(savedTheme);
+  } else {
+    setGradient('executive-dark');
+  }
 
   if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
     unlockDashboard();
