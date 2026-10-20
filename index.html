@@ -21,12 +21,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=16.0.0">
+  <link rel="stylesheet" href="./styles.css?v=17.0.0">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="./app.js?v=16.0.0" defer></script>
+  <script src="./app.js?v=17.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -98,15 +98,15 @@
       <aside class="sidebar hover-expandable-sidebar" id="mainSidebar">
         <div class="sidebar-menu-scroll">
           <div class="sidebar-logo">
-            <i class="bx bx-cube" style="color: #38bdf8; font-size: 28px;"></i>
-            <span class="nav-text" style="font-weight: 800; font-size: 14px; color: #ffffff; letter-spacing: 0.5px;">SPORTSBOOK HUB</span>
+            <i class="bx bx-cube" style="color: #000000; font-size: 28px;"></i>
+            <span class="nav-text" style="font-weight: 800; font-size: 14px; color: #0f172a; letter-spacing: 0.5px;">SPORTSBOOK HUB</span>
           </div>
 
           <!-- INTERNAL -->
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-internal', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-internal"><i class="bx bx-home-alt"></i></div>
+                <div class="icon-badge"><i class="bx bx-home-alt"></i></div>
                 <span class="nav-text">INTERNAL</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -123,13 +123,13 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-dailytask', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-tasks"><i class="bx bx-task"></i></div>
+                <div class="icon-badge"><i class="bx bx-task"></i></div>
                 <span class="nav-text">DAILY TASKS</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
             </div>
             <div class="sub-menu collapsed" id="sub-dailytask">
-              <a class="nav-sub-btn" href="boostschedule.html" target="_blank" rel="noreferrer"><span>TOP PICKS</span><i class="bx bx-right-arrow-alt"></i></a>
+              <a class="nav-sub-btn" href="boostschedule.html" target="_blank" rel="noreferrer"><span>HOT BOOST / TOP PICKS</span><i class="bx bx-right-arrow-alt"></i></a>
               <a class="nav-sub-btn" href="https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" target="_blank" rel="noreferrer"><span>EDGE BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
               <a class="nav-sub-btn" href="https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986" target="_blank" rel="noreferrer"><span>IBET BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
               <a class="nav-sub-btn" href="https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0" target="_blank" rel="noreferrer"><span>KT SPORTS CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
@@ -143,7 +143,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-dailymonitoring', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-monitor"><i class="bx bx-line-chart"></i></div>
+                <div class="icon-badge"><i class="bx bx-line-chart"></i></div>
                 <span class="nav-text">DAILY MONITORING</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -162,7 +162,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-backoffice', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-back"><i class="bx bx-briefcase-alt-2"></i></div>
+                <div class="icon-badge"><i class="bx bx-briefcase-alt-2"></i></div>
                 <span class="nav-text">BACK OFFICE</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -178,7 +178,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-multimonitor', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-multi"><i class="bx bx-desktop"></i></div>
+                <div class="icon-badge"><i class="bx bx-desktop"></i></div>
                 <span class="nav-text">MULTI-MONITOR</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -195,7 +195,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-betradar', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-radar"><i class="bx bx-radar"></i></div>
+                <div class="icon-badge"><i class="bx bx-radar"></i></div>
                 <span class="nav-text">BETRADAR</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -210,7 +210,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-ownbrands', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-brands"><i class="bx bx-layer"></i></div>
+                <div class="icon-badge"><i class="bx bx-layer"></i></div>
                 <span class="nav-text">OWN BRANDS</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -230,7 +230,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-priceref', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-price"><i class="bx bx-data"></i></div>
+                <div class="icon-badge"><i class="bx bx-data"></i></div>
                 <span class="nav-text">PRICE REFERENCES</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -255,7 +255,7 @@
           <div class="nav-group">
             <div class="nav-main-btn" onclick="toggleMenu('sub-procedures', this)">
               <div class="nav-main-left">
-                <div class="icon-badge icon-proc"><i class="bx bx-file"></i></div>
+                <div class="icon-badge"><i class="bx bx-file"></i></div>
                 <span class="nav-text">PROCEDURES</span>
               </div>
               <i class="bx bx-chevron-down toggle-icon"></i>
@@ -272,14 +272,14 @@
             <div class="quick-dock-buttons">
               <a href="https://claude.ai" target="_blank" rel="noreferrer" class="quick-launch-btn">
                 <div class="btn-left">
-                  <div class="icon-badge icon-claude" style="width:18px; height:18px; min-width:18px; font-size:10px;"><i class="bx bx-bot"></i></div>
+                  <div class="icon-badge" style="width:18px; height:18px; min-width:18px; font-size:10px;"><i class="bx bx-bot"></i></div>
                   <span class="quick-launch-text">Claude AI</span>
                 </div>
                 <i class="bx bx-export quick-launch-text" style="font-size: 12px; opacity: 0.7;"></i>
               </a>
               <a href="Edge_Gaming_Client_Risk_Segmentation_Tool_July_2026_Dashboard.html" target="_blank" rel="noreferrer" class="quick-launch-btn">
                 <div class="btn-left">
-                  <div class="icon-badge icon-risk" style="width:18px; height:18px; min-width:18px; font-size:10px;"><i class="bx bx-shield-quarter"></i></div>
+                  <div class="icon-badge" style="width:18px; height:18px; min-width:18px; font-size:10px;"><i class="bx bx-shield-quarter"></i></div>
                   <span class="quick-launch-text">Risk Seg. Tool</span>
                 </div>
                 <i class="bx bx-export quick-launch-text" style="font-size: 12px; opacity: 0.7;"></i>
@@ -290,10 +290,10 @@
         </div>
 
         <div class="sidebar-admin-footer">
-          <div class="nav-main-btn" onclick="handleLogout()" style="background: rgba(127,29,29,0.5); border: none; justify-content: center;">
+          <div class="nav-main-btn" onclick="handleLogout()" style="background: #000000; border: none; justify-content: center; color: #ffffff;">
             <div class="nav-main-left" style="justify-content: center; gap: 8px;">
-              <i class="bx bx-log-out" style="color:#fca5a5; font-size: 18px;"></i>
-              <span class="nav-text" style="color:#fca5a5;">LOCK SESSION</span>
+              <i class="bx bx-log-out" style="color:#ffffff; font-size: 18px;"></i>
+              <span class="nav-text" style="color:#ffffff;">LOCK SESSION</span>
             </div>
           </div>
         </div>
@@ -310,7 +310,7 @@
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="glass-card" id="widget-brand-dock">
             <div class="card-header">
-              <span style="color: #facc15;"><i class="bx bx-pin"></i> BRAND DIRECTORY</span>
+              <span><i class="bx bx-pin"></i> BRAND DIRECTORY</span>
             </div>
             <div class="tab-pills">
               <div class="tab-pill active" id="tab-ibet" onclick="switchBrandTab('ibet')">IBET</div>
@@ -322,9 +322,9 @@
 
           <div class="glass-card" id="widget-task-dock">
             <div class="card-header">
-              <span style="color: #f87171;"><i class="bx bx-list-ul"></i> DAILY TASKS</span>
+              <span><i class="bx bx-list-ul"></i> DAILY TASKS</span>
             </div>
-            <a class="action-row" href="boostschedule.html" target="_blank" rel="noreferrer"><span>TOP PICKS (SCHEDULE)</span><i class="bx bx-right-arrow-alt"></i></a>
+            <a class="action-row" href="boostschedule.html" target="_blank" rel="noreferrer"><span>HOT BOOST / TOP PICKS</span><i class="bx bx-right-arrow-alt"></i></a>
             <a class="action-row" href="https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" target="_blank" rel="noreferrer"><span>EDGE BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
             <a class="action-row" href="https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986" target="_blank" rel="noreferrer"><span>IBET BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
             <a class="action-row" href="https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0" target="_blank" rel="noreferrer"><span>KT SPORTS CHECK</span><i class="bx bx-right-arrow-alt"></i></a>
@@ -332,14 +332,14 @@
           </div>
         </div>
 
-        <!-- COLUMN 2: TOP PICKS -->
+        <!-- COLUMN 2: HOT BOOST / TOP PICKS -->
         <div class="glass-card" id="widget-top-picks" style="height: 100%;">
           <div class="card-header">
-            <span style="color: #f87171; display: flex; align-items: center; gap: 8px;">
-              <i class="bx bxs-flame" style="font-size: 16px;"></i> TOP PICKS
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <i class="bx bxs-flame" style="font-size: 16px;"></i> HOT BOOST / TOP PICKS
             </span>
             <div class="actions">
-              <button id="expandTopPicksBtn" onclick="openTopPicksFullScreenModal()" style="background:transparent; border:none; color:#38bdf8; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <button id="expandTopPicksBtn" onclick="openTopPicksFullScreenModal()" style="background:transparent; border:none; color:#000000; font-size:10px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
                 <i class="bx bx-expand"></i> Expand All
               </button>
             </div>
@@ -355,17 +355,17 @@
           </div>
 
           <div id="topPicksContainer" class="top-picks-grid-row">
-            <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
+            <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#000000;"></i></div>
           </div>
         </div>
 
-        <!-- COLUMN 3: DUTIES & TOP GAMES -->
+        <!-- COLUMN 3: DUTIES -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="glass-card" id="widget-duties-dock">
             <div class="card-header">
-              <span style="color: #f97316;"><i class="bx bx-time"></i> TIME-SLOT DUTIES</span>
+              <span><i class="bx bx-time"></i> TIME-SLOT DUTIES</span>
               <div class="actions">
-                <select id="traderFilter" onchange="renderLiveDutyWidget()" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:white; border-radius:4px; font-size:10px; padding:2px; outline:none; cursor:pointer;">
+                <select id="traderFilter" onchange="renderLiveDutyWidget()" style="background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; border-radius:4px; font-size:10px; padding:2px; outline:none; cursor:pointer; font-weight:700;">
                   <option value="ALL">All Traders</option>
                   <option value="ann">ANN</option>
                   <option value="dave">DAVE</option>
@@ -375,22 +375,7 @@
               </div>
             </div>
             <div id="liveDutyContent" style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
-            </div>
-          </div>
-
-          <div class="glass-card" id="widget-games-dock">
-            <div class="card-header">
-              <span style="color: #38bdf8;"><i class="bx bx-play-circle"></i> TOP GAMES</span>
-              <span style="font-size:9px; opacity:0.6;">FLASHSCORE GMT+8</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15);">
-              <i class="bx bx-chevron-left" style="cursor: pointer;" onclick="navigateMatchDay(-1)"></i>
-              <span id="matchDayDisplay">TODAY (GMT+8)</span>
-              <i class="bx bx-chevron-right" style="cursor: pointer;" onclick="navigateMatchDay(1)"></i>
-            </div>
-            <div id="gamesContainer" style="display: flex; flex-direction: column; gap: 10px;">
-              <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
+              <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#000000;"></i></div>
             </div>
           </div>
         </div>
@@ -416,7 +401,7 @@
           </button>
           <div class="dropdown-menu" id="notificationMenu" style="right: 0; width: 280px;">
             <div class="dropdown-section-title">NOTIFICATIONS</div>
-            <div style="padding: 15px; font-size: 11px; color: #94a3b8; text-align: center;">You have no new alerts.</div>
+            <div style="padding: 15px; font-size: 11px; color: #64748b; text-align: center;">You have no new alerts.</div>
           </div>
         </div>
         
@@ -434,72 +419,58 @@
       <div class="glass-card controls-card" style="padding: 15px;">
         <div class="world-clocks" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; text-align: center; margin-bottom: 15px;">
           <div>
-            <div class="clock-label" style="font-size:9px; opacity:0.7;">GMT+8</div>
-            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">GMT+8</div>
+            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
           </div>
           <div>
-            <div class="clock-label" style="font-size:9px; opacity:0.7;">CET</div>
-            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">CET</div>
+            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
           </div>
           <div>
-            <div class="clock-label" style="font-size:9px; opacity:0.7;">GMT+2</div>
-            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">GMT+2</div>
+            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
           </div>
         </div>
         
-        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 15px;">
-          <span class="weather-banner-temp" id="weatherTemp" style="font-size: 16px; font-weight: 800;">--°C</span>
-          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600;">LOADING</span>
+        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+          <span class="weather-banner-temp" id="weatherTemp" style="font-size: 16px; font-weight: 800; color:#0f172a;">--°C</span>
+          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600; color:#64748b;">LOADING</span>
         </div>
 
         <div class="banner-controls-group" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-          <a href="jira.html" target="_blank" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-task"></i> Jira</a>
+          <a href="jira.html" target="_blank" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-task"></i> Jira</a>
           
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-slider-alt"></i> Widgets</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-slider-alt"></i> Widgets</button>
             <div class="dropdown-menu" id="widgetMenu">
-              <label class="menu-option"><span>Top Picks</span><input type="checkbox" checked onchange="toggleWidget('widget-top-picks', this.checked)"></label>
+              <label class="menu-option"><span>Hot Boost / Top Picks</span><input type="checkbox" checked onchange="toggleWidget('widget-top-picks', this.checked)"></label>
               <label class="menu-option"><span>Brand Dock</span><input type="checkbox" checked onchange="toggleWidget('widget-brand-dock', this.checked)"></label>
               <label class="menu-option"><span>Task Dock</span><input type="checkbox" checked onchange="toggleWidget('widget-task-dock', this.checked)"></label>
               <label class="menu-option"><span>Duty Roster</span><input type="checkbox" checked onchange="toggleWidget('widget-duties-dock', this.checked)"></label>
-              <label class="menu-option"><span>Top Games</span><input type="checkbox" checked onchange="toggleWidget('widget-games-dock', this.checked)"></label>
               <label class="menu-option"><span>Activity Feed</span><input type="checkbox" checked onchange="toggleWidget('widget-alerts-dock', this.checked)"></label>
             </div>
           </div>
 
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-palette"></i> Theme</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-palette"></i> Theme</button>
             <div class="dropdown-menu" id="themeMenu">
-              <div class="dropdown-section-title">PLAIN COLORS</div>
-              <button class="menu-option" type="button" onclick="setGradient('plain-slate')"><span>Dark Slate</span><span class="color-dot" style="background: #0f172a;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-navy')"><span>Deep Navy</span><span class="color-dot" style="background: #0b1329;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-onyx')"><span>Onyx Black</span><span class="color-dot" style="background: #121212;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-daylight')"><span>Pure Daylight</span><span class="color-dot" style="background: #f8fafc;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-sky-light')"><span>Sky Daylight</span><span class="color-dot" style="background: #e0f2fe;"></span></button>
+              <div class="dropdown-section-title">MONOCHROME & LIGHT</div>
+              <button class="menu-option" type="button" onclick="setGradient('plain-daylight')"><span>Pure Daylight</span><span class="color-dot" style="background: #ffffff;"></span></button>
               <button class="menu-option" type="button" onclick="setGradient('plain-warm-light')"><span>Warm Sand</span><span class="color-dot" style="background: #f5f5f4;"></span></button>
-        
-              <div class="dropdown-section-title">3D CHROME & LIQUID SWIRLS</div>
-              <button class="menu-option" type="button" onclick="setGradient('3d-chrome-swirl')"><span>Glossy Obsidian</span><span class="color-dot" style="background: radial-gradient(circle, #f97316, #0f172a, #020617);"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('cyan-liquid-glass')"><span>Turquoise 3D Glass</span><span class="color-dot" style="background: radial-gradient(circle, #06b6d4, #083344, #020617);"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('deep-liquid-chrome')"><span>Liquid Chrome</span><span class="color-dot" style="background: linear-gradient(135deg, #1e293b, #3b82f6, #020617);"></span></button>
-
-              <div class="dropdown-section-title">VECTOR LINE WAVES & GRIDS</div>
-              <button class="menu-option" type="button" onclick="setGradient('neon-line-ribbon')"><span>Magenta Wave</span><span class="color-dot" style="background: linear-gradient(135deg, #d946ef, #8b5cf6, #090514);"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('neural-wireframe')"><span>Orange Neural</span><span class="color-dot" style="background: linear-gradient(135deg, #f97316, #ef4444, #0c0a09);"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('dark-energy-vortex')"><span>Crimson Vortex</span><span class="color-dot" style="background: radial-gradient(circle, #e11d48, #4c0519, #020617);"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('plain-onyx')"><span>Monochrome Dark</span><span class="color-dot" style="background: #121212;"></span></button>
             </div>
           </div>
 
-          <div class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background: rgba(56,189,248,0.1); border-color: #38bdf8;">
-            <i class="bx bx-user-check" style="color: #38bdf8;"></i> <span id="activeTraderCount">0 Working</span>
+          <div class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background: #f8fafc; border-color: #000000; color: #000000;">
+            <i class="bx bx-user-check" style="color: #000000;"></i> <span id="activeTraderCount">0 Working</span>
           </div>
         </div>
       </div>
 
-      <!-- ALERTS & HANDOVERS WIDGET (NO REDUNDANT HEAD BUTTON) -->
+      <!-- ALERTS & HANDOVERS WIDGET -->
       <div class="glass-card alerts-feed-card" id="widget-alerts-dock" style="flex: 1; display: flex; flex-direction: column;">
-        <div class="card-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
-          <span style="color:#eab308; font-size: 11px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS</span>
+        <div class="card-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+          <span style="font-size: 11px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS</span>
         </div>
         <div class="alerts-feed-content" style="flex: 1; overflow-y: auto; padding-right: 2px;">
           <div id="jiraFeedContainer" style="display:flex; flex-direction: column; gap:8px; margin-bottom: 10px;"></div>
@@ -515,7 +486,7 @@
   <div id="handoverModal" class="handover-modal-overlay">
     <div class="handover-modal-card">
       <div class="handover-modal-header">
-        <span class="handover-modal-title"><i class="bx bx-alarm-exclamation" style="color: #facc15;"></i> Manage Handovers</span>
+        <span class="handover-modal-title"><i class="bx bx-alarm-exclamation"></i> Manage Handovers</span>
         <i class="bx bx-x handover-modal-close" onclick="closeHandoverModal()"></i>
       </div>
       <form onsubmit="addUrgentHandover(event)" class="handover-modal-form">
@@ -539,7 +510,7 @@
   <div id="topPicksFullScreenModal" class="handover-modal-overlay">
     <div class="handover-modal-card" style="max-width: 90vw; width: 1200px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="handover-modal-header">
-        <span class="handover-modal-title"><i class="bx bxs-flame" style="color: #f87171;"></i> Full Top Picks & Boosts Offering</span>
+        <span class="handover-modal-title"><i class="bx bxs-flame"></i> Full Hot Boost & Top Picks Offering</span>
         <i class="bx bx-x handover-modal-close" onclick="closeTopPicksFullScreenModal()"></i>
       </div>
       
