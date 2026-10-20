@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sportsbook Hub - Secured Dashboard</title>
 
-  <!-- INSTANT AUTHENTICATION CHECK (PREVENTS FLASH OF LOGIN OVERLAY ON F5 REFRESH) -->
+  <!-- INSTANT AUTHENTICATION CHECK -->
   <script>
     (function() {
       try {
@@ -21,12 +21,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=17.0.0">
+  <link rel="stylesheet" href="./styles.css?v=18.0.0">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="./app.js?v=17.0.0" defer></script>
+  <script src="./app.js?v=18.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -98,8 +98,8 @@
       <aside class="sidebar hover-expandable-sidebar" id="mainSidebar">
         <div class="sidebar-menu-scroll">
           <div class="sidebar-logo">
-            <i class="bx bx-cube" style="color: #000000; font-size: 28px;"></i>
-            <span class="nav-text" style="font-weight: 800; font-size: 14px; color: #0f172a; letter-spacing: 0.5px;">SPORTSBOOK HUB</span>
+            <i class="bx bx-cube" style="color: var(--accent-gold); font-size: 28px;"></i>
+            <span class="nav-text" style="font-weight: 800; font-size: 14px; letter-spacing: 0.5px;">SPORTSBOOK HUB</span>
           </div>
 
           <!-- INTERNAL -->
@@ -290,10 +290,10 @@
         </div>
 
         <div class="sidebar-admin-footer">
-          <div class="nav-main-btn" onclick="handleLogout()" style="background: #000000; border: none; justify-content: center; color: #ffffff;">
+          <div class="nav-main-btn" onclick="handleLogout()" style="background: var(--surface-hover); border: 1px solid var(--border-color); justify-content: center;">
             <div class="nav-main-left" style="justify-content: center; gap: 8px;">
-              <i class="bx bx-log-out" style="color:#ffffff; font-size: 18px;"></i>
-              <span class="nav-text" style="color:#ffffff;">LOCK SESSION</span>
+              <i class="bx bx-log-out" style="color:var(--accent-red); font-size: 18px;"></i>
+              <span class="nav-text" style="color:var(--accent-red);">LOCK SESSION</span>
             </div>
           </div>
         </div>
@@ -310,7 +310,7 @@
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="glass-card" id="widget-brand-dock">
             <div class="card-header">
-              <span><i class="bx bx-pin"></i> BRAND DIRECTORY</span>
+              <span><i class="bx bx-pin" style="color: var(--accent-gold);"></i> BRAND DIRECTORY</span>
             </div>
             <div class="tab-pills">
               <div class="tab-pill active" id="tab-ibet" onclick="switchBrandTab('ibet')">IBET</div>
@@ -322,7 +322,7 @@
 
           <div class="glass-card" id="widget-task-dock">
             <div class="card-header">
-              <span><i class="bx bx-list-ul"></i> DAILY TASKS</span>
+              <span><i class="bx bx-list-ul" style="color: var(--accent-gold);"></i> DAILY TASKS</span>
             </div>
             <a class="action-row" href="boostschedule.html" target="_blank" rel="noreferrer"><span>HOT BOOST / TOP PICKS</span><i class="bx bx-right-arrow-alt"></i></a>
             <a class="action-row" href="https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" target="_blank" rel="noreferrer"><span>EDGE BOOST (MIG)</span><i class="bx bx-right-arrow-alt"></i></a>
@@ -336,10 +336,10 @@
         <div class="glass-card" id="widget-top-picks" style="height: 100%;">
           <div class="card-header">
             <span style="display: flex; align-items: center; gap: 8px;">
-              <i class="bx bxs-flame" style="font-size: 16px;"></i> HOT BOOST / TOP PICKS
+              <i class="bx bxs-flame" style="font-size: 16px; color: var(--accent-gold);"></i> HOT BOOST / TOP PICKS
             </span>
             <div class="actions">
-              <button id="expandTopPicksBtn" onclick="openTopPicksFullScreenModal()" style="background:transparent; border:none; color:#000000; font-size:10px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
+              <button id="expandTopPicksBtn" onclick="openTopPicksFullScreenModal()" style="background:transparent; border:none; color:var(--accent-gold); font-size:10px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
                 <i class="bx bx-expand"></i> Expand All
               </button>
             </div>
@@ -355,7 +355,7 @@
           </div>
 
           <div id="topPicksContainer" class="top-picks-grid-row">
-            <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#000000;"></i></div>
+            <div style="text-align:center; padding:15px; width:100%;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:var(--accent-gold);"></i></div>
           </div>
         </div>
 
@@ -363,9 +363,9 @@
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <div class="glass-card" id="widget-duties-dock">
             <div class="card-header">
-              <span><i class="bx bx-time"></i> TIME-SLOT DUTIES</span>
+              <span><i class="bx bx-time" style="color: var(--accent-gold);"></i> TIME-SLOT DUTIES</span>
               <div class="actions">
-                <select id="traderFilter" onchange="renderLiveDutyWidget()" style="background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; border-radius:4px; font-size:10px; padding:2px; outline:none; cursor:pointer; font-weight:700;">
+                <select id="traderFilter" onchange="renderLiveDutyWidget()" style="background:var(--surface-hover); border:1px solid var(--border-color); color:var(--text-primary); border-radius:6px; font-size:10px; padding:3px 6px; outline:none; cursor:pointer; font-weight:700;">
                   <option value="ALL">All Traders</option>
                   <option value="ann">ANN</option>
                   <option value="dave">DAVE</option>
@@ -375,7 +375,7 @@
               </div>
             </div>
             <div id="liveDutyContent" style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#000000;"></i></div>
+              <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:var(--accent-gold);"></i></div>
             </div>
           </div>
         </div>
@@ -386,7 +386,7 @@
     <!-- RIGHT PANEL (CONTROLS, CLOCKS & ALERTS FEED) -->
     <aside class="right-panel">
       
-      <!-- Top Action Row (Strictly Aligned) -->
+      <!-- Top Action Row -->
       <div class="right-panel-actions">
         <button class="action-btn create-btn" onclick="openActionModal('createModal')">
           <i class="bx bx-plus" style="font-size: 16px;"></i> Create
@@ -401,7 +401,7 @@
           </button>
           <div class="dropdown-menu" id="notificationMenu" style="right: 0; width: 280px;">
             <div class="dropdown-section-title">NOTIFICATIONS</div>
-            <div style="padding: 15px; font-size: 11px; color: #64748b; text-align: center;">You have no new alerts.</div>
+            <div style="padding: 15px; font-size: 11px; color: var(--text-secondary); text-align: center;">You have no new alerts.</div>
           </div>
         </div>
         
@@ -419,29 +419,29 @@
       <div class="glass-card controls-card" style="padding: 15px;">
         <div class="world-clocks" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; text-align: center; margin-bottom: 15px;">
           <div>
-            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">GMT+8</div>
-            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:var(--text-secondary); font-weight:700;">GMT+8</div>
+            <div class="clock-time" id="clock-gmt8" style="font-size:12px; font-weight:800; color:var(--text-primary);">00:00:00</div>
           </div>
           <div>
-            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">CET</div>
-            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:var(--text-secondary); font-weight:700;">CET</div>
+            <div class="clock-time" id="clock-cet" style="font-size:12px; font-weight:800; color:var(--text-primary);">00:00:00</div>
           </div>
           <div>
-            <div class="clock-label" style="font-size:9px; color:#64748b; font-weight:700;">GMT+2</div>
-            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800; color:#0f172a;">00:00:00</div>
+            <div class="clock-label" style="font-size:9px; color:var(--text-secondary); font-weight:700;">GMT+2</div>
+            <div class="clock-time" id="clock-gmt2" style="font-size:12px; font-weight:800; color:var(--text-primary);">00:00:00</div>
           </div>
         </div>
         
-        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0;">
-          <span class="weather-banner-temp" id="weatherTemp" style="font-size: 16px; font-weight: 800; color:#0f172a;">--°C</span>
-          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600; color:#64748b;">LOADING</span>
+        <div class="weather-banner-main" style="display: flex; justify-content: center; gap: 10px; align-items: center; background: var(--surface-hover); padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+          <span class="weather-banner-temp" id="weatherTemp" style="font-size: 16px; font-weight: 800; color:var(--text-primary);">--°C</span>
+          <span class="weather-banner-cond" id="weatherCond" style="font-size: 11px; font-weight: 600; color:var(--text-secondary);">LOADING</span>
         </div>
 
         <div class="banner-controls-group" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-          <a href="jira.html" target="_blank" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-task"></i> Jira</a>
+          <a href="jira.html" target="_blank" class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-task"></i> Jira</a>
           
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-slider-alt"></i> Widgets</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('widgetMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-slider-alt"></i> Widgets</button>
             <div class="dropdown-menu" id="widgetMenu">
               <label class="menu-option"><span>Hot Boost / Top Picks</span><input type="checkbox" checked onchange="toggleWidget('widget-top-picks', this.checked)"></label>
               <label class="menu-option"><span>Brand Dock</span><input type="checkbox" checked onchange="toggleWidget('widget-brand-dock', this.checked)"></label>
@@ -452,25 +452,24 @@
           </div>
 
           <div class="dropdown-container">
-            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background:#000000; color:#ffffff; border-color:#000000;"><i class="bx bx-palette"></i> Theme</button>
+            <button class="action-row" type="button" onclick="toggleDropdown('themeMenu')" style="padding: 6px 12px; border-radius: 20px; font-size:10px;"><i class="bx bx-palette"></i> Theme</button>
             <div class="dropdown-menu" id="themeMenu">
-              <div class="dropdown-section-title">MONOCHROME & LIGHT</div>
-              <button class="menu-option" type="button" onclick="setGradient('plain-daylight')"><span>Pure Daylight</span><span class="color-dot" style="background: #ffffff;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-warm-light')"><span>Warm Sand</span><span class="color-dot" style="background: #f5f5f4;"></span></button>
-              <button class="menu-option" type="button" onclick="setGradient('plain-onyx')"><span>Monochrome Dark</span><span class="color-dot" style="background: #121212;"></span></button>
+              <div class="dropdown-section-title">THEME SELECTION</div>
+              <button class="menu-option" type="button" onclick="setGradient('executive-dark')"><span>Executive Dark Obsidian</span><span class="color-dot" style="background: #151c2c;"></span></button>
+              <button class="menu-option" type="button" onclick="setGradient('soft-light')"><span>Soft Charcoal Light</span><span class="color-dot" style="background: #f4f4f6;"></span></button>
             </div>
           </div>
 
-          <div class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background: #f8fafc; border-color: #000000; color: #000000;">
-            <i class="bx bx-user-check" style="color: #000000;"></i> <span id="activeTraderCount">0 Working</span>
+          <div class="action-row" style="padding: 6px 12px; border-radius: 20px; font-size:10px; background: var(--surface-hover); border-color: var(--border-color); color: var(--text-primary);">
+            <i class="bx bx-user-check" style="color: var(--accent-gold);"></i> <span id="activeTraderCount">0 Working</span>
           </div>
         </div>
       </div>
 
       <!-- ALERTS & HANDOVERS WIDGET -->
       <div class="glass-card alerts-feed-card" id="widget-alerts-dock" style="flex: 1; display: flex; flex-direction: column;">
-        <div class="card-header" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-          <span style="font-size: 11px;"><i class="bx bx-bell"></i> ACTIVITY & ALERTS</span>
+        <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <span style="font-size: 11px;"><i class="bx bx-bell" style="color: var(--accent-gold);"></i> ACTIVITY & ALERTS</span>
         </div>
         <div class="alerts-feed-content" style="flex: 1; overflow-y: auto; padding-right: 2px;">
           <div id="jiraFeedContainer" style="display:flex; flex-direction: column; gap:8px; margin-bottom: 10px;"></div>
@@ -486,7 +485,7 @@
   <div id="handoverModal" class="handover-modal-overlay">
     <div class="handover-modal-card">
       <div class="handover-modal-header">
-        <span class="handover-modal-title"><i class="bx bx-alarm-exclamation"></i> Manage Handovers</span>
+        <span class="handover-modal-title"><i class="bx bx-alarm-exclamation" style="color: var(--accent-gold);"></i> Manage Handovers</span>
         <i class="bx bx-x handover-modal-close" onclick="closeHandoverModal()"></i>
       </div>
       <form onsubmit="addUrgentHandover(event)" class="handover-modal-form">
@@ -510,7 +509,7 @@
   <div id="topPicksFullScreenModal" class="handover-modal-overlay">
     <div class="handover-modal-card" style="max-width: 90vw; width: 1200px; max-height: 85vh; display: flex; flex-direction: column;">
       <div class="handover-modal-header">
-        <span class="handover-modal-title"><i class="bx bxs-flame"></i> Full Hot Boost & Top Picks Offering</span>
+        <span class="handover-modal-title"><i class="bx bxs-flame" style="color: var(--accent-gold);"></i> Full Hot Boost & Top Picks Offering</span>
         <i class="bx bx-x handover-modal-close" onclick="closeTopPicksFullScreenModal()"></i>
       </div>
       
@@ -529,7 +528,7 @@
     </div>
   </div>
 
-  <!-- INTERACTIVE MULTI-TAB CREATE MODAL (HANDOVER, JIRA TICKET, TASK) -->
+  <!-- INTERACTIVE MULTI-TAB CREATE MODAL -->
   <div id="createModal" class="handover-modal-overlay">
     <div class="handover-modal-card" style="max-width: 480px;">
       <div class="handover-modal-header">
@@ -537,14 +536,12 @@
         <i class="bx bx-x handover-modal-close" onclick="closeActionModal('createModal')"></i>
       </div>
       
-      <!-- FORM TAB PILLS -->
       <div class="tab-pills" style="margin-top: 5px;">
         <div class="tab-pill active" id="create-tab-handover" onclick="switchCreateFormTab('handover')">HANDOVER</div>
         <div class="tab-pill" id="create-tab-jira" onclick="switchCreateFormTab('jira')">JIRA TICKET</div>
         <div class="tab-pill" id="create-tab-task" onclick="switchCreateFormTab('task')">TASK</div>
       </div>
 
-      <!-- FORM 1: HANDOVER NOTE -->
       <form id="createFormHandover" onsubmit="handleCreateHandoverSubmit(event)" class="handover-modal-form">
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <select id="createHandoverPriority" class="handover-field select-priority" required>
@@ -558,7 +555,6 @@
         </div>
       </form>
 
-      <!-- FORM 2: JIRA TICKET -->
       <form id="createFormJira" onsubmit="handleCreateJiraSubmit(event)" class="handover-modal-form" style="display: none;">
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <input type="text" id="createJiraKey" placeholder="Jira Ticket Key (e.g. SB-1042)" required class="handover-field">
@@ -568,7 +564,6 @@
         </div>
       </form>
 
-      <!-- FORM 3: TASK -->
       <form id="createFormTask" onsubmit="handleCreateTaskSubmit(event)" class="handover-modal-form" style="display: none;">
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <input type="text" id="createTaskTitle" placeholder="Task Name (e.g. PRICE CHECK)" required class="handover-field">
