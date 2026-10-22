@@ -181,7 +181,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER --- */
+/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER (WITH PAGINATION) --- */
 const PRIORITY_LEAGUES = [
   { rank: 1, key: "eng.1",          name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "esp.1",          name: "La Liga",                code: "esp.1" },
@@ -193,6 +193,8 @@ const PRIORITY_LEAGUES = [
 
 let cachedTopPicks = [];
 let currentFilterKey = 'eng.1';
+let currentTopPicksPage = 1;
+const CARDS_PER_PAGE = 5;
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
@@ -332,6 +334,7 @@ async function fetchTopPicksAndBoosts() {
 
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
+  currentTopPicksPage = 1;
   document.querySelectorAll('.boost-filter-btn').forEach(btn => btn.classList.remove('active'));
   if (btnElement) {
     btnElement.classList.add('active');
@@ -342,24 +345,52 @@ function filterTopPicks(leagueKey, btnElement) {
   renderFilteredTopPicks();
 }
 
+function prevTopPicksPage() {
+  if (currentTopPicksPage > 1) {
+    currentTopPicksPage--;
+    renderFilteredTopPicks();
+  }
+}
+
+function nextTopPicksPage() {
+  const now = new Date();
+  let activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime());
+  let displayPicks = activePicks.filter(pick => pick.leagueKey === currentFilterKey);
+  const totalPages = Math.max(1, Math.ceil(displayPicks.length / CARDS_PER_PAGE));
+  
+  if (currentTopPicksPage < totalPages) {
+    currentTopPicksPage++;
+    renderFilteredTopPicks();
+  }
+}
+
 function renderFilteredTopPicks() {
   const container = document.getElementById('topPicksContainer');
+  const indicator = document.getElementById('topPicksPageIndicator');
   if (!container) return;
 
   const now = new Date();
   let activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime());
   let displayPicks = activePicks.filter(pick => pick.leagueKey === currentFilterKey);
 
+  const totalPages = Math.max(1, Math.ceil(displayPicks.length / CARDS_PER_PAGE));
+  if (currentTopPicksPage > totalPages) currentTopPicksPage = totalPages;
+
+  if (indicator) {
+    indicator.textContent = `${currentTopPicksPage} / ${totalPages}`;
+  }
+
   if (displayPicks.length === 0) {
     const categoryLabel = getLeagueDisplayName(currentFilterKey);
-    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:var(--text-muted);">No upcoming scheduled ${categoryLabel} matches available at this time.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:20px; width:100%; font-size:11px; font-weight:600; color:var(--text-muted);">No upcoming scheduled ${categoryLabel} matches available.</div>`;
     return;
   }
 
-  displayPicks = displayPicks.slice(0, 12);
+  const startIndex = (currentTopPicksPage - 1) * CARDS_PER_PAGE;
+  const paginatedPicks = displayPicks.slice(startIndex, startIndex + CARDS_PER_PAGE);
 
   let cardsHtml = "";
-  displayPicks.forEach(pick => {
+  paginatedPicks.forEach(pick => {
     const isTopPick = pick.badge === "TOP PICK";
     cardsHtml += `
       <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
