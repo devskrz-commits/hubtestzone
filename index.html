@@ -12,7 +12,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
   <!-- External Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=12.0.0">
+  <link rel="stylesheet" href="./styles.css?v=14.0.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,7 +20,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <!-- Application Engine Script -->
-  <script src="./app.js?v=12.0.0" defer></script>
+  <script src="./app.js?v=14.0.0" defer></script>
 </head>
 <body id="pageBody" class="theme-light-glass">
 
@@ -63,24 +63,81 @@
   <!-- DASHBOARD WORKSPACE -->
   <div id="dashboardApp">
 
-    <!-- TOP HEADER CONTROL BAR WITH CATEGORY NAV INCLUDED -->
+    <!-- TOP HEADER CONTROL BAR WITH DROPDOWN CATEGORY NAVIGATION -->
     <header class="top-bar-controls">
       <div class="top-left-brand">
         <i class="bx bx-layer" style="color:var(--accent-cyan); font-size:20px;"></i> SPORTSBOOK HUB
       </div>
 
-      <!-- TOP CATEGORY NAVIGATION DOCK -->
-      <nav class="top-category-nav">
-        <div class="top-nav-item" onclick="openCategoryDrawer('internal')"><i class="bx bx-home-alt"></i> INTERNAL</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('dailytasks')"><i class="bx bx-task"></i> DAILY TASKS</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('monitoring')"><i class="bx bx-line-chart"></i> DAILY MONITORING</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('backoffice')"><i class="bx bx-briefcase-alt-2"></i> BACK OFFICE</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('multimonitor')"><i class="bx bx-desktop"></i> MULTI-MONITOR</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('betradar')"><i class="bx bx-radar"></i> BETRADAR</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('ownbrands')"><i class="bx bx-layer"></i> OWN BRANDS</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('priceref')"><i class="bx bx-data"></i> PRICE REFERENCES</div>
-        <div class="top-nav-item" onclick="openCategoryDrawer('procedures')"><i class="bx bx-file"></i> PROCEDURES</div>
-      </nav>
+      <!-- TOP CATEGORY NAVIGATION DROPDOWNS CONTAINER -->
+      <div class="top-category-container">
+        <nav class="top-category-nav">
+          
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-internal', event)">
+              <i class="bx bx-home-alt"></i> INTERNAL <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-internal"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-dailytasks', event)">
+              <i class="bx bx-task"></i> DAILY TASKS <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-dailytasks"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-monitoring', event)">
+              <i class="bx bx-line-chart"></i> DAILY MONITORING <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-monitoring"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-backoffice', event)">
+              <i class="bx bx-briefcase-alt-2"></i> BACK OFFICE <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-backoffice"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-multimonitor', event)">
+              <i class="bx bx-desktop"></i> MULTI-MONITOR <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-multimonitor"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-betradar', event)">
+              <i class="bx bx-radar"></i> BETRADAR <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-betradar"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-ownbrands', event)">
+              <i class="bx bx-layer"></i> OWN BRANDS <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-ownbrands"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-priceref', event)">
+              <i class="bx bx-data"></i> PRICE REFERENCES <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-priceref"></div>
+          </div>
+
+          <div class="category-dropdown-wrapper">
+            <div class="top-nav-item" onclick="toggleCategoryDropdown('dropdown-procedures', event)">
+              <i class="bx bx-file"></i> PROCEDURES <i class="bx bx-chevron-down"></i>
+            </div>
+            <div class="glass-dropdown-menu" id="dropdown-procedures"></div>
+          </div>
+
+        </nav>
+      </div>
 
       <div class="top-right-group">
         <div class="glass-search-wrapper">
@@ -167,7 +224,7 @@
 
         </div>
 
-        <!-- TOP PICKS / HOT BOOSTS PANEL (OPTIMIZED TO AVOID SCROLLBARS) -->
+        <!-- TOP PICKS / HOT BOOSTS PANEL -->
         <div class="glass-panel top-picks-panel" id="widget-top-picks">
           <div class="panel-header">
             <span><i class="bx bxs-flame" style="color:#ef4444;"></i> Top Picks / Hot Boosts</span>
@@ -236,6 +293,8 @@
             <option value="theme-onyx">Onyx Night</option>
             <option value="theme-emerald">Emerald Glass</option>
             <option value="theme-sapphire">Midnight Sapphire</option>
+            <option value="theme-amethyst">Amethyst Purple</option>
+            <option value="theme-sunset">Sunset Crimson</option>
           </select>
         </div>
       </div>
@@ -292,17 +351,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- CATEGORY DRAWER MODAL -->
-  <div id="categoryDrawerModal" class="modal-overlay" onclick="closeCategoryDrawer(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span id="drawerTitle" style="font-size:14px; font-weight:800; color:var(--text-main);"></span>
-        <i class="bx bx-x" onclick="closeCategoryDrawer()" style="font-size:22px; cursor:pointer;"></i>
-      </div>
-      <div id="drawerContentList" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
   </div>
 
