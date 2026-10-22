@@ -4,40 +4,29 @@
   if (isAuth) {
     document.documentElement.classList.add('sbhub-authenticated');
   }
-  const savedTheme = localStorage.getItem('sbhub_theme') || '3d-chrome-swirl';
-  if (savedTheme === '3d-chrome-swirl') {
-    document.documentElement.style.background = 'url("[https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop)") center/cover fixed no-repeat';
-  }
 })();
 
 const DEFAULT_USER = "sportsbook2026";
 const DEFAULT_PASS = "sb2026";
 
-/* --- HELPER FOR CORS-SAFE FETCH ON GITHUB PAGES --- */
+/* --- HELPER FOR CORS-SAFE FETCH --- */
 const fetchCorsSafe = async (targetUrl) => {
   try {
     const res = await fetch(targetUrl);
     if (res.ok) return await res.json();
-  } catch (e) {
-    // Fallback via CORS proxy if direct fetch is blocked by origin
-  }
+  } catch (e) {}
   try {
-    const proxyUrl = `[https://corsproxy.io/?$](https://corsproxy.io/?$){encodeURIComponent(targetUrl)}`;
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
     const res = await fetch(proxyUrl);
     if (res.ok) return await res.json();
-  } catch (e) {
-    // Secondary fallback proxy
-  }
+  } catch (e) {}
   try {
-    const res = await fetch(`[https://api.allorigins.win/raw?url=$](https://api.allorigins.win/raw?url=$){encodeURIComponent(targetUrl)}`);
+    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
     if (res.ok) return await res.json();
-  } catch (e) {
-    return null;
-  }
+  } catch (e) {}
   return null;
 };
 
-/* --- HELPER FOR MOBILE SCREEN DETECTION --- */
 const isMobileDevice = () => window.innerWidth <= 768;
 
 /* --- FIREBASE ROSTER INITIALIZATION --- */
@@ -47,7 +36,7 @@ try {
     const rosterFirebaseConfig = {
       apiKey: "AIzaSyCaEclzLI284lWCFk-vXbLSXa_bEZsXbOg",
       authDomain: "test-daily-task--sb.firebaseapp.com",
-      databaseURL: "[https://test-daily-task--sb-default-rtdb.firebaseio.com](https://test-daily-task--sb-default-rtdb.firebaseio.com)",
+      databaseURL: "https://test-daily-task--sb-default-rtdb.firebaseio.com",
       projectId: "test-daily-task--sb",
       storageBucket: "test-daily-task--sb.firebasestorage.app",
       messagingSenderId: "928476661919",
@@ -84,18 +73,18 @@ function toggleMobileSidebar(forceState) {
 /* --- BRAND DIRECTORY TAB DATA & SWITCHER --- */
 const brandTabData = {
   ibet: [
-    { name: "IBET ADMIN", url: "[https://mga-betbook.center/ibet/bets](https://mga-betbook.center/ibet/bets)" },
-    { name: "IBET BETSSON", url: "[https://b2b.betssonbusiness.com/](https://b2b.betssonbusiness.com/)" },
-    { name: "BET CONSTRUCT", url: "[https://backoffice.betconstruct.com/](https://backoffice.betconstruct.com/)" }
+    { name: "IBET ADMIN", url: "https://mga-betbook.center/ibet/bets" },
+    { name: "IBET BETSSON", url: "https://b2b.betssonbusiness.com/" },
+    { name: "BET CONSTRUCT", url: "https://backoffice.betconstruct.com/" }
   ],
   edge: [
-    { name: "KT SBX", url: "[https://p2ibet.sbx.bet/bets](https://p2ibet.sbx.bet/bets)" },
-    { name: "KT PROJECTS", url: "[https://kickertech.atlassian.net/jira/projects](https://kickertech.atlassian.net/jira/projects)" },
-    { name: "EDGE ADMIN", url: "[https://admin.edgegaming.io/admin/qbet/homepage](https://admin.edgegaming.io/admin/qbet/homepage)" },
-    { name: "SERVICE DESK", url: "[https://kickertech.atlassian.net/servicedesk/customer/user/login?destination=portals](https://kickertech.atlassian.net/servicedesk/customer/user/login?destination=portals)" }
+    { name: "KT SBX", url: "https://p2ibet.sbx.bet/bets" },
+    { name: "KT PROJECTS", url: "https://kickertech.atlassian.net/jira/projects" },
+    { name: "EDGE ADMIN", url: "https://admin.edgegaming.io/admin/qbet/homepage" },
+    { name: "SERVICE DESK", url: "https://kickertech.atlassian.net/servicedesk/customer/user/login?destination=portals" }
   ],
   pubs: [
-    { name: "GO GAMING", url: "[https://gg-backoffice-eu.gogaming.cc/en-US/member/list](https://gg-backoffice-eu.gogaming.cc/en-US/member/list)" }
+    { name: "GO GAMING", url: "https://gg-backoffice-eu.gogaming.cc/en-US/member/list" }
   ]
 };
 
@@ -119,7 +108,6 @@ function switchBrandTab(tabName) {
   });
 }
 
-/* --- DYNAMIC MARKET BOOST DESCRIPTION GENERATOR --- */
 function generateScriptedMarket(homeName, awayName, index) {
   const templates = [
     `${homeName} to Win + Over 2.5 Goals`,
@@ -132,7 +120,6 @@ function generateScriptedMarket(homeName, awayName, index) {
   return templates[index % templates.length];
 }
 
-/* --- LEAGUE PRIORITY CONFIGURATION --- */
 const TOP_TIER_LEAGUES = [
   { rank: 1, key: "eng.1",             name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "ger.1",             name: "Bundesliga",             code: "ger.1" },
@@ -153,14 +140,13 @@ const SECONDARY_LEAGUES = [
 const PRIORITY_LEAGUES = [...TOP_TIER_LEAGUES, ...SECONDARY_LEAGUES];
 
 let cachedTopPicks = [];
-let currentFilterKey = 'eng.1'; // Default active tab is EPL
+let currentFilterKey = 'eng.1';
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
   return lg ? lg.name : key.toUpperCase();
 }
 
-/* --- HELPER TO GENERATE UPCOMING YYYYMMDD DATES DYNAMICALLY --- */
 function getUpcomingDateQueries(daysAheadCount = 7) {
   const dates = [];
   const now = new Date();
@@ -175,7 +161,6 @@ function getUpcomingDateQueries(daysAheadCount = 7) {
   return dates;
 }
 
-/* --- INSTANT LOCAL STORAGE CACHE LOADER (0ms PAGE LOAD) --- */
 function loadCachedTopPicks() {
   try {
     const stored = localStorage.getItem('sbhub_toppicks_cache');
@@ -188,7 +173,6 @@ function loadCachedTopPicks() {
   }
 }
 
-/* --- OPTIMIZED FETCHING ENGINE FOR UPCOMING TOP PICKS --- */
 async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
@@ -201,7 +185,7 @@ async function fetchTopPicksAndBoosts() {
     const fetchPromises = [];
     for (const league of PRIORITY_LEAGUES) {
       for (const dateStr of targetDates) {
-        const url = `[https://site.api.espn.com/apis/site/v2/sports/soccer/$](https://site.api.espn.com/apis/site/v2/sports/soccer/$){league.code}/scoreboard?dates=${dateStr}&limit=50`;
+        const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${dateStr}&limit=50`;
         fetchPromises.push(
           fetchCorsSafe(url)
             .then(data => ({ league, data }))
@@ -221,7 +205,6 @@ async function fetchTopPicksAndBoosts() {
         const gameState = evt.status?.type?.state;
         const evtDate = new Date(evt.date);
 
-        // Strict pre-kickoff filter
         if (gameState !== 'pre' || evtDate <= now) continue;
 
         const comp = evt.competitions?.[0];
@@ -243,8 +226,8 @@ async function fetchTopPicksAndBoosts() {
           if (seenMatchKeys.has(matchKey)) continue;
           seenMatchKeys.add(matchKey);
 
-          const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)";
-          const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)";
+          const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+          const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
 
           const kickOffStr = new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Asia/Manila',
@@ -291,7 +274,6 @@ async function fetchTopPicksAndBoosts() {
   }
 }
 
-/* --- FILTER AND RENDER TOP PICKS BY SELECTED TOURNAMENT --- */
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
 
@@ -329,9 +311,9 @@ function renderFilteredTopPicks() {
     cardsHtml += `
       <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
         <div class="flags-row">
-          <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)'">
+          <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
           <span class="vs-text">VS</span>
-          <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)'">
+          <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
         </div>
         
         <div class="boost-match-info">
@@ -424,7 +406,7 @@ function animateCanvas() {
 }
 if (canvas) animateCanvas();
 
-/* --- SITTING ROBOT EYE & HEAD TRACKING --- */
+/* --- ROBOT EYE TRACKING --- */
 document.addEventListener('mousemove', (e) => {
   if (isMobileDevice()) return;
 
@@ -461,7 +443,7 @@ document.addEventListener('mousemove', (e) => {
   if (robotBodyWrapper) robotBodyWrapper.style.transform = `rotateY(${rotateY * 0.3}deg)`;
 });
 
-/* --- WORLD CLOCKS SYSTEM --- */
+/* --- WORLD CLOCKS --- */
 function updateWorldClocks() {
   const now = new Date();
   const optionsGMT8 = { timeZone: 'Asia/Singapore', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -479,7 +461,7 @@ function updateWorldClocks() {
 setInterval(updateWorldClocks, 1000);
 updateWorldClocks();
 
-/* --- REAL-TIME PHILIPPINES (MANILA) WEATHER FORECAST --- */
+/* --- MANILA WEATHER --- */
 async function fetchManilaWeather() {
   const tempEl = document.getElementById('weatherTemp');
   const condEl = document.getElementById('weatherCond');
@@ -490,7 +472,7 @@ async function fetchManilaWeather() {
   if (!tempEl) return;
 
   try {
-    const url = '[https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842&current_weather=true&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FManila](https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842&current_weather=true&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FManila)';
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=14.5995&longitude=120.9842&current_weather=true&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FManila';
     const response = await fetch(url);
     if (!response.ok) throw new Error('Network error');
     const data = await response.json();
@@ -523,7 +505,6 @@ async function fetchManilaWeather() {
       iconEl.style.color = weatherMeta.color;
     }
   } catch (err) {
-    console.warn('Weather fetch fallback triggered:', err);
     tempEl.textContent = '32°C';
     if (condEl) condEl.textContent = 'OVERCAST';
     if (humEl) humEl.textContent = 'Humidity: 56%';
@@ -542,7 +523,7 @@ function parseWMOWeatherCode(code) {
   return { label: 'CLOUDY', icon: 'bx-cloud', color: '#38bdf8' };
 }
 
-/* --- AUTHENTICATION & PERSISTENT SESSION ENGINE --- */
+/* --- AUTHENTICATION & LOGIN --- */
 function togglePasswordVisibility() {
   const passInput = document.getElementById('passwordInput');
   const icon = document.getElementById('togglePassIcon');
@@ -581,9 +562,7 @@ function handleLogin(event) {
     if (errorMsg) errorMsg.textContent = "ACCESS DENIED: Invalid Security Key";
     if (card) {
       card.classList.add('shake');
-      setTimeout(() => {
-        card.classList.remove('shake');
-      }, 500);
+      setTimeout(() => { card.classList.remove('shake'); }, 500);
     }
     if (passInput) {
       passInput.focus();
@@ -647,9 +626,7 @@ function toggleWidget(widgetId, show) {
     const savedWidgets = JSON.parse(localStorage.getItem('sbhub_widgets') || '{}');
     savedWidgets[widgetId] = show;
     localStorage.setItem('sbhub_widgets', JSON.stringify(savedWidgets));
-  } catch(e) {
-    console.warn("Could not save widget preference:", e);
-  }
+  } catch(e) {}
 }
 
 function hideWidgetDirect(widgetId) {
@@ -662,38 +639,34 @@ function restoreSavedWidgets() {
     Object.keys(savedWidgets).forEach(widgetId => {
       toggleWidget(widgetId, savedWidgets[widgetId]);
     });
-  } catch(e) {
-    console.warn("Could not load widget preferences:", e);
-  }
+  } catch(e) {}
 }
 
 /* --- ABSTRACT WALLPAPERS --- */
 const ABSTRACT_WALLPAPERS = {
-  '3d-chrome-swirl': '[https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop)',
-  'cyan-liquid-glass': '[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop)',
-  'deep-liquid-chrome': '[https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2560&auto=format&fit=crop)',
-  'neon-line-ribbon': '[https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2560&auto=format&fit=crop)',
-  'neural-wireframe': '[https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2560&auto=format&fit=crop)',
-  'dark-energy-vortex': '[https://images.unsplash.com/photo-1604076913837-52ab5629fba9?q=80&w=2560&auto=format&fit=crop](https://images.unsplash.com/photo-1604076913837-52ab5629fba9?q=80&w=2560&auto=format&fit=crop)'
+  '3d-chrome-swirl': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop',
+  'cyan-liquid-glass': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop',
+  'deep-liquid-chrome': 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2560&auto=format&fit=crop',
+  'neon-line-ribbon': 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2560&auto=format&fit=crop',
+  'neural-wireframe': 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2560&auto=format&fit=crop',
+  'dark-energy-vortex': 'https://images.unsplash.com/photo-1604076913837-52ab5629fba9?q=80&w=2560&auto=format&fit=crop'
 };
 
-/* --- THEME SWITCHER ENGINE --- */
+/* --- FIXED THEME SWITCHER ENGINE --- */
 function setGradient(theme) {
   const body = document.getElementById('pageBody');
   if (!body) return;
-  let backgroundStyle = '';
 
   body.classList.remove('light-theme', 'pastel-light');
 
-  const lightThemes = ['plain-daylight', 'plain-sky-light', 'plain-warm-light', 'plain-pastel-light'];
+  const lightThemes = ['plain-daylight', 'plain-sky-light', 'plain-warm-light'];
   if (lightThemes.includes(theme)) {
     body.classList.add('light-theme');
-    if (theme === 'plain-pastel-light') {
-      body.classList.add('pastel-light');
-    }
   }
 
-  if (ABSTRACT_WALLPAPERS[theme]) {
+  let backgroundStyle = '';
+
+  if (ABSTRACT_WALLPAPERS && ABSTRACT_WALLPAPERS[theme]) {
     backgroundStyle = `url("${ABSTRACT_WALLPAPERS[theme]}")`;
   } else if (typeof theme === 'string' && (theme.startsWith('http') || theme.startsWith('url('))) {
     backgroundStyle = theme.startsWith('url(') ? theme : `url("${theme}")`;
@@ -708,11 +681,8 @@ function setGradient(theme) {
       case 'plain-onyx':
         backgroundStyle = 'linear-gradient(rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0.95)), #121212';
         break;
-      case 'plain-pastel-light':
-        backgroundStyle = 'linear-gradient(rgba(235, 240, 245, 0.98), rgba(235, 240, 245, 0.98)), #ebf0f5';
-        break;
       case 'plain-daylight':
-        backgroundStyle = 'linear-gradient(rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0.95)), #f8fafc';
+        backgroundStyle = 'linear-gradient(rgba(240, 244, 248, 0.95), rgba(240, 244, 248, 0.95)), #f0f4f8';
         break;
       case 'plain-sky-light':
         backgroundStyle = 'linear-gradient(rgba(224, 242, 254, 0.95), rgba(224, 242, 254, 0.95)), #e0f2fe';
@@ -736,7 +706,7 @@ function setGradient(theme) {
   localStorage.setItem('sbhub_theme', theme);
 }
 
-/* --- REAL-TIME LIVE DUTY ROSTER (ACCURATE GMT+8 / MANILA TIME) --- */
+/* --- LIVE DUTY ROSTER --- */
 function getGMT8IsoDate() {
   const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
   const year = nowManila.getFullYear();
@@ -907,9 +877,9 @@ async function fetchLiveGames() {
       gamesHtml += `
         <div class="top-game-card">
           <div class="top-game-flags">
-            <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)'">
+            <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
             <span class="vs-text">vs</span>
-            <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)'">
+            <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
           </div>
           <div class="top-game-title">${item.homeName} <span class="vs-light">vs</span> ${item.awayName}</div>
           <div class="top-game-league">${item.leagueName}${item.kickOffTime ? ' &bull; <span style="color:#38bdf8;">' + item.kickOffTime + '</span>' : ''}</div>
@@ -920,7 +890,6 @@ async function fetchLiveGames() {
     container.innerHTML = gamesHtml;
 
   } catch (e) {
-    console.error("Fetch Live Games Error:", e);
     container.innerHTML = `<div style="text-align:center; padding:10px; font-size:11px; color:#f87171;">Failed to fetch live fixture data.</div>`;
   }
 }
@@ -934,7 +903,7 @@ async function fetchLeagueList(leagueList, dateQuery) {
   });
 
   const fetchPromises = Array.from(uniqueCodeToLeagues.entries()).map(([code, leagueObj]) => {
-    const url = `[https://site.api.espn.com/apis/site/v2/sports/soccer/$](https://site.api.espn.com/apis/site/v2/sports/soccer/$){code}/scoreboard?dates=${dateQuery}`;
+    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
     return fetchCorsSafe(url)
       .then(data => data ? { code, leagueObj, data } : null)
       .catch(() => null);
@@ -955,7 +924,6 @@ async function fetchLeagueList(leagueList, dateQuery) {
       const gameState = evt.status?.type?.state;
       const evtDate = new Date(evt.date);
 
-      // Strict pre-kickoff filter
       if (gameState !== 'pre' || evtDate <= now) continue;
 
       const comp = evt.competitions?.[0];
@@ -977,8 +945,8 @@ async function fetchLeagueList(leagueList, dateQuery) {
         if (seenMatchKeys.has(matchKey)) continue;
         seenMatchKeys.add(matchKey);
 
-        const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)";
-        const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "[https://a.espncdn.com/i/teamlogos/soccer/500/default.png](https://a.espncdn.com/i/teamlogos/soccer/500/default.png)";
+        const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+        const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
 
         let kickOffTime = "";
         if (evt.date || comp.date) {
@@ -1033,12 +1001,8 @@ function calculateActiveTraders() {
 
 /* --- INITIALIZATION --- */
 function initDashboardApp() {
-  const savedTheme = localStorage.getItem('sbhub_theme');
-  if (savedTheme) {
-    setGradient(savedTheme);
-  } else {
-    setGradient('3d-chrome-swirl');
-  }
+  const savedTheme = localStorage.getItem('sbhub_theme') || '3d-chrome-swirl';
+  setGradient(savedTheme);
 
   if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
     unlockDashboard();
