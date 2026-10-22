@@ -181,7 +181,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER (WITH PAGINATION) --- */
+/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER --- */
 const PRIORITY_LEAGUES = [
   { rank: 1, key: "eng.1",          name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "esp.1",          name: "La Liga",                code: "esp.1" },
@@ -382,7 +382,7 @@ function renderFilteredTopPicks() {
 
   if (displayPicks.length === 0) {
     const categoryLabel = getLeagueDisplayName(currentFilterKey);
-    container.innerHTML = `<div style="text-align:center; padding:20px; width:100%; font-size:11px; font-weight:600; color:var(--text-muted);">No upcoming scheduled ${categoryLabel} matches available.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:15px; width:100%; font-size:11px; font-weight:600; color:var(--text-muted);">No upcoming scheduled ${categoryLabel} matches available.</div>`;
     return;
   }
 
