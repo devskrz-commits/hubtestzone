@@ -12,7 +12,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
   <!-- External Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=16.0.0">
+  <link rel="stylesheet" href="./styles.css?v=18.0.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,11 +20,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <!-- Application Engine Script -->
-  <script src="./app.js?v=16.0.0" defer></script>
+  <script src="./app.js?v=18.0.0" defer></script>
 </head>
-<body id="pageBody" class="theme-light-glass">
+<body id="pageBody" class="theme-chrome-liquid">
 
-  <!-- Ambient Canvas Background -->
+  <!-- Ambient Liquid Canvas Background -->
   <canvas id="bgCanvas"></canvas>
 
   <!-- AUTHENTICATION OVERLAY -->
@@ -63,13 +63,13 @@
   <!-- DASHBOARD WORKSPACE -->
   <div id="dashboardApp">
 
-    <!-- TOP HEADER CONTROL BAR WITH HORIZONTAL CATEGORY CONTAINER -->
+    <!-- TOP HEADER CONTROL BAR -->
     <header class="top-bar-controls">
       <div class="top-left-brand">
         <i class="bx bx-layer" style="color:var(--accent-cyan); font-size:20px;"></i> SPORTSBOOK HUB
       </div>
 
-      <!-- TOP HORIZONTAL CATEGORY NAVIGATION CONTAINER -->
+      <!-- TOP CATEGORY NAVIGATION DOCK -->
       <div class="top-category-container">
         <nav class="top-category-nav">
           
@@ -291,22 +291,21 @@
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Theme Style Palette</div>
+        <div class="settings-label">Wallpaper / Theme Palette</div>
         <div class="settings-control-row">
           <select class="settings-select" id="themeSelect" onchange="applyThemeSetting(this.value)">
-            <option value="theme-light-glass" selected>Pure Light Glass (White Default)</option>
-            <option value="theme-liquid-teal">Watery Liquid Teal</option>
-            <option value="theme-dark-slate">Deep Dark Slate</option>
-            <option value="theme-onyx">Onyx Night</option>
-            <option value="theme-emerald">Emerald Glass</option>
-            <option value="theme-sapphire">Midnight Sapphire</option>
+            <option value="theme-chrome-liquid" selected>3D Metallic Blue Swirl</option>
+            <option value="theme-cyan-chrome">Cyan Liquid Chrome</option>
+            <option value="theme-magenta-wave">Magenta Glowing Wave</option>
+            <option value="theme-dark-vortex">Crimson Dark Vortex</option>
+            <option value="theme-light-glass">Pure Light Silk Glass</option>
           </select>
         </div>
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">65%</span></div>
-        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="65" oninput="applyOpacitySetting(this.value)" style="width:100%;">
+        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">35%</span></div>
+        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="35" oninput="applyOpacitySetting(this.value)" style="width:100%;">
       </div>
 
       <div class="settings-group">
