@@ -181,7 +181,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER --- */
+/* --- LEAGUE CONFIGURATION & TOP PICKS PARSER (8 CARDS PER PAGE FOR FULL STRETCH) --- */
 const PRIORITY_LEAGUES = [
   { rank: 1, key: "eng.1",          name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "esp.1",          name: "La Liga",                code: "esp.1" },
@@ -194,7 +194,7 @@ const PRIORITY_LEAGUES = [
 let cachedTopPicks = [];
 let currentFilterKey = 'eng.1';
 let currentTopPicksPage = 1;
-const CARDS_PER_PAGE = 5;
+const CARDS_PER_PAGE = 8; /* Expanded card threshold to fill the whole container */
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
