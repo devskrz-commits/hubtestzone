@@ -22,7 +22,7 @@ html, body {
 
 body {
   min-height: 100vh;
-  /* Primary Default Wallpaper: Liquid Chrome & Blue / Fluid Ink Swirl */
+  /* Primary Default Wallpaper */
   background: url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop") center/cover fixed no-repeat #090d16;
   color: #ffffff;
   display: flex;
@@ -32,7 +32,7 @@ body {
   position: relative;
 }
 
-/* --- INSTANT AUTHENTICATED STATE (PREVENTS REFRESH GLIMPSE) --- */
+/* --- INSTANT AUTHENTICATED STATE --- */
 html.sbhub-authenticated #authOverlay {
   display: none !important;
   opacity: 0 !important;
@@ -360,6 +360,14 @@ html.sbhub-authenticated #dashboardApp {
   pointer-events: auto !important;
 }
 
+/* FIX: HIDE MOBILE NAV HEADER ON DESKTOP SCREENS STRICTLY */
+.mobile-nav-header {
+  display: none !important;
+}
+.sidebar-overlay {
+  display: none !important;
+}
+
 /* SIDEBAR NAVIGATION (DESKTOP) */
 .sidebar {
   width: 270px;
@@ -610,13 +618,6 @@ html.sbhub-authenticated #dashboardApp {
   box-sizing: border-box !important;
 }
 
-.quick-launch-btn:visited,
-.quick-launch-btn:active,
-.quick-launch-btn:hover {
-  color: #ffffff !important;
-  text-decoration: none !important;
-}
-
 .quick-launch-btn:hover {
   background: rgba(255, 255, 255, 0.22) !important;
   border-color: rgba(56, 189, 248, 0.5) !important;
@@ -744,7 +745,7 @@ html.sbhub-authenticated #dashboardApp {
 }
 
 /* ==========================================================================
-   OVERVIEW BANNER CARD - HERO HEADER (FROZEN STICKY BANNER)
+   HERO HEADER BANNER
    ========================================================================== */
 .top-banner-card {
   display: flex;
@@ -958,9 +959,7 @@ html.sbhub-authenticated #dashboardApp {
   color: #ffffff !important;
 }
 
-/* ==========================================================================
-   YELLOW GLOWING URGENT HANDOVER BANNER - CATEGORIZATION & COUNT STYLES
-   ========================================================================== */
+/* YELLOW GLOWING URGENT HANDOVER BANNER */
 @keyframes yellowPulseGlow {
   0% {
     box-shadow: 0 0 10px rgba(234, 179, 8, 0.55), inset 0 0 8px rgba(234, 179, 8, 0.25);
@@ -1109,11 +1108,6 @@ html.sbhub-authenticated #dashboardApp {
   white-space: normal !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
-  overflow: visible !important;
-  text-overflow: clip !important;
-  max-width: none !important;
-  width: 100% !important;
-  display: block !important;
   line-height: 1.45 !important;
   font-size: 11px !important;
 }
@@ -1139,16 +1133,6 @@ html.sbhub-authenticated #dashboardApp {
   background: rgba(250, 204, 21, 0.45) !important;
   color: #ffffff !important;
   border-color: #fde047 !important;
-}
-
-.handover-field.select-priority {
-  background: #1e293b !important;
-  border: 1px solid #eab308 !important;
-  color: #ffffff !important;
-  font-weight: 800 !important;
-  padding: 8px 10px !important;
-  cursor: pointer !important;
-  border-radius: 8px !important;
 }
 
 /* INTERACTIVE HANDOVER MODAL */
@@ -1703,31 +1687,30 @@ html.sbhub-authenticated #dashboardApp {
 }
 
 /* ==========================================================================
-   AUTHENTIC ROSTER PASTEL LIGHT MODE (MATCHING REFERENCE PALETTE)
+   PERFECTED LIGHT MODE (CLEAN WHITE SURFACES & ACCENT PILLS)
    ========================================================================== */
 body.light-theme {
   background: #eef2f6 !important;
   color: #0f172a !important;
 }
 
-/* Base Headers & Sidebar Titles */
+/* Page Headers & Base Typography */
 body.light-theme .sidebar-header,
-body.light-theme .mobile-brand-title,
 body.light-theme .card-header span,
 body.light-theme .login-title {
   color: #0f172a !important;
 }
 
-/* Cards & Containers: Clean White Surfaces */
+/* Main Cards: Pure Crisp White */
 body.light-theme .glass-card:not(.top-banner-card) {
   background: #ffffff !important;
   border: 1px solid #dbe3ea !important;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* Sidebar Inputs & Navigation Buttons */
+/* Sidebar Elements: White Panels */
 body.light-theme .search-box,
 body.light-theme .nav-main-btn,
 body.light-theme .sidebar-quick-dock {
@@ -1747,28 +1730,20 @@ body.light-theme .nav-sub-btn {
   background: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
   color: #1e293b !important;
-  box-shadow: none !important;
 }
 body.light-theme .nav-sub-btn:hover {
   background: #ffffff !important;
   border-color: #0284c7 !important;
   color: #0284c7 !important;
 }
-body.light-theme .nav-sub-btn span { color: #1e293b !important; }
 
 body.light-theme .quick-dock-title { color: #0284c7 !important; }
 body.light-theme .quick-launch-btn {
   background: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
   color: #0f172a !important;
-  box-shadow: none !important;
 }
 body.light-theme .quick-launch-btn span { color: #0f172a !important; }
-body.light-theme .quick-launch-btn:hover {
-  background: #ffffff !important;
-  border-color: #0284c7 !important;
-  color: #0284c7 !important;
-}
 
 body.light-theme .sidebar-admin-footer .admin-top-pill {
   background: #ffffff !important;
@@ -1777,13 +1752,13 @@ body.light-theme .sidebar-admin-footer .admin-top-pill {
 }
 body.light-theme .sidebar-admin-footer .user-title { color: #0f172a !important; }
 
-/* --- PASTEL CARDS & BOOST CARDS (SAMPLED FROM REFERENCE) --- */
+/* FIX: PASTEL CARDS & BOOST CARDS (SAMPLED FROM REFERENCE SCHEDULE) */
 body.light-theme .boost-card,
 body.light-theme .action-row,
 body.light-theme .duty-card,
 body.light-theme .top-game-card {
   background: #f8fafc !important; /* Soft pill background */
-  border: 1px solid #cbd5e1 !important; /* Crisp pill outline */
+  border: 1px solid #cbd5e1 !important; /* Crisp outline */
   color: #0f172a !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
 }
@@ -1793,10 +1768,10 @@ body.light-theme .action-row:hover,
 body.light-theme .top-game-card:hover {
   background: #ffffff !important;
   border-color: #0284c7 !important;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1) !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12) !important;
 }
 
-/* Card Text & Titles Visibility Fix */
+/* Fix Card Text Visibility */
 body.light-theme .boost-match-title,
 body.light-theme .top-game-title,
 body.light-theme .duty-top span,
@@ -1806,7 +1781,7 @@ body.light-theme .action-row span {
 }
 
 body.light-theme .boost-market-desc {
-  color: #334155 !important;
+  color: #1e293b !important;
   font-weight: 600 !important;
 }
 
@@ -1816,10 +1791,10 @@ body.light-theme .duty-desc {
   color: #64748b !important;
 }
 
-/* Time Badges & Kickoff Pills (Matching Green/Blue Roster Pills) */
+/* Time Badges & Kickoff Pills (Reference Green Pill) */
 body.light-theme .boost-kickoff-pill,
 body.light-theme .badge-time {
-  background: #dcfce7 !important; /* Reference Green Pill */
+  background: #dcfce7 !important;
   border: 1px solid #86efac !important;
   color: #166534 !important;
   font-weight: 700 !important;
@@ -1836,7 +1811,7 @@ body.light-theme .tab-pill.active {
   color: #ffffff !important;
 }
 
-/* Top Banner Header Overrides for Light Mode */
+/* Top Hero Banner Overrides */
 body.light-theme .top-banner-card {
   background-color: #080c1a !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
@@ -1878,7 +1853,6 @@ body.light-theme .weather-banner-widget {
   background: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid #cbd5e1 !important;
   color: #0f172a !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
 }
 body.light-theme .weather-banner-temp,
 body.light-theme .weather-location-tag { color: #0f172a !important; }
@@ -1906,47 +1880,14 @@ body.light-theme .handover-manage-row { background: #f8fafc !important; border-c
 body.light-theme .handover-manage-text { color: #1e293b !important; }
 
 /* ==========================================================================
-   MOBILE & TOUCHSCREEN RESPONSIVE MEDIA QUERIES
+   RESPONSIVE MOBILE BREAKPOINTS
    ========================================================================== */
-.mobile-nav-header { display: none; }
-.sidebar-overlay { display: none; }
-
 @media (max-width: 768px) {
   body { padding: 10px; gap: 0; overflow-x: hidden; }
 
-  .glass-card,
-  .nav-main-btn,
-  .nav-sub-btn,
-  .sidebar-quick-dock,
-  .search-box,
-  .login-card {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background: rgba(15, 23, 42, 0.95) !important;
-  }
-
-  body.light-theme .glass-card:not(.top-banner-card),
-  body.light-theme .nav-main-btn,
-  body.light-theme .nav-sub-btn,
-  body.light-theme .sidebar-quick-dock,
-  body.light-theme .search-box {
-    background: #ffffff !important;
-  }
-
-  .banner-top-row { flex-direction: column; gap: 10px; align-items: stretch; }
-  .banner-top-left-group { max-width: 100%; width: 100%; }
-
-  .jira-static-alert-banner,
-  .urgent-handover-banner {
-    max-width: 100%;
-    width: 100%;
-    padding: 10px;
-  }
-
-  .top-banner-card .weather-banner-widget { width: 100%; min-width: 0; margin-left: 0; }
-
+  /* Mobile Header Re-enabled only under 768px */
   .mobile-nav-header {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     width: 100%;
@@ -1955,13 +1896,12 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 14px;
     margin-bottom: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     position: sticky;
     top: 0;
     z-index: 9000;
   }
 
-  body.light-theme .mobile-nav-header { background: #ffffff; border-color: #cbd5e1; }
+  body.light-theme .mobile-nav-header { background: #ffffff !important; border-color: #cbd5e1 !important; }
 
   .mobile-menu-toggle {
     background: rgba(255, 255, 255, 0.1);
@@ -1979,6 +1919,7 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
 
   body.light-theme .mobile-menu-toggle { background: #f1f5f9; border-color: #cbd5e1; color: #0f172a; }
   .mobile-brand-title { font-size: 14px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+  body.light-theme .mobile-brand-title { color: #0f172a !important; }
 
   .mobile-lock-btn {
     background: rgba(220, 38, 38, 0.2);
@@ -1994,7 +1935,7 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
     cursor: pointer;
   }
 
-  .sidebar-overlay { display: block; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 99998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+  .sidebar-overlay { display: block; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 99998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
   .sidebar {
@@ -2011,8 +1952,7 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     padding: 16px;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease;
   }
 
   body.light-theme .sidebar { background: #f8fafc; border-right-color: #cbd5e1; }
@@ -2027,36 +1967,17 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
     top: 0 !important;
     z-index: 1000 !important;
     padding: 14px;
-    min-height: auto;
     border-radius: 18px;
     margin-bottom: 12px;
   }
 
-  .banner-bottom-row { flex-direction: column; gap: 10px; align-items: stretch; padding-top: 10px; }
+  .banner-bottom-row { flex-direction: column; gap: 10px; align-items: stretch; }
   .world-clocks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
   .top-banner-card .clock-badge { min-width: 0; width: 100%; padding: 6px 4px; }
-
-  .clock-label { font-size: 8px; }
-  .clock-time { font-size: 10.5px; }
 
   .banner-controls-group { flex-wrap: wrap; gap: 8px; width: 100%; }
   .banner-controls-group > .dropdown-btn { flex: 1 1 calc(50% - 4px); justify-content: center; }
   .dropdown-container { flex: 1 1 calc(50% - 4px); width: auto; }
-
-  .top-banner-card .dropdown-btn { width: 100%; justify-content: center; padding: 8px 10px; font-size: 10.5px; }
-  .top-banner-card .metric-pill { width: 100%; justify-content: center; padding: 8px 10px; }
-
-  .dropdown-menu {
-    position: fixed;
-    top: 50% !important;
-    left: 5% !important;
-    right: 5% !important;
-    width: 90% !important;
-    max-width: 320px !important;
-    margin: 0 auto;
-    transform: translateY(-50%);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95) !important;
-  }
 
   .top-picks-grid-row {
     grid-template-columns: 1fr !important;
@@ -2065,19 +1986,4 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
   .boost-card { width: 100% !important; padding: 14px; }
   .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
   .glass-card { padding: 14px; border-radius: 18px; }
-
-  #authOverlay { padding: 20px 10px; overflow-y: auto; align-items: flex-start; }
-  .login-container { margin-top: 60px; margin-bottom: 20px; max-width: 100%; }
-  .login-card { padding: 24px 18px; border-radius: 24px; }
-  .login-title { font-size: 22px; }
-  .sitting-robot-stage { top: -60px; transform: translateX(-50%) scale(0.8); }
-}
-
-@media (max-width: 480px) {
-  body { padding: 8px; }
-  .world-clocks { grid-template-columns: repeat(3, 1fr); gap: 4px; }
-  .top-banner-card .clock-badge { padding: 5px 2px; }
-  .clock-time { font-size: 10px; }
-  .banner-controls-group > .dropdown-btn,
-  .dropdown-container { flex: 1 1 100%; }
 }
