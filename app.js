@@ -77,6 +77,110 @@ function handleLogout() {
   document.getElementById('authOverlay')?.classList.remove('unlocked');
 }
 
+/* --- CATEGORY DROPDOWN SYSTEM --- */
+const categoryDatasets = {
+  'dropdown-internal': [
+    { name: "DAILY DUTY", url: "duties.html" },
+    { name: "ROTA", url: "rota.html" },
+    { name: "DAILY BIG WINNERS", url: "https://reliancedigi-my.sharepoint.com/:x:/p/ann/IQCWP022FAMHSY-z3-eV0c9XAWFWLrVAPb9xSCUut_VuZ9U?rtime=BxZTEFXS3kg" },
+    { name: "HANDOVER", url: "handover.html" }
+  ],
+  'dropdown-dailytasks': [
+    { name: "TOP PICKS", url: "boostschedule.html" },
+    { name: "EDGE BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" },
+    { name: "IBET BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986" },
+    { name: "KT SPORTS CHECK", url: "https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0" },
+    { name: "PREDICTION OFFER CHECK", url: "https://polymarket.com/breaking" },
+    { name: "EDGE BOOST SYS", url: "edge_boosts.html" },
+    { name: "IBET BOOST SYS", url: "ibet_boosts.html" }
+  ],
+  'dropdown-monitoring': [
+    { name: "GREEN TRACKER", url: "https://docs.google.com/spreadsheets/d/1qruVq-HZCyM0uDgnYSqFhccXKnMkqJ8z/edit?gid=1305147410#gid=1305147410" },
+    { name: "RED TRACKER", url: "https://docs.google.com/spreadsheets/d/1OcaMz_AOUeRsWIVplbnk2XAna62m3IKa/edit?gid=457800468#gid=457800468" },
+    { name: "ORANGE TRACKER", url: "https://docs.google.com/spreadsheets/d/1U-Dmc628kHQabzJGoBeEgRus5PiRhgSd/edit?pli=1&amp;gid=1983372695#gid=1983372695" },
+    { name: "7A TRACKER", url: "#7a" },
+    { name: "GREEN CRM", url: "https://docs.google.com/spreadsheets/d/11STKO4Xsj0a8iTuUXSCXC-XEE4-7qmF9/edit?pli=1&amp;gid=1701374259#gid=1701374259" },
+    { name: "RED CRM", url: "https://docs.google.com/spreadsheets/d/1gPks2FdHyOOTiILvn553miz32WeEtOpx/edit?gid=1701374259#gid=1701374259" }
+  ],
+  'dropdown-backoffice': [
+    { name: "QBET/55/30", url: "https://betbook.center/qbet/bets" },
+    { name: "IBET", url: "https://mga-betbook.center/ibet/bets" },
+    { name: "PUBS", url: "https://eu-b7k.center/pubs8/bets" }
+  ],
+  'dropdown-multimonitor': [
+    { name: "EDGE PREDICTION TICKER", url: "https://betbook.center/monitor?providerIds=prediction_markets" },
+    { name: "PUBS PREDICTION TICKER", url: "https://eu-b7k.center/monitor?providerIds=prediction_markets" },
+    { name: "QBET/55/30 REJECTED", url: "https://betbook.center/monitor" },
+    { name: "PUBS REJECTED", url: "https://eu-b7k.center/monitor" }
+  ],
+  'dropdown-betradar': [
+    { name: "MTS", url: "https://mtsc-its.betradar.com/" },
+    { name: "CTRL PORTAL", url: "https://portal.betradar.com/" }
+  ],
+  'dropdown-ownbrands': [
+    { name: "7A", url: "https://www.7abet.com/en-UN" },
+    { name: "QBET", url: "https://www.qbet.com/en-UN" },
+    { name: "55BET", url: "https://www.55bet.com/en-UN" },
+    { name: "30BET", url: "https://www.30bet.com/en-UN" },
+    { name: "GQBET", url: "https://www.gqbet.vip/en-UN/" },
+    { name: "BVBET", url: "https://www.bvbet.com/en-UN" },
+    { name: "IBET", url: "https://www.ibet.com/en-UN/sportsbook/price-boost/football" }
+  ],
+  'dropdown-priceref': [
+    { name: "FLASHSCORE", url: "https://www.flashscore.com/" },
+    { name: "BETSAPI", url: "https://betsapi.com/" },
+    { name: "ODDSPORTAL", url: "https://www.oddsportal.com/football/" },
+    { name: "ODDSCHECKER", url: "https://www.oddschecker.com/" },
+    { name: "BETFAIR", url: "https://www.betfair.com/exchange/plus/" },
+    { name: "BET365", url: "https://www.bet365.com/" },
+    { name: "PINNACLE", url: "https://www.pinnacle.com/" },
+    { name: "GGBET", url: "https://gg.bet/" },
+    { name: "UNIBET", url: "https://www.unibet.com.au/" },
+    { name: "SOFASCORE", url: "https://www.sofascore.com/" },
+    { name: "MARATHONBET", url: "https://www.marathonbet.com/" },
+    { name: "FONBET", url: "https://fonbet.com/" }
+  ],
+  'dropdown-procedures': [
+    { name: "CONFLUENCE", url: "https://ibet.atlassian.net/wiki/spaces/Sportsbook/overview" },
+    { name: "WORKSPACE", url: "workspace.html" }
+  ]
+};
+
+function populateDropdownMenus() {
+  Object.keys(categoryDatasets).forEach(menuId => {
+    const container = document.getElementById(menuId);
+    if (!container) return;
+    container.innerHTML = '';
+    categoryDatasets[menuId].forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'glass-dropdown-item';
+      a.href = item.url;
+      a.target = '_blank';
+      a.rel = 'noreferrer';
+      a.innerHTML = `<span>${item.name}</span><i class='bx bx-right-arrow-alt'></i>`;
+      container.appendChild(a);
+    });
+  });
+}
+
+function toggleCategoryDropdown(menuId, event) {
+  if (event) event.stopPropagation();
+  const targetMenu = document.getElementById(menuId);
+  const isVisible = targetMenu?.classList.contains('show');
+
+  document.querySelectorAll('.glass-dropdown-menu').forEach(m => m.classList.remove('show'));
+
+  if (!isVisible && targetMenu) {
+    targetMenu.classList.add('show');
+  }
+}
+
+window.addEventListener('click', (e) => {
+  if (!e.target.closest('.category-dropdown-wrapper')) {
+    document.querySelectorAll('.glass-dropdown-menu').forEach(m => m.classList.remove('show'));
+  }
+});
+
 /* --- LEAGUE CONFIGURATION & TOP PICKS PARSER --- */
 const PRIORITY_LEAGUES = [
   { rank: 1, key: "eng.1",          name: "Premier League",         code: "eng.1" },
@@ -286,126 +390,6 @@ function renderFilteredTopPicks() {
   container.innerHTML = cardsHtml;
 }
 
-/* --- FULL CATEGORY LINK DATASETS --- */
-const categoryDatasets = {
-  internal: {
-    title: "INTERNAL LINKS",
-    links: [
-      { name: "DAILY DUTY", url: "duties.html" },
-      { name: "ROTA", url: "rota.html" },
-      { name: "DAILY BIG WINNERS", url: "https://reliancedigi-my.sharepoint.com/:x:/p/ann/IQCWP022FAMHSY-z3-eV0c9XAWFWLrVAPb9xSCUut_VuZ9U?rtime=BxZTEFXS3kg" },
-      { name: "HANDOVER", url: "handover.html" }
-    ]
-  },
-  dailytasks: {
-    title: "DAILY TASKS",
-    links: [
-      { name: "TOP PICKS", url: "boostschedule.html" },
-      { name: "EDGE BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/1Pl8XVaYNEaupKx57HlXbWibsIeR7a28UfemRasxJ8RY/edit?gid=1450723096#gid=1450723096" },
-      { name: "IBET BOOST (MIG)", url: "https://docs.google.com/spreadsheets/d/18ZJNs7wJ37-4sAHX5CNMfqQQcmpfy1cIvP19tHI7rY4/edit?gid=784209986#gid=784209986" },
-      { name: "KT SPORTS CHECK", url: "https://docs.google.com/spreadsheets/d/1-sft6uXe-D4GlDng96bMfWcOC4492WA3lkuO8gaUqQ4/edit?gid=0#gid=0" },
-      { name: "PREDICTION OFFER CHECK", url: "https://polymarket.com/breaking" },
-      { name: "EDGE BOOST SYS", url: "edge_boosts.html" },
-      { name: "IBET BOOST SYS", url: "ibet_boosts.html" }
-    ]
-  },
-  monitoring: {
-    title: "DAILY MONITORING",
-    links: [
-      { name: "GREEN TRACKER", url: "https://docs.google.com/spreadsheets/d/1qruVq-HZCyM0uDgnYSqFhccXKnMkqJ8z/edit?gid=1305147410#gid=1305147410" },
-      { name: "RED TRACKER", url: "https://docs.google.com/spreadsheets/d/1OcaMz_AOUeRsWIVplbnk2XAna62m3IKa/edit?gid=457800468#gid=457800468" },
-      { name: "ORANGE TRACKER", url: "https://docs.google.com/spreadsheets/d/1U-Dmc628kHQabzJGoBeEgRus5PiRhgSd/edit?pli=1&amp;gid=1983372695#gid=1983372695" },
-      { name: "7A TRACKER", url: "#7a" },
-      { name: "GREEN CRM", url: "https://docs.google.com/spreadsheets/d/11STKO4Xsj0a8iTuUXSCXC-XEE4-7qmF9/edit?pli=1&amp;gid=1701374259#gid=1701374259" },
-      { name: "RED CRM", url: "https://docs.google.com/spreadsheets/d/1gPks2FdHyOOTiILvn553miz32WeEtOpx/edit?gid=1701374259#gid=1701374259" }
-    ]
-  },
-  backoffice: {
-    title: "BACK OFFICE",
-    links: [
-      { name: "QBET/55/30", url: "https://betbook.center/qbet/bets" },
-      { name: "IBET", url: "https://mga-betbook.center/ibet/bets" },
-      { name: "PUBS", url: "https://eu-b7k.center/pubs8/bets" }
-    ]
-  },
-  multimonitor: {
-    title: "MULTI-MONITOR",
-    links: [
-      { name: "EDGE PREDICTION TICKER", url: "https://betbook.center/monitor?providerIds=prediction_markets" },
-      { name: "PUBS PREDICTION TICKER", url: "https://eu-b7k.center/monitor?providerIds=prediction_markets" },
-      { name: "QBET/55/30 REJECTED", url: "https://betbook.center/monitor" },
-      { name: "PUBS REJECTED", url: "https://eu-b7k.center/monitor" }
-    ]
-  },
-  betradar: {
-    title: "BETRADAR",
-    links: [
-      { name: "MTS", url: "https://mtsc-its.betradar.com/" },
-      { name: "CTRL PORTAL", url: "https://portal.betradar.com/" }
-    ]
-  },
-  ownbrands: {
-    title: "OWN BRANDS",
-    links: [
-      { name: "7A", url: "https://www.7abet.com/en-UN" },
-      { name: "QBET", url: "https://www.qbet.com/en-UN" },
-      { name: "55BET", url: "https://www.55bet.com/en-UN" },
-      { name: "30BET", url: "https://www.30bet.com/en-UN" },
-      { name: "GQBET", url: "https://www.gqbet.vip/en-UN/" },
-      { name: "BVBET", url: "https://www.bvbet.com/en-UN" },
-      { name: "IBET", url: "https://www.ibet.com/en-UN/sportsbook/price-boost/football" }
-    ]
-  },
-  priceref: {
-    title: "PRICE REFERENCES",
-    links: [
-      { name: "FLASHSCORE", url: "https://www.flashscore.com/" },
-      { name: "BETSAPI", url: "https://betsapi.com/" },
-      { name: "ODDSPORTAL", url: "https://www.oddsportal.com/football/" },
-      { name: "ODDSCHECKER", url: "https://www.oddschecker.com/" },
-      { name: "BETFAIR", url: "https://www.betfair.com/exchange/plus/" },
-      { name: "BET365", url: "https://www.bet365.com/" },
-      { name: "PINNACLE", url: "https://www.pinnacle.com/" },
-      { name: "GGBET", url: "https://gg.bet/" },
-      { name: "UNIBET", url: "https://www.unibet.com.au/" },
-      { name: "SOFASCORE", url: "https://www.sofascore.com/" },
-      { name: "MARATHONBET", url: "https://www.marathonbet.com/" },
-      { name: "FONBET", url: "https://fonbet.com/" }
-    ]
-  },
-  procedures: {
-    title: "PROCEDURES",
-    links: [
-      { name: "CONFLUENCE", url: "https://ibet.atlassian.net/wiki/spaces/Sportsbook/overview" },
-      { name: "WORKSPACE", url: "workspace.html" }
-    ]
-  }
-};
-
-function openCategoryDrawer(catKey) {
-  const data = categoryDatasets[catKey];
-  if (!data) return;
-  document.getElementById('drawerTitle').textContent = data.title;
-  const listEl = document.getElementById('drawerContentList');
-  listEl.innerHTML = '';
-  data.links.forEach(item => {
-    const a = document.createElement('a');
-    a.className = 'action-row';
-    a.href = item.url;
-    a.target = '_blank';
-    a.rel = 'noreferrer';
-    a.innerHTML = `<span>${item.name}</span><i class='bx bx-right-arrow-alt'></i>`;
-    listEl.appendChild(a);
-  });
-  document.getElementById('categoryDrawerModal')?.classList.add('show');
-}
-
-function closeCategoryDrawer(e) {
-  if (!e || e.target.id === 'categoryDrawerModal' || !e.target.closest) {
-    document.getElementById('categoryDrawerModal')?.classList.remove('show');
-  }
-}
-
 /* --- SETTINGS SYSTEM --- */
 let selectedTimezone = "Asia/Singapore";
 
@@ -494,7 +478,7 @@ function switchBrandTab(tabName) {
   });
 }
 
-/* --- HANDOVER SYSTEM WITH BROADCASTCHANNEL SYNC --- */
+/* --- HANDOVER SYSTEM --- */
 var HANDOVER_STORAGE_KEY = 'sbhub_urgent_handovers';
 var handoverChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('handover_sync_channel') : null;
 
@@ -566,7 +550,7 @@ function deleteUrgentHandover(idx) {
 
 if (handoverChannel) handoverChannel.onmessage = renderUrgentHandovers;
 
-/* --- JIRA TICKET MANAGEMENT SYSTEM WITH BROADCASTCHANNEL SYNC --- */
+/* --- JIRA TICKET MANAGEMENT SYSTEM --- */
 var JIRA_STORAGE_KEY = 'sbhub_jira_tickets';
 var jiraChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('jira_sync_channel') : null;
 
@@ -788,6 +772,7 @@ function animateCanvas() {
 if (canvas) animateCanvas();
 
 document.addEventListener('DOMContentLoaded', () => {
+  populateDropdownMenus();
   switchBrandTab('ibet');
   loadCachedTopPicks();
   fetchTopPicksAndBoosts();
