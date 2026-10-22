@@ -12,17 +12,17 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
   <!-- External Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=11.0.0">
+  <link rel="stylesheet" href="./styles.css?v=12.0.0">
 
-  <!-- External Libraries (Firebase Compatibility Libraries Included) -->
+  <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <!-- Application Engine Script -->
-  <script src="./app.js?v=11.0.0" defer></script>
+  <script src="./app.js?v=12.0.0" defer></script>
 </head>
-<body id="pageBody" class="theme-liquid-teal">
+<body id="pageBody" class="theme-light-glass">
 
   <!-- Ambient Liquid Canvas Background -->
   <canvas id="bgCanvas"></canvas>
@@ -63,11 +63,24 @@
   <!-- DASHBOARD WORKSPACE -->
   <div id="dashboardApp">
 
-    <!-- TOP CONTROL BAR -->
+    <!-- TOP HEADER CONTROL BAR WITH CATEGORY NAV INCLUDED -->
     <header class="top-bar-controls">
       <div class="top-left-brand">
         <i class="bx bx-layer" style="color:var(--accent-cyan); font-size:20px;"></i> SPORTSBOOK HUB
       </div>
+
+      <!-- TOP CATEGORY NAVIGATION DOCK -->
+      <nav class="top-category-nav">
+        <div class="top-nav-item" onclick="openCategoryDrawer('internal')"><i class="bx bx-home-alt"></i> INTERNAL</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('dailytasks')"><i class="bx bx-task"></i> DAILY TASKS</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('monitoring')"><i class="bx bx-line-chart"></i> DAILY MONITORING</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('backoffice')"><i class="bx bx-briefcase-alt-2"></i> BACK OFFICE</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('multimonitor')"><i class="bx bx-desktop"></i> MULTI-MONITOR</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('betradar')"><i class="bx bx-radar"></i> BETRADAR</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('ownbrands')"><i class="bx bx-layer"></i> OWN BRANDS</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('priceref')"><i class="bx bx-data"></i> PRICE REFERENCES</div>
+        <div class="top-nav-item" onclick="openCategoryDrawer('procedures')"><i class="bx bx-file"></i> PROCEDURES</div>
+      </nav>
 
       <div class="top-right-group">
         <div class="glass-search-wrapper">
@@ -106,7 +119,7 @@
         <div class="top-three-columns">
 
           <!-- COLUMN 1: BRAND DIRECTORY & DAILY TASKS -->
-          <div style="display:flex; flex-direction:column; gap:10px; min-height:0;" id="widget-brand-stack">
+          <div style="display:flex; flex-direction:column; gap:8px; min-height:0;" id="widget-brand-stack">
             <div class="glass-panel" id="widget-brand-dock">
               <div class="panel-header">
                 <span><i class="bx bx-pin"></i> Brand Directory Dock</span>
@@ -116,7 +129,7 @@
                 <div class="brand-segment-btn" id="tab-edge" onclick="switchBrandTab('edge')">EDGE</div>
                 <div class="brand-segment-btn" id="tab-pubs" onclick="switchBrandTab('pubs')">PUBS</div>
               </div>
-              <div id="brandLinksContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+              <div id="brandLinksContainer" style="display:flex; flex-direction:column; gap:5px;"></div>
             </div>
 
             <div class="glass-panel" id="widget-task-dock">
@@ -131,12 +144,12 @@
             </div>
           </div>
 
-          <!-- COLUMN 2: LIVE TIME-SLOT DUTIES (POWERED BY FIREBASE ROSTER) -->
+          <!-- COLUMN 2: LIVE TIME-SLOT DUTIES -->
           <div class="glass-panel" id="widget-duties-dock">
             <div class="panel-header">
               <span><i class="bx bx-time"></i> Live Time-Slot Duties</span>
             </div>
-            <div id="liveDutyContent" style="display:flex; flex-direction:column; gap:6px; overflow-y:auto;">
+            <div id="liveDutyContent" style="display:flex; flex-direction:column; gap:5px; overflow-y:auto;">
               <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:var(--accent-cyan);"></i></div>
             </div>
           </div>
@@ -154,10 +167,10 @@
 
         </div>
 
-        <!-- TOP PICKS / HOT BOOSTS PANEL -->
+        <!-- TOP PICKS / HOT BOOSTS PANEL (OPTIMIZED TO AVOID SCROLLBARS) -->
         <div class="glass-panel top-picks-panel" id="widget-top-picks">
           <div class="panel-header">
-            <span style="color:#ffffff;"><i class="bx bxs-flame" style="color:#ef4444;"></i> Top Picks / Hot Boosts</span>
+            <span><i class="bx bxs-flame" style="color:#ef4444;"></i> Top Picks / Hot Boosts</span>
           </div>
           <div class="top-picks-filter-bar">
             <button class="boost-filter-btn active" id="btn-boost-eng.1" onclick="filterTopPicks('eng.1', this)">EPL</button>
@@ -178,43 +191,30 @@
 
       <!-- RIGHT PANEL: HANDOVER & ALERTS -->
       <aside class="glass-panel right-handover-panel">
-        <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
           <div class="panel-header">
             <span style="color:var(--accent-yellow);"><i class="bx bx-alarm-exclamation"></i> Handover Notes</span>
             <button type="button" class="glass-pill-btn" onclick="openHandoverModal()" style="padding:2px 8px; font-size:9.5px;">
               <i class="bx bx-plus"></i> Manage
             </button>
           </div>
-          <div id="handoverPillsContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <div id="handoverPillsContainer" style="display:flex; flex-direction:column; gap:5px;"></div>
         </div>
 
         <hr style="border:none; border-top:1px solid var(--glass-border); margin:2px 0;">
 
-        <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
           <div class="panel-header">
             <span style="color:#f87171;"><i class="bx bx-error-circle"></i> Pending Jira (>24h)</span>
             <button type="button" class="glass-pill-btn" onclick="openJiraModal()" style="padding:2px 8px; font-size:9.5px; border-color:rgba(248,113,113,0.5);">
               <i class="bx bx-plus"></i> Add Jira
             </button>
           </div>
-          <div id="jiraPillsContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <div id="jiraPillsContainer" style="display:flex; flex-direction:column; gap:5px;"></div>
         </div>
       </aside>
 
     </main>
-
-    <!-- UNCOMPRESSED PERSISTENT BOTTOM DOCK -->
-    <nav class="bottom-horizontal-nav">
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('internal')"><i class="bx bx-home-alt"></i> INTERNAL</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('dailytasks')"><i class="bx bx-task"></i> DAILY TASKS</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('monitoring')"><i class="bx bx-line-chart"></i> DAILY MONITORING</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('backoffice')"><i class="bx bx-briefcase-alt-2"></i> BACK OFFICE</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('multimonitor')"><i class="bx bx-desktop"></i> MULTI-MONITOR</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('betradar')"><i class="bx bx-radar"></i> BETRADAR</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('ownbrands')"><i class="bx bx-layer"></i> OWN BRANDS</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('priceref')"><i class="bx bx-data"></i> PRICE REFERENCES</div>
-      <div class="bottom-nav-item" onclick="openCategoryDrawer('procedures')"><i class="bx bx-file"></i> PROCEDURES</div>
-    </nav>
 
   </div>
 
@@ -230,8 +230,8 @@
         <div class="settings-label">Theme Style Palette</div>
         <div class="settings-control-row">
           <select class="settings-select" id="themeSelect" onchange="applyThemeSetting(this.value)">
-            <option value="theme-liquid-teal" selected>Watery Liquid Teal</option>
-            <option value="theme-light-glass">Pure Light Glass</option>
+            <option value="theme-light-glass" selected>Pure Light Glass</option>
+            <option value="theme-liquid-teal">Watery Liquid Teal</option>
             <option value="theme-dark-slate">Deep Dark Slate</option>
             <option value="theme-onyx">Onyx Night</option>
             <option value="theme-emerald">Emerald Glass</option>
@@ -241,8 +241,8 @@
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">18%</span></div>
-        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="18" oninput="applyOpacitySetting(this.value)" style="width:100%;">
+        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">65%</span></div>
+        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="65" oninput="applyOpacitySetting(this.value)" style="width:100%;">
       </div>
 
       <div class="settings-group">
@@ -299,7 +299,7 @@
   <div id="categoryDrawerModal" class="modal-overlay" onclick="closeCategoryDrawer(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span id="drawerTitle" style="font-size:14px; font-weight:800; color:#ffffff;"></span>
+        <span id="drawerTitle" style="font-size:14px; font-weight:800; color:var(--text-main);"></span>
         <i class="bx bx-x" onclick="closeCategoryDrawer()" style="font-size:22px; cursor:pointer;"></i>
       </div>
       <div id="drawerContentList" style="display:flex; flex-direction:column; gap:8px;"></div>
@@ -314,7 +314,7 @@
         <i class="bx bx-x" onclick="closeHandoverModal()" style="font-size:22px; cursor:pointer;"></i>
       </div>
       
-      <form onsubmit="addUrgentHandover(event)" style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.2); padding:12px; border-radius:16px;">
+      <form onsubmit="addUrgentHandover(event)" style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.15); padding:12px; border-radius:16px;">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <select id="handoverPriorityInput" class="settings-select" required>
             <option value="URGENT/CRITICAL" selected>🚨 URGENT</option>
@@ -340,7 +340,7 @@
         <i class="bx bx-x" onclick="closeJiraModal()" style="font-size:22px; cursor:pointer;"></i>
       </div>
       
-      <form onsubmit="addJiraTicket(event)" style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.2); padding:12px; border-radius:16px;">
+      <form onsubmit="addJiraTicket(event)" style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.15); padding:12px; border-radius:16px;">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <input type="text" id="jiraKeyInput" placeholder="Key (e.g. KT-1024)" required class="login-input" style="width:140px; margin:0;">
           <input type="text" id="jiraBrandInput" placeholder="Brand/Project" required class="login-input" style="width:130px; margin:0;">
