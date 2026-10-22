@@ -12,7 +12,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
   <!-- External Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=14.0.0">
+  <link rel="stylesheet" href="./styles.css?v=15.0.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,9 +20,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <!-- Application Engine Script -->
-  <script src="./app.js?v=14.0.0" defer></script>
+  <script src="./app.js?v=15.0.0" defer></script>
 </head>
-<body id="pageBody" class="theme-light-glass">
+<body id="pageBody" class="theme-oceanic-gradient">
 
   <!-- Ambient Liquid Canvas Background -->
   <canvas id="bgCanvas"></canvas>
@@ -63,13 +63,13 @@
   <!-- DASHBOARD WORKSPACE -->
   <div id="dashboardApp">
 
-    <!-- TOP HEADER CONTROL BAR WITH DROPDOWN CATEGORY NAVIGATION -->
+    <!-- TOP HEADER CONTROL BAR WITH HORIZONTAL CATEGORY CONTAINER -->
     <header class="top-bar-controls">
       <div class="top-left-brand">
         <i class="bx bx-layer" style="color:var(--accent-cyan); font-size:20px;"></i> SPORTSBOOK HUB
       </div>
 
-      <!-- TOP CATEGORY NAVIGATION DROPDOWNS CONTAINER -->
+      <!-- TOP HORIZONTAL CATEGORY NAVIGATION CONTAINER -->
       <div class="top-category-container">
         <nav class="top-category-nav">
           
@@ -224,11 +224,19 @@
 
         </div>
 
-        <!-- TOP PICKS / HOT BOOSTS PANEL -->
+        <!-- TOP PICKS / HOT BOOSTS PANEL (WITH PAGINATED CAROUSEL CONTROLS) -->
         <div class="glass-panel top-picks-panel" id="widget-top-picks">
           <div class="panel-header">
             <span><i class="bx bxs-flame" style="color:#ef4444;"></i> Top Picks / Hot Boosts</span>
+            
+            <!-- CAROUSEL NEXT/PREV CONTROLS -->
+            <div class="carousel-nav-group">
+              <button type="button" class="carousel-arrow-btn" onclick="prevTopPicksPage()"><i class="bx bx-chevron-left"></i></button>
+              <span id="topPicksPageIndicator" style="font-size:10px; font-weight:800; opacity:0.8;">1 / 1</span>
+              <button type="button" class="carousel-arrow-btn" onclick="nextTopPicksPage()"><i class="bx bx-chevron-right"></i></button>
+            </div>
           </div>
+
           <div class="top-picks-filter-bar">
             <button class="boost-filter-btn active" id="btn-boost-eng.1" onclick="filterTopPicks('eng.1', this)">EPL</button>
             <button class="boost-filter-btn" id="btn-boost-esp.1" onclick="filterTopPicks('esp.1', this)">LA LIGA</button>
@@ -237,7 +245,8 @@
             <button class="boost-filter-btn" id="btn-boost-fra.1" onclick="filterTopPicks('fra.1', this)">LIGUE 1</button>
             <button class="boost-filter-btn" id="btn-boost-uefa.champions" onclick="filterTopPicks('uefa.champions', this)">UEFA</button>
           </div>
-          <div id="topPicksContainer" class="top-picks-grid-row">
+
+          <div id="topPicksContainer" class="top-picks-carousel-row">
             <div style="text-align:center; padding:15px; width:100%;">
               <i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:var(--accent-cyan);"></i>
             </div>
@@ -284,24 +293,24 @@
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Theme Style Palette</div>
+        <div class="settings-label">Gradient Theme Palette</div>
         <div class="settings-control-row">
           <select class="settings-select" id="themeSelect" onchange="applyThemeSetting(this.value)">
-            <option value="theme-light-glass" selected>Pure Light Glass</option>
+            <option value="theme-oceanic-gradient" selected>Deep Oceanic Gradient</option>
+            <option value="theme-nebula-gradient">Midnight Nebula Gradient</option>
+            <option value="theme-sunset-gradient">Warm Sunset Gradient</option>
+            <option value="theme-emerald-gradient">Emerald Forest Gradient</option>
+            <option value="theme-silk-light-gradient">Pure Silk Light Gradient</option>
             <option value="theme-liquid-teal">Watery Liquid Teal</option>
+            <option value="theme-light-glass">Pure Light Glass</option>
             <option value="theme-dark-slate">Deep Dark Slate</option>
-            <option value="theme-onyx">Onyx Night</option>
-            <option value="theme-emerald">Emerald Glass</option>
-            <option value="theme-sapphire">Midnight Sapphire</option>
-            <option value="theme-amethyst">Amethyst Purple</option>
-            <option value="theme-sunset">Sunset Crimson</option>
           </select>
         </div>
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">65%</span></div>
-        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="65" oninput="applyOpacitySetting(this.value)" style="width:100%;">
+        <div class="settings-label">Panel Glass Opacity: <span id="opacityVal">22%</span></div>
+        <input type="range" class="settings-slider" id="opacityRange" min="10" max="90" value="22" oninput="applyOpacitySetting(this.value)" style="width:100%;">
       </div>
 
       <div class="settings-group">
