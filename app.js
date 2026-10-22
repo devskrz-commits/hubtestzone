@@ -261,13 +261,13 @@ function renderFilteredTopPicks() {
       <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
         <div class="flags-row">
           <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
-          <span style="font-size:9px; font-weight:800; opacity:0.7;">VS</span>
+          <span style="font-size:8px; font-weight:800; opacity:0.7;">VS</span>
           <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
         </div>
         
         <div class="boost-match-info">
           <div class="boost-match-title">${pick.homeName} <span style="opacity:0.6; font-weight:400;">vs</span> ${pick.awayName}</div>
-          <div style="font-size:9px; opacity:0.7; margin-top:2px;">${pick.leagueName}</div>
+          <div style="font-size:8.5px; opacity:0.7; margin-top:2px;">${pick.leagueName}</div>
         </div>
 
         <div>
@@ -286,7 +286,7 @@ function renderFilteredTopPicks() {
   container.innerHTML = cardsHtml;
 }
 
-/* --- FULL CATEGORY LINK DATASETS FOR BOTTOM DOCK --- */
+/* --- FULL CATEGORY LINK DATASETS --- */
 const categoryDatasets = {
   internal: {
     title: "INTERNAL LINKS",
@@ -518,8 +518,8 @@ function renderUrgentHandovers() {
       container.innerHTML = '<span style="font-size:11px; color:var(--text-muted);">No active handover notes.</span>';
     } else {
       container.innerHTML = list.map(function(item) {
-        return '<div style="background:rgba(0,0,0,0.18); border:1px solid var(--glass-border); padding:10px 14px; border-radius:14px; font-size:11px; display:flex; flex-direction:column; gap:4px; box-shadow:inset 0 1px 2px rgba(255,255,255,0.3);">' +
-                 '<div><span style="font-weight:800; color:#fde047;">[' + item.brand.toUpperCase() + ']</span> <span style="font-size:9.5px; opacity:0.85; padding:2px 6px; background:rgba(234,179,8,0.25); border-radius:4px;">' + (item.priority || 'URGENT') + '</span></div>' +
+        return '<div style="background:rgba(0,0,0,0.18); border:1px solid var(--glass-border); padding:8px 12px; border-radius:12px; font-size:11px; display:flex; flex-direction:column; gap:4px; box-shadow:inset 0 1px 2px rgba(255,255,255,0.3);">' +
+                 '<div><span style="font-weight:800; color:var(--accent-yellow);">[' + item.brand.toUpperCase() + ']</span> <span style="font-size:9.5px; opacity:0.85; padding:2px 6px; background:rgba(234,179,8,0.25); border-radius:4px;">' + (item.priority || 'URGENT') + '</span></div>' +
                  '<span>' + item.msg + '</span>' +
                '</div>';
       }).join('');
@@ -531,9 +531,9 @@ function renderUrgentHandovers() {
       modalList.innerHTML = '<div style="text-align:center; padding:15px; font-size:11px; opacity:0.7;">No active handovers. Add one above!</div>';
     } else {
       modalList.innerHTML = list.map(function(item, idx) {
-        return '<div class="handover-manage-row">' +
-                 '<span class="handover-manage-text"><b>[' + item.brand.toUpperCase() + ']</b> ' + item.msg + '</span>' +
-                 '<button type="button" class="handover-delete-btn" onclick="deleteUrgentHandover(' + idx + ')">✓ Complete</button>' +
+        return '<div class="handover-manage-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:rgba(0,0,0,0.15); border-radius:8px; margin-bottom:4px;">' +
+                 '<span style="font-size:11px;"><b>[' + item.brand.toUpperCase() + ']</b> ' + item.msg + '</span>' +
+                 '<button type="button" class="glass-pill-btn" style="padding:2px 8px; font-size:9.5px;" onclick="deleteUrgentHandover(' + idx + ')">✓ Complete</button>' +
                '</div>';
       }).join('');
     }
@@ -604,9 +604,9 @@ function renderJiraTickets() {
       modalList.innerHTML = '<div style="text-align:center; padding:15px; font-size:11px; opacity:0.7;">No active Jira tickets. Add one above!</div>';
     } else {
       modalList.innerHTML = list.map(function(item, idx) {
-        return '<div class="handover-manage-row">' +
-                 '<span class="handover-manage-text"><b>[' + item.brand.toUpperCase() + ']</b> ' + item.key + '</span>' +
-                 '<button type="button" class="handover-delete-btn" onclick="deleteJiraTicket(' + idx + ')">✓ Resolve</button>' +
+        return '<div class="handover-manage-row" style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:rgba(0,0,0,0.15); border-radius:8px; margin-bottom:4px;">' +
+                 '<span style="font-size:11px;"><b>[' + item.brand.toUpperCase() + ']</b> ' + item.key + '</span>' +
+                 '<button type="button" class="glass-pill-btn" style="padding:2px 8px; font-size:9.5px;" onclick="deleteJiraTicket(' + idx + ')">✓ Resolve</button>' +
                '</div>';
       }).join('');
     }
@@ -697,7 +697,7 @@ function renderLiveDutyWidget(rosterData) {
   const displayDate = dayData.isoDate || dayData.date || todayIso;
   const teamMembers = [{ id: 'ann', name: 'ANN' }, { id: 'dave', name: 'DAVE' }, { id: 'ken', name: 'KEN' }, { id: 'kriztel', name: 'KRIZTEL' }];
 
-  let html = `<div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+  let html = `<div style="font-size:10px; font-weight:700; opacity:0.9; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
     <span>📅 ${displayDate}</span>
     <span class="badge-time">⏰ ${slotLabel}</span>
   </div>`;
@@ -719,12 +719,12 @@ function renderLiveDutyWidget(rosterData) {
       </div>`;
 
     if (isRest) {
-      html += `<div style="font-size:10px; opacity:0.8;">Rest day.</div>`;
+      html += `<div style="font-size:9.5px; opacity:0.8;">Rest day.</div>`;
     } else if (tasks.length === 0) {
-      html += `<div style="font-size:10px; opacity:0.8;">No assigned tasks in this slot.</div>`;
+      html += `<div style="font-size:9.5px; opacity:0.8;">No assigned tasks in this slot.</div>`;
     } else {
       tasks.forEach(t => {
-        html += `<div style="font-size:10px; display:flex; gap:4px; align-items:center;">
+        html += `<div style="font-size:9.5px; display:flex; gap:4px; align-items:center;">
           <i class='bx ${t.done ? 'bx-check-circle' : 'bx-time-five'}' style="color:${t.done ? '#34d399' : '#38bdf8'}"></i>
           <span style="${t.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">${t.text}</span>
         </div>`;
