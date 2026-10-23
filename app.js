@@ -22,19 +22,21 @@ const ABSTRACT_WALLPAPERS = {
 
 /* --- HELPER FOR CORS-SAFE FETCH ON GITHUB PAGES --- */
 const fetchCorsSafe = async (targetUrl) => {
-  try {
-    const res = await fetch(targetUrl);
-    if (res.ok) return await res.json();
-  } catch (e) {}
-  try {
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-    const res = await fetch(proxyUrl);
-    if (res.ok) return await res.json();
-  } catch (e) {}
-  try {
-    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
-    if (res.ok) return await res.json();
-  } catch (e) {}
+  const proxies = [
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://thingproxy.freeboard.io/fetch/${url}`
+  ];
+
+  for (const proxyFn of proxies) {
+    try {
+      const res = await fetch(proxyFn(targetUrl));
+      if (res.ok) return await res.json();
+    } catch (e) {
+      // Continue to next proxy fallback if one fails
+    }
+  }
+
   return null;
 };
 
@@ -288,7 +290,7 @@ async function fetchTopPicksAndBoosts() {
 
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
-  topPicksPageIndex = 0; // Reset to first page when changing tabs
+  topPicksPageIndex = 0;
 
   document.querySelectorAll('.boost-filter-btn').forEach(btn => btn.classList.remove('active'));
   if (btnElement) {
@@ -307,7 +309,7 @@ function getCardsPerPage() {
   if (w <= 900) return 2;
   if (w <= 1300) return 3;
   if (w <= 1650) return 4;
-  return 5; // Default 5 items in 1 row for clean widescreen layout
+  return 5;
 }
 
 function navigateTopPicks(direction) {
@@ -347,7 +349,6 @@ function renderFilteredTopPicks() {
   const startIndex = topPicksPageIndex * pageSize;
   const pageItems = activePicks.slice(startIndex, startIndex + pageSize);
 
-  // Show/Hide pagination buttons dynamically
   if (activePicks.length > pageSize) {
     if (prevBtn) prevBtn.style.display = 'flex';
     if (nextBtn) nextBtn.style.display = 'flex';
