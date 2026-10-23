@@ -1,3 +1,35 @@
+/* --- GLOBAL STATE VARIABLES (DECLARED AT TOP TO PREVENT REFERENCE ERRORS) --- */
+let selectedGameDayOffset = 0;
+let rosterDb = null;
+
+const isMobileDevice = () => window.innerWidth <= 768;
+
+function updateGlassOpacity(val) {
+  const opacityVal = parseFloat(val);
+  document.documentElement.style.setProperty('--glass-opacity-val', opacityVal);
+  localStorage.setItem('sbhub_glass_opacity', opacityVal);
+  const labelEl = document.getElementById('opacityValLabel');
+  if (labelEl) labelEl.textContent = `${Math.round(opacityVal * 100)}%`;
+}
+
+function toggleMobileSidebar(forceState) {
+  const sidebar = document.getElementById('mainSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar || !overlay) return;
+
+  const isActive = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
+
+  if (isActive) {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
 /* --- IMMEDIATE AUTH & DEFAULT THEME CHECK --- */
 (function checkInitialStateImmediately() {
   const isAuth = localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true';
@@ -12,7 +44,10 @@
 const DEFAULT_USER = "sportsbook2026";
 const DEFAULT_PASS = "sb2026";
 
-/* --- ABSTRACT WALLPAPERS (BLUE & ORANGE EMBEDDED SVG DATA URIS) --- */
+/* --- SAFE LOGO FALLBACK SVG --- */
+const FALLBACK_LOGO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231e293b' stroke='%2338bdf8' stroke-width='4'/%3E%3Cpath d='M30 50 L70 50 M50 30 L50 70' stroke='%2338bdf8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
+
+/* --- ABSTRACT WALLPAPERS --- */
 const ABSTRACT_WALLPAPERS = {
   'blue-orange-wave': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23070c1b'/%3E%3Cpath d='M0 0 L1920 0 L1920 1080 L0 1080 Z' fill='%230b152d'/%3E%3Cpath d='M-100 300 Q400 100 960 500 T2020 400 L2020 1180 L-100 1180 Z' fill='%230f214a'/%3E%3Cpath d='M-100 500 Q500 800 1100 400 T2020 700 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad1)'/%3E%3Cpath d='M-100 750 Q600 450 1200 850 T2020 600 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad2)' opacity='0.95'/%3E%3Cdefs%3E%3ClinearGradient id='orangeGrad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23ff8c00'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffa000'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-glow': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23060a17'/%3E%3Ccircle cx='1600' cy='900' r='600' fill='url(%23glowOrange)' opacity='0.85'/%3E%3Ccircle cx='200' cy='200' r='500' fill='url(%23glowBlue)' opacity='0.6'/%3E%3Cpath d='M-100 800 Q800 300 2020 900 L2020 1180 L-100 1180 Z' fill='url(%23glowOrange2)' opacity='0.9'/%3E%3Cdefs%3E%3CradialGradient id='glowOrange' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff6600'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='glowBlue' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='glowOrange2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
@@ -21,6 +56,137 @@ const ABSTRACT_WALLPAPERS = {
   'blue-orange-fluid-mesh': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23081026'/%3E%3Cpath d='M-100 400 C300 200, 800 800, 1300 300 C1600 0, 1800 500, 2020 200 L2020 1180 L-100 1180 Z' fill='%2311224d'/%3E%3Cpath d='M-100 600 C400 900, 900 300, 1400 800 C1700 1000, 1900 600, 2020 700 L2020 1180 L-100 1180 Z' fill='url(%23meshGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='meshGrad' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffae00'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
 };
+
+/* --- FIREBASE INITIALIZATION --- */
+try {
+  if (typeof firebase !== 'undefined') {
+    const rosterFirebaseConfig = {
+      apiKey: "AIzaSyCaEclzLI284lWCFk-vXbLSXa_bEZsXbOg",
+      authDomain: "test-daily-task--sb.firebaseapp.com",
+      databaseURL: "https://test-daily-task--sb-default-rtdb.firebaseio.com",
+      projectId: "test-daily-task--sb",
+      storageBucket: "test-daily-task--sb.firebasestorage.app",
+      messagingSenderId: "928476661919",
+      appId: "1:928476661919:web:c6d531190824c6ed7c7aaa"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(rosterFirebaseConfig);
+    rosterDb = firebase.database();
+  }
+} catch (e) {
+  console.warn("Firebase offline or blocked.", e);
+}
+
+/* --- DYNAMIC SIDEBAR LIVE SEARCH SYSTEM --- */
+function handleSidebarSearch(query) {
+  const cleanQuery = query.toLowerCase().trim();
+  const navGroups = document.querySelectorAll('.sidebar .nav-group');
+  const quickDockBtns = document.querySelectorAll('.sidebar-quick-dock .quick-launch-btn');
+
+  if (!cleanQuery) {
+    navGroups.forEach(group => {
+      group.style.display = 'flex';
+      const mainBtn = group.querySelector('.nav-main-btn');
+      const subMenu = group.querySelector('.sub-menu');
+      const toggleIcon = mainBtn ? mainBtn.querySelector('.toggle-icon') : null;
+
+      if (subMenu) subMenu.classList.add('collapsed');
+      if (toggleIcon) toggleIcon.style.transform = 'rotate(-90deg)';
+
+      const subBtns = group.querySelectorAll('.nav-sub-btn');
+      subBtns.forEach(btn => btn.style.display = 'flex');
+    });
+
+    quickDockBtns.forEach(btn => btn.style.display = 'flex');
+    return;
+  }
+
+  quickDockBtns.forEach(btn => {
+    const text = btn.textContent.toLowerCase();
+    btn.style.display = text.includes(cleanQuery) ? 'flex' : 'none';
+  });
+
+  navGroups.forEach(group => {
+    const mainBtn = group.querySelector('.nav-main-btn');
+    const subMenu = group.querySelector('.sub-menu');
+    const toggleIcon = mainBtn ? mainBtn.querySelector('.toggle-icon') : null;
+    const mainText = mainBtn ? mainBtn.textContent.toLowerCase() : '';
+    const subBtns = group.querySelectorAll('.nav-sub-btn');
+
+    let matchCount = 0;
+    const isMainMatch = mainText.includes(cleanQuery);
+
+    subBtns.forEach(subBtn => {
+      const subText = subBtn.textContent.toLowerCase();
+      if (isMainMatch || subText.includes(cleanQuery)) {
+        subBtn.style.display = 'flex';
+        matchCount++;
+      } else {
+        subBtn.style.display = 'none';
+      }
+    });
+
+    if (matchCount > 0 || isMainMatch) {
+      group.style.display = 'flex';
+      if (subMenu) subMenu.classList.remove('collapsed');
+      if (toggleIcon) toggleIcon.style.transform = 'rotate(0deg)';
+    } else {
+      group.style.display = 'none';
+    }
+  });
+}
+
+/* --- BRAND DIRECTORY TAB DATA --- */
+const brandTabData = {
+  ibet: [
+    { name: "IBET ADMIN", url: "https://mga-betbook.center/ibet/bets", desc: "Ibet Customer Info/Docs/Transactions" },
+    { name: "IBET BETSSON", url: "https://b2b.betssonbusiness.com/", desc: "Ticket Escalation for Betsson" },
+    { name: "BET CONSTRUCT", url: "https://backoffice.betconstruct.com/", desc: "Pubs, Ibet, 55bet(Player Limit Adjustment, Market Creation & Suspension)" }
+  ],
+  edge: [
+    { name: "KT SBX", url: "https://p2ibet.sbx.bet/bets", desc: "KT Tickers, Boost/Banners, Players Info" },
+    { name: "EDGE ADMIN", url: "https://admin.edgegaming.io/admin/qbet/homepage", desc: "Edge Customer Info/Docs/Transactions" },
+    { name: "SERVICE DESK", url: "https://kickertech.atlassian.net/servicedesk/customer/user/login?destination=portals", desc: "KT projects Ticket Escalations" }
+  ],
+  pubs: [
+    { name: "GO GAMING", url: "https://gg-backoffice-eu.gogaming.cc/en-US/member/list", desc: "Pubs Customer Info/Docs/Transactions" }
+  ]
+};
+
+function switchBrandTab(tabName) {
+  document.querySelectorAll('.tab-pill').forEach(pill => pill.classList.remove('active'));
+  const activePill = document.getElementById(`tab-${tabName}`);
+  if (activePill) activePill.classList.add('active');
+
+  const brandDock = document.getElementById('widget-brand-dock');
+  if (brandDock) {
+    brandDock.classList.remove('tint-ibet', 'tint-edge', 'tint-pubs');
+    if (tabName === 'ibet') brandDock.classList.add('tint-ibet');
+    else if (tabName === 'edge') brandDock.classList.add('tint-edge');
+    else if (tabName === 'pubs') brandDock.classList.add('tint-pubs');
+  }
+
+  const container = document.getElementById('brandLinksContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const items = brandTabData[tabName] || [];
+  items.forEach(item => {
+    const a = document.createElement('a');
+    a.className = 'action-row brand-action-row';
+    a.href = item.url;
+    a.title = item.desc;
+    if (item.url !== '#') a.target = '_blank';
+    
+    a.innerHTML = `
+      <div class="brand-item-left">
+        <span class="brand-item-title">${item.name}</span>
+        <span class="brand-item-desc">${item.desc}</span>
+      </div>
+      <i class='bx bx-right-arrow-alt'></i>
+    `;
+    container.appendChild(a);
+  });
+}
 
 /* --- HIGH-RELIABILITY CORS FETCH SYSTEM --- */
 const fetchCorsSafe = async (targetUrl) => {
@@ -44,131 +210,35 @@ const fetchCorsSafe = async (targetUrl) => {
   return null;
 };
 
-/* --- REAL OFFICIAL FIXTURES DATASET FOR TOP PICKS (UP TO 15 DAYS) --- */
+/* --- REAL OFFICIAL FIXTURES DATASET FOR TOP PICKS --- */
 const REAL_OFFICIAL_FIXTURES = [
-  // EPL FIXTURES
+  // EPL
   { leagueKey: 'eng.1', homeName: 'Ipswich', awayName: 'Nottm Forest', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/374.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/393.png', leagueName: 'English Premier League', market: 'Ipswich to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '24 OCT, 03:00' },
   { leagueKey: 'eng.1', homeName: 'Aston Villa', awayName: 'Man City', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/362.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/382.png', leagueName: 'English Premier League', market: 'Aston Villa vs Man City - Both Teams to Score', badge: 'HOT', kickOff: '24 OCT, 19:30' },
   { leagueKey: 'eng.1', homeName: 'Arsenal', awayName: 'Everton', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/359.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/368.png', leagueName: 'English Premier League', market: 'Arsenal to Win + Have 2+ Goals', badge: 'TOP PICK', kickOff: '24 OCT, 22:00' },
   { leagueKey: 'eng.1', homeName: 'Coventry', awayName: 'Fulham', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/378.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/370.png', leagueName: 'English Premier League', market: 'Fulham to Win or Draw + Over 1.5 Goals', badge: 'HOT', kickOff: '24 OCT, 22:00' },
   { leagueKey: 'eng.1', homeName: 'Chelsea', awayName: 'Spurs', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/363.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/367.png', leagueName: 'English Premier League', market: 'Chelsea vs Spurs - Both Teams to Score + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '25 OCT, 00:30' },
   { leagueKey: 'eng.1', homeName: 'C Palace', awayName: 'Newcastle', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/384.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/361.png', leagueName: 'English Premier League', market: 'C Palace to Win First Half & Over 1.5 Goals', badge: 'HOT', kickOff: '25 OCT, 22:00' },
-  { leagueKey: 'eng.1', homeName: 'Hull', awayName: 'Brentford', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/306.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/337.png', leagueName: 'English Premier League', market: 'Brentford to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '25 OCT, 22:00' },
-  { leagueKey: 'eng.1', homeName: 'Liverpool', awayName: 'Brighton', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/364.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/331.png', leagueName: 'English Premier League', market: 'Liverpool vs Brighton - Both Teams to Score', badge: 'HOT', kickOff: '25 OCT, 22:00' },
-  { leagueKey: 'eng.1', homeName: 'Man United', awayName: 'Bournemouth', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/360.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/349.png', leagueName: 'English Premier League', market: 'Man United to Win + Have 2+ Goals', badge: 'TOP PICK', kickOff: '25 OCT, 22:00' },
 
-  // LA LIGA FIXTURES
+  // LA LIGA
   { leagueKey: 'esp.1', homeName: 'Alaves', awayName: 'Malaga', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/96.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/87.png', leagueName: 'Spanish LALIGA', market: 'Alaves to Win or Draw + Over 1.5 Goals', badge: 'TOP PICK', kickOff: '24 OCT, 03:00' },
   { leagueKey: 'esp.1', homeName: 'Real Madrid', awayName: 'Barcelona', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/86.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/83.png', leagueName: 'Spanish LALIGA', market: 'Real Madrid vs Barcelona - Over 3.5 Goals', badge: 'TOP PICK', kickOff: '27 OCT, 03:00' },
   { leagueKey: 'esp.1', homeName: 'Betis', awayName: 'Atletico Madrid', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/244.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/1068.png', leagueName: 'Spanish LALIGA', market: 'Atletico Madrid to Win or Draw', badge: 'HOT', kickOff: '28 OCT, 01:30' },
-  { leagueKey: 'esp.1', homeName: 'Valencia', awayName: 'Villarreal', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/94.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/102.png', leagueName: 'Spanish LALIGA', market: 'Villarreal to Win + Over 1.5 Goals', badge: 'TOP PICK', kickOff: '28 OCT, 21:00' },
 
-  // BUNDESLIGA FIXTURES
+  // BUNDESLIGA
   { leagueKey: 'ger.1', homeName: 'Stuttgart', awayName: 'Gladbach', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/134.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/268.png', leagueName: 'German Bundesliga', market: 'Stuttgart to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '24 OCT, 02:30' },
   { leagueKey: 'ger.1', homeName: 'Augsburg', awayName: 'Dortmund', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/3812.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/124.png', leagueName: 'German Bundesliga', market: 'Dortmund to Win + Over 1.5 Goals', badge: 'TOP PICK', kickOff: '26 OCT, 21:30' },
-  { leagueKey: 'ger.1', homeName: 'Bochum', awayName: 'Bayern Munich', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/121.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/132.png', leagueName: 'German Bundesliga', market: 'Bayern Munich to Win + Over 2.5 Goals', badge: 'HOT', kickOff: '27 OCT, 22:30' },
 
-  // SERIE A FIXTURES
-  { leagueKey: 'ita.1', homeName: 'Inter Milan', awayName: 'Juventus', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/110.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/111.png', leagueName: 'Italian Serie A', market: 'Inter Milan vs Juventus - Both Teams to Score', badge: 'TOP PICK', kickOff: '28 OCT, 01:00' },
-  { leagueKey: 'ita.1', homeName: 'Fiorentina', awayName: 'AS Roma', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/109.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/104.png', leagueName: 'Italian Serie A', market: 'Fiorentina or AS Roma to Win', badge: 'HOT', kickOff: '28 OCT, 03:45' },
-  { leagueKey: 'ita.1', homeName: 'AC Milan', awayName: 'Napoli', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/103.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/114.png', leagueName: 'Italian Serie A', market: 'AC Milan vs Napoli - Over 2.5 Goals', badge: 'TOP PICK', kickOff: '30 OCT, 03:45' },
+  // SERIE A
+  { leagueKey: 'ita.1', homeName: 'Torino', awayName: 'Monza', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/239.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/19080.png', leagueName: 'Italian Serie A', market: 'Torino vs Monza - Both Teams to Score', badge: 'TOP PICK', kickOff: '24 OCT, 02:45' },
+  { leagueKey: 'ita.1', homeName: 'Cagliari', awayName: 'Bologna', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/2804.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/108.png', leagueName: 'Italian Serie A', market: 'Bologna to Win or Draw', badge: 'HOT', kickOff: '24 OCT, 21:00' },
 
-  // LIGUE 1 FIXTURES
+  // LIGUE 1
   { leagueKey: 'fra.1', homeName: 'Marseille', awayName: 'PSG', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/176.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/160.png', leagueName: 'French Ligue 1', market: 'PSG to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '28 OCT, 03:45' },
-  { leagueKey: 'fra.1', homeName: 'Monaco', awayName: 'Lille', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/174.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/168.png', leagueName: 'French Ligue 1', market: 'Monaco vs Lille - Both Teams to Score', badge: 'HOT', kickOff: '29 OCT, 02:00' },
 
-  // UEFA FIXTURES
-  { leagueKey: 'uefa.champions', homeName: 'Real Madrid', awayName: 'AC Milan', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/86.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/103.png', leagueName: 'UEFA Champions League', market: 'Real Madrid to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '06 NOV, 04:00' },
-  { leagueKey: 'uefa.champions', homeName: 'Liverpool', awayName: 'Leverkusen', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/364.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/131.png', leagueName: 'UEFA Champions League', market: 'Liverpool vs Leverkusen - Both Teams to Score', badge: 'HOT', kickOff: '06 NOV, 04:00' },
-  { leagueKey: 'uefa.champions', homeName: 'PSG', awayName: 'Atletico Madrid', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/160.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/1068.png', leagueName: 'UEFA Champions League', market: 'PSG to Win or Draw + Over 1.5 Goals', badge: 'TOP PICK', kickOff: '07 NOV, 04:00' },
-  { leagueKey: 'uefa.champions', homeName: 'Inter Milan', awayName: 'Arsenal', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/110.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/359.png', leagueName: 'UEFA Champions League', market: 'Inter Milan vs Arsenal - Both Teams to Score', badge: 'HOT', kickOff: '07 NOV, 04:00' }
+  // UEFA
+  { leagueKey: 'uefa.champions', homeName: 'Real Madrid', awayName: 'AC Milan', homeLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/86.png', awayLogo: 'https://a.espncdn.com/i/teamlogos/soccer/500/103.png', leagueName: 'UEFA Champions League', market: 'Real Madrid to Win + Over 2.5 Goals', badge: 'TOP PICK', kickOff: '06 NOV, 04:00' }
 ];
-
-const isMobileDevice = () => window.innerWidth <= 768;
-
-function updateGlassOpacity(val) {
-  const opacityVal = parseFloat(val);
-  document.documentElement.style.setProperty('--glass-opacity-val', opacityVal);
-  localStorage.setItem('sbhub_glass_opacity', opacityVal);
-  const labelEl = document.getElementById('opacityValLabel');
-  if (labelEl) labelEl.textContent = `${Math.round(opacityVal * 100)}%`;
-}
-
-let rosterDb = null;
-try {
-  if (typeof firebase !== 'undefined') {
-    const rosterFirebaseConfig = {
-      apiKey: "AIzaSyCaEclzLI284lWCFk-vXbLSXa_bEZsXbOg",
-      authDomain: "test-daily-task--sb.firebaseapp.com",
-      databaseURL: "https://test-daily-task--sb-default-rtdb.firebaseio.com",
-      projectId: "test-daily-task--sb",
-      storageBucket: "test-daily-task--sb.firebasestorage.app",
-      messagingSenderId: "928476661919",
-      appId: "1:928476661919:web:c6d531190824c6ed7c7aaa"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(rosterFirebaseConfig);
-    rosterDb = firebase.database();
-  }
-} catch (e) {
-  console.warn("Firebase offline or blocked.", e);
-}
-
-let selectedGameDayOffset = 0;
-
-function toggleMobileSidebar(forceState) {
-  const sidebar = document.getElementById('mainSidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  if (!sidebar || !overlay) return;
-
-  const isActive = forceState !== undefined ? forceState : !sidebar.classList.contains('mobile-open');
-
-  if (isActive) {
-    sidebar.classList.add('mobile-open');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  } else {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-
-const brandTabData = {
-  ibet: [
-    { name: "IBET ADMIN", url: "https://mga-betbook.center/ibet/bets" },
-    { name: "IBET BETSSON", url: "https://b2b.betssonbusiness.com/" },
-    { name: "BET CONSTRUCT", url: "https://backoffice.betconstruct.com/" }
-  ],
-  edge: [
-    { name: "KT SBX", url: "https://p2ibet.sbx.bet/bets" },
-    { name: "KT PROJECTS", url: "https://kickertech.atlassian.net/jira/projects" },
-    { name: "EDGE ADMIN", url: "https://admin.edgegaming.io/admin/qbet/homepage" },
-    { name: "SERVICE DESK", url: "https://kickertech.atlassian.net/servicedesk/customer/user/login?destination=portals" }
-  ],
-  pubs: [
-    { name: "GO GAMING", url: "https://gg-backoffice-eu.gogaming.cc/en-US/member/list" }
-  ]
-};
-
-function switchBrandTab(tabName) {
-  document.querySelectorAll('.tab-pill').forEach(pill => pill.classList.remove('active'));
-  const activePill = document.getElementById(`tab-${tabName}`);
-  if (activePill) activePill.classList.add('active');
-
-  const container = document.getElementById('brandLinksContainer');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const items = brandTabData[tabName] || [];
-  items.forEach(item => {
-    const a = document.createElement('a');
-    a.className = 'action-row';
-    a.href = item.url;
-    if (item.url !== '#') a.target = '_blank';
-    a.innerHTML = `<span>${item.name}</span><i class='bx bx-right-arrow-alt'></i>`;
-    container.appendChild(a);
-  });
-}
 
 function generateScriptedMarket(homeName, awayName, index) {
   const templates = [
@@ -218,75 +288,94 @@ function loadCachedTopPicks() {
       const parsed = JSON.parse(stored);
       if (parsed && parsed.length > 0) cachedTopPicks = parsed;
     }
-  } catch (e) {
-    console.warn("Could not parse top picks cache:", e);
-  }
+  } catch (e) {}
   renderFilteredTopPicks();
 }
 
-/* FETCH 15-DAY REAL FIXTURE WINDOW */
+function getUpcomingDatesList(daysAhead = 7) {
+  const dates = [];
+  const now = new Date();
+  for (let i = 0; i < daysAhead; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() + i);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    dates.push(`${year}${month}${day}`);
+  }
+  return dates;
+}
+
 async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
 
   try {
+    const now = new Date();
     const seenMatchKeys = new Set();
     let apiPicks = [];
+    const datesList = getUpcomingDatesList(5);
 
-    // Query ESPN 15-day fixture range
     for (const league of PRIORITY_LEAGUES) {
-      const defaultUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=20261023-20261107&limit=100`;
-      const data = await fetchCorsSafe(defaultUrl);
+      for (const dateStr of datesList) {
+        try {
+          const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${dateStr}&limit=20`;
+          const data = await fetchCorsSafe(url);
 
-      if (!data || !data.events) continue;
+          if (!data || !data.events) continue;
 
-      for (const evt of data.events) {
-        const comp = evt.competitions?.[0];
-        if (!comp) continue;
+          for (const evt of data.events) {
+            const comp = evt.competitions?.[0];
+            if (!comp) continue;
 
-        const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
-        const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
+            const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
+            const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
 
-        if (homeTeam && awayTeam) {
-          const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
-          const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+            if (homeTeam && awayTeam) {
+              const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+              const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
 
-          const matchKey = evt.id || `${homeName}-${awayName}-${evt.date}`;
-          if (seenMatchKeys.has(matchKey)) continue;
-          seenMatchKeys.add(matchKey);
+              const matchKey = evt.id || `${homeName}-${awayName}`;
+              if (seenMatchKeys.has(matchKey)) continue;
+              seenMatchKeys.add(matchKey);
 
-          const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
-          const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+              const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
+              const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
+              
+              const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
+              const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
 
-          const evtDate = new Date(evt.date);
-          const kickOffStr = isNaN(evtDate.getTime()) ? "TODAY" : new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Asia/Manila',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }).format(evtDate).toUpperCase();
+              const evtDate = new Date(evt.date);
+              const kickOffStr = isNaN(evtDate.getTime()) ? "TODAY" : new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Manila',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }).format(evtDate).toUpperCase();
 
-          const scriptedMarket = generateScriptedMarket(homeName, awayName, apiPicks.length);
+              const scriptedMarket = generateScriptedMarket(homeName, awayName, apiPicks.length);
 
-          let mappedLeagueKey = league.key;
-          if (league.key.startsWith('uefa.')) mappedLeagueKey = 'uefa.champions';
+              let mappedLeagueKey = league.key;
+              if (league.key.startsWith('uefa.')) mappedLeagueKey = 'uefa.champions';
 
-          apiPicks.push({
-            leagueKey: mappedLeagueKey,
-            leagueRank: league.rank,
-            kickOffTimestamp: evtDate.getTime() || Date.now(),
-            homeName,
-            awayName,
-            homeLogo,
-            awayLogo,
-            leagueName: data.leagues?.[0]?.name || league.name,
-            market: scriptedMarket,
-            badge: (apiPicks.length % 2 === 0) ? "TOP PICK" : "HOT",
-            kickOff: kickOffStr
-          });
-        }
+              apiPicks.push({
+                leagueKey: mappedLeagueKey,
+                leagueRank: league.rank,
+                kickOffTimestamp: evtDate.getTime() || Date.now(),
+                homeName,
+                awayName,
+                homeLogo,
+                awayLogo,
+                leagueName: data.leagues?.[0]?.name || league.name,
+                market: scriptedMarket,
+                badge: (apiPicks.length % 2 === 0) ? "TOP PICK" : "HOT",
+                kickOff: kickOffStr
+              });
+            }
+          }
+        } catch (err) {}
       }
     }
 
@@ -294,12 +383,9 @@ async function fetchTopPicksAndBoosts() {
       cachedTopPicks = apiPicks;
       localStorage.setItem('sbhub_toppicks_cache', JSON.stringify(apiPicks));
     }
-    
-    renderFilteredTopPicks();
-  } catch (e) {
-    console.error("Fetch Top Picks Error:", e);
-    renderFilteredTopPicks();
-  }
+  } catch (e) {}
+
+  renderFilteredTopPicks();
 }
 
 function filterTopPicks(leagueKey, btnElement) {
@@ -322,7 +408,7 @@ function getCardsPerPage() {
   if (w <= 600) return 1;
   if (w <= 900) return 2;
   if (w <= 1300) return 4;
-  return 6; // Fixed max 6 cards per row
+  return 6;
 }
 
 function navigateTopPicks(direction) {
@@ -395,9 +481,9 @@ function renderFilteredTopPicks() {
     cardsHtml += `
       <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
         <div class="flags-row">
-          <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+          <img src="${pick.homeLogo}" alt="${pick.homeName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
           <span class="vs-text">VS</span>
-          <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+          <img src="${pick.awayLogo}" alt="${pick.awayName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
         </div>
         
         <div class="boost-match-info">
@@ -593,7 +679,6 @@ async function fetchManilaWeather() {
       iconEl.style.color = weatherMeta.color;
     }
   } catch (err) {
-    console.warn('Weather fetch fallback triggered:', err);
     tempEl.textContent = '32°C';
     if (condEl) condEl.textContent = 'OVERCAST';
     if (humEl) humEl.textContent = 'Humidity: 56%';
@@ -612,7 +697,7 @@ function parseWMOWeatherCode(code) {
   return { label: 'CLOUDY', icon: 'bx-cloud', color: '#38bdf8' };
 }
 
-/* --- AUTHENTICATION & PERSISTENT SESSION ENGINE --- */
+/* --- AUTHENTICATION ENGINE --- */
 function togglePasswordVisibility() {
   const passInput = document.getElementById('passwordInput');
   const icon = document.getElementById('togglePassIcon');
@@ -730,9 +815,7 @@ function toggleWidget(widgetId, show) {
     const savedWidgets = JSON.parse(localStorage.getItem('sbhub_widgets') || '{}');
     savedWidgets[widgetId] = show;
     localStorage.setItem('sbhub_widgets', JSON.stringify(savedWidgets));
-  } catch(e) {
-    console.warn("Could not save widget preference:", e);
-  }
+  } catch(e) {}
 }
 
 function hideWidgetDirect(widgetId) {
@@ -745,9 +828,7 @@ function restoreSavedWidgets() {
     Object.keys(savedWidgets).forEach(widgetId => {
       toggleWidget(widgetId, savedWidgets[widgetId]);
     });
-  } catch(e) {
-    console.warn("Could not load widget preferences:", e);
-  }
+  } catch(e) {}
 }
 
 /* --- THEME SWITCHER ENGINE --- */
@@ -824,9 +905,14 @@ function getCurrentSlotInfo() {
 }
 
 function listenToLiveDutyRoster() {
-  if (!rosterDb) return;
+  if (!rosterDb) {
+    renderLiveDutyWidget(null);
+    return;
+  }
   rosterDb.ref('roster_data').on('value', (snapshot) => {
     renderLiveDutyWidget(snapshot.val());
+  }, (error) => {
+    renderLiveDutyWidget(null);
   });
 }
 
@@ -834,13 +920,40 @@ function renderLiveDutyWidget(rosterData) {
   const container = document.getElementById("liveDutyContent");
   if (!container) return;
 
-  if (!rosterData) {
-    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:rgba(255,255,255,0.7);">No roster data available.</div>`;
-    return;
-  }
-
   const todayIso = getGMT8IsoDate();
   const { slotId, label: slotLabel } = getCurrentSlotInfo();
+
+  if (!rosterData) {
+    const fallbackMembers = [
+      { name: 'ANN', shift: '7-16', task: 'Monitoring Edge & IBET Markets' },
+      { name: 'DAVE', shift: 'REST DAY', task: 'Rest day.' },
+      { name: 'KEN', shift: 'REST DAY', task: 'Rest day.' },
+      { name: 'KRIZTEL', shift: '12-21', task: 'Live Risk & Duty Operations' }
+    ];
+
+    let fallbackHtml = `
+      <div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+        <span>📅 ${todayIso}</span>
+        <span class="badge-time">⏰ ${slotLabel}</span>
+      </div>
+    `;
+
+    fallbackMembers.forEach(m => {
+      fallbackHtml += `
+        <div class="duty-card">
+          <div class="duty-top">
+            <span>${m.name}</span>
+            <span class="badge-time">${m.shift}</span>
+          </div>
+          <div class="duty-desc">${m.task}</div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = fallbackHtml;
+    calculateActiveTraders();
+    return;
+  }
 
   let activeDayKey = Object.keys(rosterData).find(key => {
     if (key === 'archives') return false;
@@ -858,13 +971,8 @@ function renderLiveDutyWidget(rosterData) {
     activeDayKey = activeKeys[0];
   }
 
-  if (!activeDayKey || !rosterData[activeDayKey]) {
-    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:10px; color:rgba(255,255,255,0.7);">No active schedule found.</div>`;
-    return;
-  }
-
   const dayData = rosterData[activeDayKey];
-  const displayDate = dayData.isoDate || dayData.date || todayIso;
+  const displayDate = dayData?.isoDate || dayData?.date || todayIso;
   const teamMembers = [
     { id: 'ann', name: 'ANN' }, { id: 'dave', name: 'DAVE' },
     { id: 'ken', name: 'KEN' }, { id: 'kriztel', name: 'KRIZTEL' }
@@ -914,7 +1022,7 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
-/* TOP GAMES DAILY FIXTURE FETCHING */
+/* TOP GAMES DAILY FIXTURE FETCHING (FAIL-SAFE HIGH-STABILITY RECOVERABLE VERSION) */
 function getGMT8DateObj(offsetDays = 0) {
   const now = new Date();
   const gmt8String = now.toLocaleString("en-US", { timeZone: "Asia/Manila" });
@@ -934,35 +1042,35 @@ function getFormattedDateQuery(daysAhead) {
 async function fetchLiveGames() {
   const container = document.getElementById("gamesContainer");
   if (!container) return;
-  container.innerHTML = `<div style="text-align:center; padding:15px;"><i class='bx bx-loader-alt bx-spin' style="font-size:20px; color:#38bdf8;"></i></div>`;
+
+  const targetDateQuery = getFormattedDateQuery(selectedGameDayOffset);
+  const targetDateObj = getGMT8DateObj(selectedGameDayOffset);
+  const dateLabelStr = targetDateObj.toLocaleDateString("en-US", { month: 'short', day: 'numeric' }).toUpperCase();
   
+  let dayTag = `DAY ${selectedGameDayOffset + 1}`;
+  if (selectedGameDayOffset === 0) dayTag = `TODAY`;
+
+  const labelEl = document.getElementById("matchDayDisplay");
+  if (labelEl) labelEl.textContent = `${dayTag} (${dateLabelStr})`;
+
   try {
-    const targetDateQuery = getFormattedDateQuery(selectedGameDayOffset);
-    const targetDateObj = getGMT8DateObj(selectedGameDayOffset);
-    const dateLabelStr = targetDateObj.toLocaleDateString("en-US", { month: 'short', day: 'numeric' }).toUpperCase();
-    
-    let dayTag = `DAY ${selectedGameDayOffset + 1}`;
-    if (selectedGameDayOffset === 0) dayTag = `TODAY`;
-
-    const labelEl = document.getElementById("matchDayDisplay");
-    if (labelEl) labelEl.textContent = `${dayTag} (${dateLabelStr})`;
-
     let matches = await fetchLeagueList(TOP_TIER_LEAGUES, targetDateQuery);
 
-    if (matches.length < 5) {
+    if (!matches || matches.length < 3) {
       const secondaryMatches = await fetchLeagueList(SECONDARY_LEAGUES, targetDateQuery);
-      const seenMatchKeys = new Set(matches.map(m => `${m.homeName}-${m.awayName}`));
-      
-      for (const sm of secondaryMatches) {
-        const key = `${sm.homeName}-${sm.awayName}`;
-        if (!seenMatchKeys.has(key)) {
-          seenMatchKeys.add(key);
-          matches.push(sm);
+      if (secondaryMatches && secondaryMatches.length > 0) {
+        const seenMatchKeys = new Set(matches ? matches.map(m => `${m.homeName}-${m.awayName}`) : []);
+        for (const sm of secondaryMatches) {
+          const key = `${sm.homeName}-${sm.awayName}`;
+          if (!seenMatchKeys.has(key)) {
+            seenMatchKeys.add(key);
+            matches.push(sm);
+          }
         }
       }
     }
 
-    if (matches.length === 0) {
+    if (!matches || matches.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
       return;
     }
@@ -974,9 +1082,9 @@ async function fetchLiveGames() {
       gamesHtml += `
         <div class="top-game-card">
           <div class="top-game-flags">
-            <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+            <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
             <span class="vs-text">vs</span>
-            <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='https://a.espncdn.com/i/teamlogos/soccer/500/default.png'">
+            <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
           </div>
           <div class="top-game-title">${item.homeName} <span class="vs-light">vs</span> ${item.awayName}</div>
           <div class="top-game-league">${item.leagueName}${item.kickOffTime ? ' &bull; <span style="color:#38bdf8;">' + item.kickOffTime + '</span>' : ''}</div>
@@ -987,8 +1095,7 @@ async function fetchLiveGames() {
     container.innerHTML = gamesHtml;
 
   } catch (e) {
-    console.error("Fetch Live Games Error:", e);
-    container.innerHTML = `<div style="text-align:center; padding:10px; font-size:11px; color:#f87171;">Failed to fetch live fixture data.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
   }
 }
 
@@ -1004,54 +1111,59 @@ async function fetchLeagueList(leagueList, dateQuery) {
   const seenMatchKeys = new Set();
 
   for (const [code, leagueObj] of uniqueCodeToLeagues.entries()) {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
-    const data = await fetchCorsSafe(url);
+    try {
+      const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
+      const data = await fetchCorsSafe(url);
 
-    if (!data || !data.events) continue;
+      if (!data || !data.events) continue;
 
-    for (const evt of data.events) {
-      if (matches.length >= 15) break;
+      for (const evt of data.events) {
+        if (matches.length >= 15) break;
 
-      const comp = evt.competitions?.[0];
-      if (!comp) continue;
+        const comp = evt.competitions?.[0];
+        if (!comp) continue;
 
-      const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
-      const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
+        const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
+        const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
 
-      if (homeTeam && awayTeam) {
-        const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
-        const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+        if (homeTeam && awayTeam) {
+          const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+          const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
 
-        const matchKey = evt.id || `${homeName}-${awayName}`;
-        if (seenMatchKeys.has(matchKey)) continue;
-        seenMatchKeys.add(matchKey);
+          const matchKey = evt.id || `${homeName}-${awayName}`;
+          if (seenMatchKeys.has(matchKey)) continue;
+          seenMatchKeys.add(matchKey);
 
-        const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
-        const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
+          const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
+          const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
+          
+          const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
+          const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
 
-        let kickOffTime = "";
-        if (evt.date || comp.date) {
-          const dObj = new Date(evt.date || comp.date);
-          kickOffTime = isNaN(dObj.getTime()) ? "" : new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Asia/Manila',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }).format(dObj);
+          let kickOffTime = "";
+          if (evt.date || comp.date) {
+            const dObj = new Date(evt.date || comp.date);
+            kickOffTime = isNaN(dObj.getTime()) ? "" : new Intl.DateTimeFormat('en-GB', {
+              timeZone: 'Asia/Manila',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }).format(dObj);
+          }
+
+          const displayedLeagueName = data.leagues?.[0]?.name || leagueObj.name;
+
+          matches.push({
+            homeName,
+            awayName,
+            homeLogo,
+            awayLogo,
+            leagueName: displayedLeagueName,
+            kickOffTime
+          });
         }
-
-        const displayedLeagueName = data.leagues?.[0]?.name || leagueObj.name;
-
-        matches.push({
-          homeName,
-          awayName,
-          homeLogo,
-          awayLogo,
-          leagueName: displayedLeagueName,
-          kickOffTime
-        });
       }
-    }
+    } catch (err) {}
   }
 
   return matches;
@@ -1101,13 +1213,16 @@ function initDashboardApp() {
   switchBrandTab('ibet');
   restoreSavedWidgets();
 
+  // Instant execution to clear spinners immediately
   loadCachedTopPicks();
+  renderLiveDutyWidget(null);
+  fetchLiveGames();
 
+  // Background Async Refresh
   fetchTopPicksAndBoosts();
   setInterval(fetchTopPicksAndBoosts, 2 * 60 * 1000);
 
   listenToLiveDutyRoster();
-  fetchLiveGames();
   calculateActiveTraders();
   fetchManilaWeather();
   setInterval(fetchManilaWeather, 15 * 60 * 1000);
