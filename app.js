@@ -1,4 +1,4 @@
-/* --- GLOBAL STATE VARIABLES (DECLARED AT TOP TO PREVENT REFERENCE ERRORS) --- */
+/* --- GLOBAL STATE VARIABLES (HOISTED AT TOP TO PREVENT REFERENCE ERRORS) --- */
 let selectedGameDayOffset = 0;
 let rosterDb = null;
 
@@ -188,7 +188,7 @@ function switchBrandTab(tabName) {
   });
 }
 
-/* --- HIGH-RELIABILITY CORS FETCH SYSTEM --- */
+/* --- ENHANCED DIRECT + CORS PROXY FETCH ENGINE --- */
 const fetchCorsSafe = async (targetUrl) => {
   try {
     const res = await fetch(targetUrl);
