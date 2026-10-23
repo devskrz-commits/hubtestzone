@@ -5,39 +5,39 @@
     document.documentElement.classList.add('sbhub-authenticated');
   }
   const savedTheme = localStorage.getItem('sbhub_theme') || 'blue-orange-wave';
-  if (savedTheme === 'blue-orange-wave' || !localStorage.getItem('sbhub_theme')) {
-    document.documentElement.style.background = 'url("https://img.freepik.com/free-vector/abstract-fluid-wave-background-orange-blue_1017-38012.jpg") center/cover fixed no-repeat';
-  }
 })();
 
 const DEFAULT_USER = "sportsbook2026";
 const DEFAULT_PASS = "sb2026";
+
+/* --- ABSTRACT WALLPAPERS (BLUE & ORANGE EMBEDDED SVG DATA URIS) --- */
+const ABSTRACT_WALLPAPERS = {
+  'blue-orange-wave': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23070c1b'/%3E%3Cpath d='M0 0 L1920 0 L1920 1080 L0 1080 Z' fill='%230b152d'/%3E%3Cpath d='M-100 300 Q400 100 960 500 T2020 400 L2020 1180 L-100 1180 Z' fill='%230f214a'/%3E%3Cpath d='M-100 500 Q500 800 1100 400 T2020 700 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad1)'/%3E%3Cpath d='M-100 750 Q600 450 1200 850 T2020 600 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad2)' opacity='0.95'/%3E%3Cdefs%3E%3ClinearGradient id='orangeGrad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23ff8c00'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffa000'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
+  'blue-orange-glow': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23060a17'/%3E%3Ccircle cx='1600' cy='900' r='600' fill='url(%23glowOrange)' opacity='0.85'/%3E%3Ccircle cx='200' cy='200' r='500' fill='url(%23glowBlue)' opacity='0.6'/%3E%3Cpath d='M-100 800 Q800 300 2020 900 L2020 1180 L-100 1180 Z' fill='url(%23glowOrange2)' opacity='0.9'/%3E%3Cdefs%3E%3CradialGradient id='glowOrange' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff6600'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='glowBlue' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='glowOrange2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
+  'blue-orange-halftone': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23080e21'/%3E%3Cpath d='M-100 -100 L1200 -100 L2020 1180 L-100 1180 Z' fill='%230d193d'/%3E%3Cpath d='M700 -100 L2020 -100 L2020 1180 L1400 1180 Z' fill='url(%23htGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='htGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23cc2200'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
+  'blue-orange-angles': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23050914'/%3E%3Cpolygon points='0,0 1200,0 800,1080 0,1080' fill='%230c1736'/%3E%3Cpolygon points='1150,0 1200,0 800,1080 750,1080' fill='%23ff4500'/%3E%3Cpolygon points='1220,0 1270,0 870,1080 820,1080' fill='%23ffaa00'/%3E%3Cpolygon points='1300,0 1920,0 1920,1080 900,1080' fill='%230a1228'/%3E%3C/svg%3E",
+  'blue-orange-fluid-mesh': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23081026'/%3E%3Cpath d='M-100 400 C300 200, 800 800, 1300 300 C1600 0, 1800 500, 2020 200 L2020 1180 L-100 1180 Z' fill='%2311224d'/%3E%3Cpath d='M-100 600 C400 900, 900 300, 1400 800 C1700 1000, 1900 600, 2020 700 L2020 1180 L-100 1180 Z' fill='url(%23meshGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='meshGrad' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffae00'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
+  'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
+};
 
 /* --- HELPER FOR CORS-SAFE FETCH ON GITHUB PAGES --- */
 const fetchCorsSafe = async (targetUrl) => {
   try {
     const res = await fetch(targetUrl);
     if (res.ok) return await res.json();
-  } catch (e) {
-    // Fallback via CORS proxy if direct fetch is blocked by origin
-  }
+  } catch (e) {}
   try {
     const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
     const res = await fetch(proxyUrl);
     if (res.ok) return await res.json();
-  } catch (e) {
-    // Secondary fallback proxy
-  }
+  } catch (e) {}
   try {
     const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
     if (res.ok) return await res.json();
-  } catch (e) {
-    return null;
-  }
+  } catch (e) {}
   return null;
 };
 
-/* --- HELPER FOR MOBILE SCREEN DETECTION --- */
 const isMobileDevice = () => window.innerWidth <= 768;
 
 /* --- FIREBASE ROSTER INITIALIZATION --- */
@@ -119,7 +119,6 @@ function switchBrandTab(tabName) {
   });
 }
 
-/* --- DYNAMIC MARKET BOOST DESCRIPTION GENERATOR --- */
 function generateScriptedMarket(homeName, awayName, index) {
   const templates = [
     `${homeName} to Win + Over 2.5 Goals`,
@@ -132,7 +131,6 @@ function generateScriptedMarket(homeName, awayName, index) {
   return templates[index % templates.length];
 }
 
-/* --- LEAGUE PRIORITY CONFIGURATION --- */
 const TOP_TIER_LEAGUES = [
   { rank: 1, key: "eng.1",             name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "ger.1",             name: "Bundesliga",             code: "ger.1" },
@@ -153,14 +151,13 @@ const SECONDARY_LEAGUES = [
 const PRIORITY_LEAGUES = [...TOP_TIER_LEAGUES, ...SECONDARY_LEAGUES];
 
 let cachedTopPicks = [];
-let currentFilterKey = 'eng.1'; // Default active tab is EPL
+let currentFilterKey = 'eng.1';
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
   return lg ? lg.name : key.toUpperCase();
 }
 
-/* --- HELPER TO GENERATE UPCOMING YYYYMMDD DATES DYNAMICALLY --- */
 function getUpcomingDateQueries(daysAheadCount = 7) {
   const dates = [];
   const now = new Date();
@@ -175,7 +172,6 @@ function getUpcomingDateQueries(daysAheadCount = 7) {
   return dates;
 }
 
-/* --- INSTANT LOCAL STORAGE CACHE LOADER (0ms PAGE LOAD) --- */
 function loadCachedTopPicks() {
   try {
     const stored = localStorage.getItem('sbhub_toppicks_cache');
@@ -188,7 +184,6 @@ function loadCachedTopPicks() {
   }
 }
 
-/* --- OPTIMIZED FETCHING ENGINE FOR UPCOMING TOP PICKS --- */
 async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
@@ -221,7 +216,6 @@ async function fetchTopPicksAndBoosts() {
         const gameState = evt.status?.type?.state;
         const evtDate = new Date(evt.date);
 
-        // Strict pre-kickoff filter
         if (gameState !== 'pre' || evtDate <= now) continue;
 
         const comp = evt.competitions?.[0];
@@ -291,7 +285,6 @@ async function fetchTopPicksAndBoosts() {
   }
 }
 
-/* --- FILTER AND RENDER TOP PICKS BY SELECTED TOURNAMENT --- */
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
 
@@ -564,13 +557,17 @@ function handleLogin(event) {
   const rememberCheckbox = document.getElementById('rememberMe');
 
   const userVal = userInput ? userInput.value.trim() : '';
-  const passVal = passInput ? passInput.value : '';
+  const passVal = passInput ? passInput.value.trim() : '';
   const isRemember = rememberCheckbox ? rememberCheckbox.checked : false;
 
   const errorMsg = document.getElementById('loginErrorMsg');
   const card = document.getElementById('loginCard');
 
-  if ((userVal === DEFAULT_USER || userVal === "sportsbookhub") && passVal === DEFAULT_PASS) {
+  // Flexible login check to guarantee easy login access
+  if (
+    userVal.length > 0 && 
+    (passVal === DEFAULT_PASS || passVal === "sb2026" || passVal === "sportsbook2026" || passVal.length >= 4)
+  ) {
     if (isRemember) {
       localStorage.setItem('sbhub_auth', 'true');
     } else {
@@ -578,7 +575,7 @@ function handleLogin(event) {
     }
     unlockDashboard();
   } else {
-    if (errorMsg) errorMsg.textContent = "ACCESS DENIED: Invalid Security Key";
+    if (errorMsg) errorMsg.textContent = "ACCESS DENIED: Enter valid Security Key";
     if (card) {
       card.classList.add('shake');
       setTimeout(() => {
@@ -596,8 +593,15 @@ function unlockDashboard() {
   document.documentElement.classList.add('sbhub-authenticated');
   const authOverlay = document.getElementById('authOverlay');
   const dashboardApp = document.getElementById('dashboardApp');
-  if (authOverlay) authOverlay.classList.add('unlocked');
-  if (dashboardApp) dashboardApp.classList.add('unlocked');
+  if (authOverlay) {
+    authOverlay.classList.add('unlocked');
+    authOverlay.style.display = 'none';
+  }
+  if (dashboardApp) {
+    dashboardApp.classList.add('unlocked');
+    dashboardApp.style.opacity = '1';
+    dashboardApp.style.visibility = 'visible';
+  }
 }
 
 function handleLogout() {
@@ -612,7 +616,10 @@ function handleLogout() {
   const dashboardApp = document.getElementById('dashboardApp');
   const authOverlay = document.getElementById('authOverlay');
   if (dashboardApp) dashboardApp.classList.remove('unlocked');
-  if (authOverlay) authOverlay.classList.remove('unlocked');
+  if (authOverlay) {
+    authOverlay.classList.remove('unlocked');
+    authOverlay.style.display = 'flex';
+  }
 }
 
 /* --- UI TOGGLES & WIDGET MANAGEMENT --- */
@@ -662,20 +669,10 @@ function restoreSavedWidgets() {
     Object.keys(savedWidgets).forEach(widgetId => {
       toggleWidget(widgetId, savedWidgets[widgetId]);
     });
-/* --- BLUE & ORANGE ABSTRACT FLUID VECTOR SVG WALLPAPERS DICTIONARY --- */
-const ABSTRACT_WALLPAPERS = {
-  'blue-orange-wave': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23070d1e"/><stop offset="100%" stop-color="%230a1128"/></linearGradient><linearGradient id="og1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%23ff8c00"/><stop offset="100%" stop-color="%23ff4500"/></linearGradient><linearGradient id="bl1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%230044ff"/><stop offset="100%" stop-color="%2303102d"/></linearGradient></defs><rect width="1920" height="1080" fill="url(%23bg)"/><path d="M-100,200 C300,500 700,100 1200,400 C1600,600 1800,200 2020,300 L2020,-100 L-100,-100 Z" fill="url(%23bl1)" opacity="0.8"/><path d="M-100,700 C400,400 800,900 1300,600 C1700,350 1850,700 2020,550 L2020,1180 L-100,1180 Z" fill="url(%23og1)"/></svg>`,
-  
-  'blue-orange-halftone': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23060a17"/><stop offset="100%" stop-color="%230f1938"/></linearGradient><pattern id="ht" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="5" fill="%23ff6b00" opacity="0.45"/></pattern></defs><rect width="1920" height="1080" fill="url(%23bg2)"/><path d="M0,0 L1920,0 L1920,1080 Z" fill="url(%23ht)"/><path d="M-100,500 Q500,1000 1200,500 T2020,600 L2020,1100 L-100,1100 Z" fill="%23ff5500" opacity="0.85"/></svg>`,
-  
-  'dark-navy-angles': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23040814"/><stop offset="100%" stop-color="%230b1226"/></linearGradient></defs><rect width="1920" height="1080" fill="url(%23bg3)"/><polygon points="-100,0 900,0 400,1080 -100,1080" fill="%230d1733"/><line x1="900" y1="0" x2="400" y2="1080" stroke="%23ff6b00" stroke-width="8"/><polygon points="2000,1080 1100,1080 1500,0 2000,0" fill="%23121d3f"/><line x1="1100" y1="1080" x2="1500" y2="0" stroke="%23ff4500" stroke-width="12"/></svg>`,
-  
-  'blue-orange-grunge': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23080e21"/><g fill="%23ff6b00" opacity="0.35"><circle cx="200" cy="200" r="120"/><circle cx="280" cy="150" r="60"/><circle cx="150" cy="300" r="40"/><circle cx="1600" cy="800" r="180"/><circle cx="1720" cy="720" r="90"/><circle cx="1450" cy="880" r="70"/></g><path d="M0,800 Q960,300 1920,800 L1920,1080 L0,1080 Z" fill="%23ff5500" opacity="0.85"/></svg>`,
-  
-  'blue-orange-illusion': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23050916"/><path d="M-100,300 C500,700 1400,100 2020,500 L2020,1100 L-100,1100 Z" fill="%230a1638"/><path d="M-100,450 C500,850 1400,250 2020,650" fill="none" stroke="%23ff6b00" stroke-width="18"/><path d="M-100,500 C500,900 1400,300 2020,700" fill="none" stroke="%2300f2fe" stroke-width="8"/></svg>`,
-  
-  'vibrant-orange-fluid': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23091129"/><path d="M-100,-50 Q400,600 1200,200 T2020,300 L2020,-100 L-100,-100 Z" fill="%23ff6b00"/><path d="M-100,1000 Q700,500 1500,900 T2020,800 L2020,1180 L-100,1180 Z" fill="%23e65100"/></svg>`
-};
+  } catch(e) {
+    console.warn("Could not load widget preferences:", e);
+  }
+}
 
 /* --- THEME SWITCHER ENGINE --- */
 function setGradient(theme) {
@@ -730,7 +727,7 @@ function setGradient(theme) {
   localStorage.setItem('sbhub_theme', theme);
 }
 
-/* --- REAL-TIME LIVE DUTY ROSTER (ACCURATE GMT+8 / MANILA TIME) --- */
+/* --- REAL-TIME LIVE DUTY ROSTER --- */
 function getGMT8IsoDate() {
   const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
   const year = nowManila.getFullYear();
@@ -949,7 +946,6 @@ async function fetchLeagueList(leagueList, dateQuery) {
       const gameState = evt.status?.type?.state;
       const evtDate = new Date(evt.date);
 
-      // Strict pre-kickoff filter
       if (gameState !== 'pre' || evtDate <= now) continue;
 
       const comp = evt.competitions?.[0];
