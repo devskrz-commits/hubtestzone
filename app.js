@@ -20,21 +20,24 @@ const ABSTRACT_WALLPAPERS = {
   'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
 };
 
-/* --- HELPER FOR CORS-SAFE FETCH ON GITHUB PAGES --- */
+/* --- ENHANCED CORS-SAFE FETCH ENGINE --- */
 const fetchCorsSafe = async (targetUrl) => {
+  // Direct fetch fallback first
+  try {
+    const directRes = await fetch(targetUrl);
+    if (directRes.ok) return await directRes.json();
+  } catch (e) {}
+
   const proxies = [
     (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://thingproxy.freeboard.io/fetch/${url}`
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
   ];
 
   for (const proxyFn of proxies) {
     try {
       const res = await fetch(proxyFn(targetUrl));
       if (res.ok) return await res.json();
-    } catch (e) {
-      // Continue to next proxy fallback if one fails
-    }
+    } catch (e) {}
   }
 
   return null;
@@ -64,7 +67,6 @@ try {
 
 let selectedGameDayOffset = 0;
 
-/* --- MOBILE DRAWER NAVIGATION SYSTEM --- */
 function toggleMobileSidebar(forceState) {
   const sidebar = document.getElementById('mainSidebar');
   const overlay = document.getElementById('sidebarOverlay');
@@ -83,7 +85,6 @@ function toggleMobileSidebar(forceState) {
   }
 }
 
-/* --- BRAND DIRECTORY TAB DATA & SWITCHER --- */
 const brandTabData = {
   ibet: [
     { name: "IBET ADMIN", url: "https://mga-betbook.center/ibet/bets" },
@@ -133,21 +134,22 @@ function generateScriptedMarket(homeName, awayName, index) {
   return templates[index % templates.length];
 }
 
+/* ALL MAJOR LEAGUES & UEFA COMPETITIONS INCLUDED */
 const TOP_TIER_LEAGUES = [
   { rank: 1, key: "eng.1",             name: "Premier League",         code: "eng.1" },
-  { rank: 2, key: "ger.1",             name: "Bundesliga",             code: "ger.1" },
-  { rank: 3, key: "fra.1",             name: "Ligue 1",                code: "fra.1" },
-  { rank: 4, key: "esp.1",             name: "La Liga",                code: "esp.1" },
-  { rank: 5, key: "ned.1",             name: "Eredivisie",             code: "ned.1" },
+  { rank: 2, key: "esp.1",             name: "La Liga",                code: "esp.1" },
+  { rank: 3, key: "ger.1",             name: "Bundesliga",             code: "ger.1" },
+  { rank: 4, key: "ita.1",             name: "Serie A",                code: "ita.1" },
+  { rank: 5, key: "fra.1",             name: "Ligue 1",                code: "fra.1" },
   { rank: 6, key: "uefa.champions",    name: "UEFA Champions League",  code: "uefa.champions" },
   { rank: 7, key: "uefa.europa",       name: "UEFA Europa League",     code: "uefa.europa" },
-  { rank: 8, key: "uefa.europa.conf",  name: "UEFA Conference League", code: "uefa.europa.conf" },
-  { rank: 9, key: "usa.1",             name: "MLS (Inter Miami)",      code: "usa.1", interMiamiOnly: true }
+  { rank: 8, key: "uefa.europa.conf",  name: "UEFA Conference League", code: "uefa.europa.conf" }
 ];
 
 const SECONDARY_LEAGUES = [
-  { rank: 10, key: "fin.1",            name: "Veikkausliiga",          code: "fin.1" },
-  { rank: 11, key: "nor.1",            name: "Eliteserien",            code: "nor.1" }
+  { rank: 9,  key: "ned.1",            name: "Eredivisie",             code: "ned.1" },
+  { rank: 10, key: "por.1",            name: "Primeira Liga",          code: "por.1" },
+  { rank: 11, key: "usa.1",            name: "MLS",                    code: "usa.1" }
 ];
 
 const PRIORITY_LEAGUES = [...TOP_TIER_LEAGUES, ...SECONDARY_LEAGUES];
@@ -157,14 +159,15 @@ let currentFilterKey = 'eng.1';
 let topPicksPageIndex = 0;
 
 function getLeagueDisplayName(key) {
+  if (key === 'uefa.champions' || key === 'uefa.europa' || key === 'uefa.europa.conf' || key === 'uefa') return "UEFA";
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
   return lg ? lg.name : key.toUpperCase();
 }
 
-function getUpcomingDateQueries(daysAheadCount = 7) {
+function getUpcomingDateQueries(daysAheadCount = 14) {
   const dates = [];
   const now = new Date();
-  for (let i = 0; i < daysAheadCount; i++) {
+  for (let i = -1; i < daysAheadCount; i++) {
     const d = new Date(now);
     d.setDate(d.getDate() + i);
     const year = d.getFullYear();
@@ -187,25 +190,23 @@ function loadCachedTopPicks() {
   }
 }
 
+/* FETCH REAL ESPN/FLASHSCORE FIXTURES IN REAL-TIME */
 async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
 
   try {
-    const now = new Date();
     const seenMatchKeys = new Set();
-    const targetDates = getUpcomingDateQueries(7);
 
     const fetchPromises = [];
     for (const league of PRIORITY_LEAGUES) {
-      for (const dateStr of targetDates) {
-        const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${dateStr}&limit=50`;
-        fetchPromises.push(
-          fetchCorsSafe(url)
-            .then(data => ({ league, data }))
-            .catch(() => null)
-        );
-      }
+      // Direct call without date parameter returns the live/current matchday schedule
+      const defaultUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?limit=100`;
+      fetchPromises.push(
+        fetchCorsSafe(defaultUrl)
+          .then(data => ({ league, data }))
+          .catch(() => null)
+      );
     }
 
     const results = await Promise.all(fetchPromises);
@@ -216,11 +217,6 @@ async function fetchTopPicksAndBoosts() {
       const { league, data } = resItem;
 
       for (const evt of data.events) {
-        const gameState = evt.status?.type?.state;
-        const evtDate = new Date(evt.date);
-
-        if (gameState !== 'pre' || evtDate <= now) continue;
-
         const comp = evt.competitions?.[0];
         if (!comp) continue;
 
@@ -231,11 +227,6 @@ async function fetchTopPicksAndBoosts() {
           const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
           const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
 
-          if (league.interMiamiOnly) {
-            const isInterMiami = homeName.toLowerCase().includes("inter miami") || awayName.toLowerCase().includes("inter miami");
-            if (!isInterMiami) continue;
-          }
-
           const matchKey = evt.id || `${homeName}-${awayName}-${evt.date}`;
           if (seenMatchKeys.has(matchKey)) continue;
           seenMatchKeys.add(matchKey);
@@ -243,7 +234,8 @@ async function fetchTopPicksAndBoosts() {
           const homeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
           const awayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href || "https://a.espncdn.com/i/teamlogos/soccer/500/default.png";
 
-          const kickOffStr = new Intl.DateTimeFormat('en-GB', {
+          const evtDate = new Date(evt.date);
+          const kickOffStr = isNaN(evtDate.getTime()) ? "TODAY" : new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Asia/Manila',
             month: 'short',
             day: 'numeric',
@@ -254,10 +246,14 @@ async function fetchTopPicksAndBoosts() {
 
           const scriptedMarket = generateScriptedMarket(homeName, awayName, apiPicks.length);
 
+          // Standardize UEFA group
+          let mappedLeagueKey = league.key;
+          if (league.key.startsWith('uefa.')) mappedLeagueKey = 'uefa.champions';
+
           apiPicks.push({
-            leagueKey: league.key,
+            leagueKey: mappedLeagueKey,
             leagueRank: league.rank,
-            kickOffTimestamp: evtDate.getTime(),
+            kickOffTimestamp: evtDate.getTime() || Date.now(),
             homeName,
             awayName,
             homeLogo,
@@ -270,11 +266,6 @@ async function fetchTopPicksAndBoosts() {
         }
       }
     }
-
-    apiPicks.sort((a, b) => {
-      if (a.leagueRank !== b.leagueRank) return a.leagueRank - b.leagueRank;
-      return a.kickOffTimestamp - b.kickOffTimestamp;
-    });
 
     if (apiPicks.length > 0) {
       cachedTopPicks = apiPicks;
@@ -313,8 +304,12 @@ function getCardsPerPage() {
 }
 
 function navigateTopPicks(direction) {
-  const now = new Date();
-  const activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime() && pick.leagueKey === currentFilterKey);
+  const activePicks = cachedTopPicks.filter(pick => {
+    if (currentFilterKey === 'uefa.champions' || currentFilterKey === 'uefa') {
+      return pick.leagueKey.startsWith('uefa');
+    }
+    return pick.leagueKey === currentFilterKey;
+  });
   const pageSize = getCardsPerPage();
   const maxPages = Math.ceil(activePicks.length / pageSize);
 
@@ -331,8 +326,12 @@ function renderFilteredTopPicks() {
   const nextBtn = document.getElementById('topPicksNextBtn');
   if (!container) return;
 
-  const now = new Date();
-  const activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime() && pick.leagueKey === currentFilterKey);
+  const activePicks = cachedTopPicks.filter(pick => {
+    if (currentFilterKey === 'uefa.champions' || currentFilterKey === 'uefa') {
+      return pick.leagueKey.startsWith('uefa');
+    }
+    return pick.leagueKey === currentFilterKey;
+  });
 
   if (activePicks.length === 0) {
     const categoryLabel = getLeagueDisplayName(currentFilterKey);
@@ -882,7 +881,7 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
-/* --- TOP GAMES ENGINE --- */
+/* TOP GAMES DAILY FIXTURE FETCHING */
 function getGMT8DateObj(offsetDays = 0) {
   const now = new Date();
   const gmt8String = now.toLocaleString("en-US", { timeZone: "Asia/Manila" });
@@ -969,6 +968,7 @@ async function fetchLeagueList(leagueList, dateQuery) {
   });
 
   const fetchPromises = Array.from(uniqueCodeToLeagues.entries()).map(([code, leagueObj]) => {
+    // Fetch live scoreboard endpoint directly
     const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
     return fetchCorsSafe(url)
       .then(data => data ? { code, leagueObj, data } : null)
@@ -978,7 +978,6 @@ async function fetchLeagueList(leagueList, dateQuery) {
   const results = await Promise.all(fetchPromises);
   let matches = [];
   const seenMatchKeys = new Set();
-  const now = new Date();
 
   for (const item of results) {
     if (!item || !item.data || !item.data.events) continue;
@@ -986,11 +985,6 @@ async function fetchLeagueList(leagueList, dateQuery) {
 
     for (const evt of data.events) {
       if (matches.length >= 15) break;
-
-      const gameState = evt.status?.type?.state;
-      const evtDate = new Date(evt.date);
-
-      if (gameState !== 'pre' || evtDate <= now) continue;
 
       const comp = evt.competitions?.[0];
       if (!comp) continue;
@@ -1002,11 +996,6 @@ async function fetchLeagueList(leagueList, dateQuery) {
         const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
         const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
 
-        if (leagueObj.interMiamiOnly) {
-          const isInterMiami = homeName.toLowerCase().includes("inter miami") || awayName.toLowerCase().includes("inter miami");
-          if (!isInterMiami) continue;
-        }
-
         const matchKey = evt.id || `${homeName}-${awayName}`;
         if (seenMatchKeys.has(matchKey)) continue;
         seenMatchKeys.add(matchKey);
@@ -1017,7 +1006,7 @@ async function fetchLeagueList(leagueList, dateQuery) {
         let kickOffTime = "";
         if (evt.date || comp.date) {
           const dObj = new Date(evt.date || comp.date);
-          kickOffTime = new Intl.DateTimeFormat('en-GB', {
+          kickOffTime = isNaN(dObj.getTime()) ? "" : new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Asia/Manila',
             hour: '2-digit',
             minute: '2-digit',
