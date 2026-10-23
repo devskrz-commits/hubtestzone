@@ -36,7 +36,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=10.0.0">
+  <link rel="stylesheet" href="./styles.css?v=11.0.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,7 +44,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   
   <!-- App JS -->
-  <script src="./app.js?v=10.0.0" defer></script>
+  <script src="./app.js?v=11.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -292,7 +292,6 @@
           </div>
         </div>
 
-        <!-- QUICK LAUNCH DOCK WITH CLAUDE, CHATGPT & GEMINI -->
         <div class="sidebar-quick-dock">
           <div class="quick-dock-title"><i class="bx bx-rocket"></i> QUICK LAUNCH</div>
           <div class="quick-dock-buttons">
@@ -551,7 +550,16 @@
         <div class="glass-card" id="widget-duties-dock">
           <div class="card-header">
             <span style="color: #f97316;"><i class="bx bx-time"></i> LIVE TIME-SLOT DUTIES</span>
-            <div class="actions"><i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-duties-dock')"></i></div>
+            <div class="actions">
+              <select id="traderFilterSelect" class="trader-filter-dropdown" onchange="filterTraderDuty(this.value)">
+                <option value="ALL" selected>ALL TRADERS</option>
+                <option value="ANN">ANN</option>
+                <option value="DAVE">DAVE</option>
+                <option value="KEN">KEN</option>
+                <option value="KRIZTEL">KRIZTEL</option>
+              </select>
+              <i class="bx bx-x" style="cursor:pointer;" onclick="hideWidgetDirect('widget-duties-dock')"></i>
+            </div>
           </div>
           <div id="liveDutyContent" style="display: flex; flex-direction: column; gap: 8px;">
             <div style="text-align:center; padding:15px;"><i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i></div>
