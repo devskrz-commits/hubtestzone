@@ -504,31 +504,33 @@ html.sbhub-authenticated #dashboardApp {
   margin-bottom: 5px;
 }
 
+/* OBLONG MAIN CATEGORY ACCORDION BUTTONS */
 .nav-main-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 12px;
-  min-height: 36px;
-  height: 36px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  min-height: 38px;
+  height: 38px;
+  border-radius: 999px !important; /* OBLONG SHAPE MATCHING IBET TAB */
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
 .nav-main-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 6px 16px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
 }
 
 .nav-main-left { 
@@ -541,8 +543,8 @@ html.sbhub-authenticated #dashboardApp {
 
 .nav-main-btn span {
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -554,7 +556,7 @@ html.sbhub-authenticated #dashboardApp {
   width: 24px;
   height: 24px;
   min-width: 24px;
-  border-radius: 6px;
+  border-radius: 50% !important; /* ROUND BADGE */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -565,9 +567,9 @@ html.sbhub-authenticated #dashboardApp {
 
 .toggle-icon {
   font-size: 14px;
-  opacity: 0.7;
+  opacity: 0.8;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 
 .icon-internal { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
@@ -586,9 +588,9 @@ html.sbhub-authenticated #dashboardApp {
 .sub-menu {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-left: 4px;
-  margin-top: 3px;
+  gap: 4px;
+  padding-left: 6px;
+  margin-top: 4px;
   max-height: 450px;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
@@ -600,16 +602,17 @@ html.sbhub-authenticated #dashboardApp {
   pointer-events: none;
 }
 
+/* OBLONG SUB-FOLDER LINKS */
 .nav-sub-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 10px;
-  min-height: 32px;
-  height: 32px;
+  padding: 6px 14px;
+  min-height: 34px;
+  height: 34px;
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px !important; /* OBLONG SUB-FOLDERS */
   font-size: 10.5px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
@@ -621,17 +624,19 @@ html.sbhub-authenticated #dashboardApp {
 }
 
 .nav-sub-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 0 12px rgba(56, 189, 248, 0.3);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 0 12px rgba(56, 189, 248, 0.35);
+  transform: translateX(3px);
 }
 
+/* OBLONG QUICK LAUNCH DOCK & BUTTONS */
 .sidebar-quick-dock {
   margin-top: 10px;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 14px;
+  border-radius: 20px !important;
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
@@ -649,7 +654,7 @@ html.sbhub-authenticated #dashboardApp {
   align-items: center;
   gap: 6px;
   text-transform: uppercase;
-  padding-left: 2px;
+  padding-left: 4px;
 }
 
 .quick-dock-buttons {
@@ -662,12 +667,12 @@ html.sbhub-authenticated #dashboardApp {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 5px 10px !important;
-  min-height: 34px !important;
-  height: 34px !important;
+  padding: 6px 14px !important;
+  min-height: 36px !important;
+  height: 36px !important;
   background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 999px !important; /* OBLONG QUICK LAUNCH BUTTONS */
   font-size: 11px !important;
   font-weight: 700 !important;
   color: #ffffff !important;
