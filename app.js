@@ -662,19 +662,19 @@ function restoreSavedWidgets() {
     Object.keys(savedWidgets).forEach(widgetId => {
       toggleWidget(widgetId, savedWidgets[widgetId]);
     });
-  } catch(e) {
-    console.warn("Could not load widget preferences:", e);
-  }
-}
-
-/* --- BLUE & ORANGE ABSTRACT FLUID WALLPAPERS DICTIONARY --- */
+/* --- BLUE & ORANGE ABSTRACT FLUID VECTOR SVG WALLPAPERS DICTIONARY --- */
 const ABSTRACT_WALLPAPERS = {
-  'blue-orange-wave': 'https://img.freepik.com/free-vector/abstract-fluid-wave-background-orange-blue_1017-38012.jpg',
-  'blue-orange-halftone': 'https://img.freepik.com/free-vector/halftone-background-with-orange-blue-waves_23-2148906680.jpg',
-  'dark-navy-angles': 'https://img.freepik.com/free-vector/dark-navy-blue-orange-abstract-background_1017-38011.jpg',
-  'blue-orange-fluid': 'https://img.freepik.com/free-vector/blue-orange-fluid-gradient-background_23-2149117382.jpg',
-  'blue-orange-grunge': 'https://img.freepik.com/free-vector/abstract-grunge-blue-orange-background_1017-38010.jpg',
-  'blue-orange-sunset': 'https://img.freepik.com/free-vector/gradient-fluid-abstract-background_23-2149120831.jpg'
+  'blue-orange-wave': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23070d1e"/><stop offset="100%" stop-color="%230a1128"/></linearGradient><linearGradient id="og1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="%23ff8c00"/><stop offset="100%" stop-color="%23ff4500"/></linearGradient><linearGradient id="bl1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%230044ff"/><stop offset="100%" stop-color="%2303102d"/></linearGradient></defs><rect width="1920" height="1080" fill="url(%23bg)"/><path d="M-100,200 C300,500 700,100 1200,400 C1600,600 1800,200 2020,300 L2020,-100 L-100,-100 Z" fill="url(%23bl1)" opacity="0.8"/><path d="M-100,700 C400,400 800,900 1300,600 C1700,350 1850,700 2020,550 L2020,1180 L-100,1180 Z" fill="url(%23og1)"/></svg>`,
+  
+  'blue-orange-halftone': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23060a17"/><stop offset="100%" stop-color="%230f1938"/></linearGradient><pattern id="ht" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="5" fill="%23ff6b00" opacity="0.45"/></pattern></defs><rect width="1920" height="1080" fill="url(%23bg2)"/><path d="M0,0 L1920,0 L1920,1080 Z" fill="url(%23ht)"/><path d="M-100,500 Q500,1000 1200,500 T2020,600 L2020,1100 L-100,1100 Z" fill="%23ff5500" opacity="0.85"/></svg>`,
+  
+  'dark-navy-angles': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><defs><linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23040814"/><stop offset="100%" stop-color="%230b1226"/></linearGradient></defs><rect width="1920" height="1080" fill="url(%23bg3)"/><polygon points="-100,0 900,0 400,1080 -100,1080" fill="%230d1733"/><line x1="900" y1="0" x2="400" y2="1080" stroke="%23ff6b00" stroke-width="8"/><polygon points="2000,1080 1100,1080 1500,0 2000,0" fill="%23121d3f"/><line x1="1100" y1="1080" x2="1500" y2="0" stroke="%23ff4500" stroke-width="12"/></svg>`,
+  
+  'blue-orange-grunge': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23080e21"/><g fill="%23ff6b00" opacity="0.35"><circle cx="200" cy="200" r="120"/><circle cx="280" cy="150" r="60"/><circle cx="150" cy="300" r="40"/><circle cx="1600" cy="800" r="180"/><circle cx="1720" cy="720" r="90"/><circle cx="1450" cy="880" r="70"/></g><path d="M0,800 Q960,300 1920,800 L1920,1080 L0,1080 Z" fill="%23ff5500" opacity="0.85"/></svg>`,
+  
+  'blue-orange-illusion': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23050916"/><path d="M-100,300 C500,700 1400,100 2020,500 L2020,1100 L-100,1100 Z" fill="%230a1638"/><path d="M-100,450 C500,850 1400,250 2020,650" fill="none" stroke="%23ff6b00" stroke-width="18"/><path d="M-100,500 C500,900 1400,300 2020,700" fill="none" stroke="%2300f2fe" stroke-width="8"/></svg>`,
+  
+  'vibrant-orange-fluid': `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><rect width="1920" height="1080" fill="%23091129"/><path d="M-100,-50 Q400,600 1200,200 T2020,300 L2020,-100 L-100,-100 Z" fill="%23ff6b00"/><path d="M-100,1000 Q700,500 1500,900 T2020,800 L2020,1180 L-100,1180 Z" fill="%23e65100"/></svg>`
 };
 
 /* --- THEME SWITCHER ENGINE --- */
@@ -692,7 +692,7 @@ function setGradient(theme) {
 
   if (ABSTRACT_WALLPAPERS[theme]) {
     backgroundStyle = `url("${ABSTRACT_WALLPAPERS[theme]}")`;
-  } else if (typeof theme === 'string' && (theme.startsWith('http') || theme.startsWith('url('))) {
+  } else if (typeof theme === 'string' && (theme.startsWith('http') || theme.startsWith('url(') || theme.startsWith('data:'))) {
     backgroundStyle = theme.startsWith('url(') ? theme : `url("${theme}")`;
   } else {
     switch(theme) {
