@@ -4,9 +4,9 @@
   if (isAuth) {
     document.documentElement.classList.add('sbhub-authenticated');
   }
-  const savedTheme = localStorage.getItem('sbhub_theme') || '3d-chrome-swirl';
-  if (savedTheme === '3d-chrome-swirl') {
-    document.documentElement.style.background = 'url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop") center/cover fixed no-repeat';
+  const savedTheme = localStorage.getItem('sbhub_theme') || 'blue-orange-wave';
+  if (savedTheme === 'blue-orange-wave' || !localStorage.getItem('sbhub_theme')) {
+    document.documentElement.style.background = 'url("https://img.freepik.com/free-vector/abstract-fluid-wave-background-orange-blue_1017-38012.jpg") center/cover fixed no-repeat';
   }
 })();
 
@@ -667,14 +667,14 @@ function restoreSavedWidgets() {
   }
 }
 
-/* --- ABSTRACT WALLPAPERS --- */
+/* --- BLUE & ORANGE ABSTRACT FLUID WALLPAPERS DICTIONARY --- */
 const ABSTRACT_WALLPAPERS = {
-  '3d-chrome-swirl': 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2560&auto=format&fit=crop',
-  'cyan-liquid-glass': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop',
-  'deep-liquid-chrome': 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2560&auto=format&fit=crop',
-  'neon-line-ribbon': 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2560&auto=format&fit=crop',
-  'neural-wireframe': 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2560&auto=format&fit=crop',
-  'dark-energy-vortex': 'https://images.unsplash.com/photo-1604076913837-52ab5629fba9?q=80&w=2560&auto=format&fit=crop'
+  'blue-orange-wave': 'https://img.freepik.com/free-vector/abstract-fluid-wave-background-orange-blue_1017-38012.jpg',
+  'blue-orange-halftone': 'https://img.freepik.com/free-vector/halftone-background-with-orange-blue-waves_23-2148906680.jpg',
+  'dark-navy-angles': 'https://img.freepik.com/free-vector/dark-navy-blue-orange-abstract-background_1017-38011.jpg',
+  'blue-orange-fluid': 'https://img.freepik.com/free-vector/blue-orange-fluid-gradient-background_23-2149117382.jpg',
+  'blue-orange-grunge': 'https://img.freepik.com/free-vector/abstract-grunge-blue-orange-background_1017-38010.jpg',
+  'blue-orange-sunset': 'https://img.freepik.com/free-vector/gradient-fluid-abstract-background_23-2149120831.jpg'
 };
 
 /* --- THEME SWITCHER ENGINE --- */
@@ -715,7 +715,7 @@ function setGradient(theme) {
         backgroundStyle = 'linear-gradient(rgba(245, 245, 244, 0.95), rgba(245, 245, 244, 0.95)), #f5f5f4';
         break;
       default:
-        backgroundStyle = `url("${ABSTRACT_WALLPAPERS['3d-chrome-swirl']}")`;
+        backgroundStyle = `url("${ABSTRACT_WALLPAPERS['blue-orange-wave']}")`;
     }
   }
 
@@ -1031,7 +1031,7 @@ function initDashboardApp() {
   if (savedTheme) {
     setGradient(savedTheme);
   } else {
-    setGradient('3d-chrome-swirl');
+    setGradient('blue-orange-wave');
   }
 
   if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
