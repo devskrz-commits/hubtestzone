@@ -152,6 +152,7 @@ const PRIORITY_LEAGUES = [...TOP_TIER_LEAGUES, ...SECONDARY_LEAGUES];
 
 let cachedTopPicks = [];
 let currentFilterKey = 'eng.1';
+let topPicksPageIndex = 0;
 
 function getLeagueDisplayName(key) {
   const lg = PRIORITY_LEAGUES.find(l => l.key === key);
@@ -287,6 +288,7 @@ async function fetchTopPicksAndBoosts() {
 
 function filterTopPicks(leagueKey, btnElement) {
   currentFilterKey = leagueKey;
+  topPicksPageIndex = 0; // Reset to first page when changing tabs
 
   document.querySelectorAll('.boost-filter-btn').forEach(btn => btn.classList.remove('active'));
   if (btnElement) {
@@ -299,25 +301,63 @@ function filterTopPicks(leagueKey, btnElement) {
   renderFilteredTopPicks();
 }
 
+function getCardsPerPage() {
+  const w = window.innerWidth;
+  if (w <= 600) return 1;
+  if (w <= 900) return 2;
+  if (w <= 1300) return 3;
+  if (w <= 1650) return 4;
+  return 5; // Default 5 items in 1 row for clean widescreen layout
+}
+
+function navigateTopPicks(direction) {
+  const now = new Date();
+  const activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime() && pick.leagueKey === currentFilterKey);
+  const pageSize = getCardsPerPage();
+  const maxPages = Math.ceil(activePicks.length / pageSize);
+
+  topPicksPageIndex += direction;
+  if (topPicksPageIndex < 0) topPicksPageIndex = Math.max(0, maxPages - 1);
+  if (topPicksPageIndex >= maxPages) topPicksPageIndex = 0;
+
+  renderFilteredTopPicks();
+}
+
 function renderFilteredTopPicks() {
   const container = document.getElementById('topPicksContainer');
+  const prevBtn = document.getElementById('topPicksPrevBtn');
+  const nextBtn = document.getElementById('topPicksNextBtn');
   if (!container) return;
 
   const now = new Date();
+  const activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime() && pick.leagueKey === currentFilterKey);
 
-  let activePicks = cachedTopPicks.filter(pick => pick.kickOffTimestamp > now.getTime());
-  let displayPicks = activePicks.filter(pick => pick.leagueKey === currentFilterKey);
-
-  if (displayPicks.length === 0) {
+  if (activePicks.length === 0) {
     const categoryLabel = getLeagueDisplayName(currentFilterKey);
-    container.innerHTML = `<div style="text-align:center; padding:25px; width:100%; font-size:12px; font-weight:600; color:rgba(255,255,255,0.65);">No upcoming scheduled ${categoryLabel} matches available at this time.</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:15px; width:100%; font-size:12px; font-weight:600; color:rgba(255,255,255,0.65);">No upcoming scheduled ${categoryLabel} matches available at this time.</div>`;
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
     return;
   }
 
-  displayPicks = displayPicks.slice(0, 12);
+  const pageSize = getCardsPerPage();
+  const maxPages = Math.ceil(activePicks.length / pageSize);
+  if (topPicksPageIndex >= maxPages) topPicksPageIndex = 0;
+
+  const startIndex = topPicksPageIndex * pageSize;
+  const pageItems = activePicks.slice(startIndex, startIndex + pageSize);
+
+  // Show/Hide pagination buttons dynamically
+  if (activePicks.length > pageSize) {
+    if (prevBtn) prevBtn.style.display = 'flex';
+    if (nextBtn) nextBtn.style.display = 'flex';
+  } else {
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+  }
 
   let cardsHtml = "";
-  displayPicks.forEach(pick => {
+  pageItems.forEach(pick => {
     const isTopPick = pick.badge === "TOP PICK";
     cardsHtml += `
       <div class="boost-card ${isTopPick ? 'highlight-border' : ''}">
@@ -347,6 +387,10 @@ function renderFilteredTopPicks() {
 
   container.innerHTML = cardsHtml;
 }
+
+window.addEventListener('resize', () => {
+  renderFilteredTopPicks();
+});
 
 /* --- ANIMATED PLASMA BACKGROUND CANVAS --- */
 const canvas = document.getElementById('bgCanvas');
@@ -563,7 +607,6 @@ function handleLogin(event) {
   const errorMsg = document.getElementById('loginErrorMsg');
   const card = document.getElementById('loginCard');
 
-  // Flexible login check to guarantee easy login access
   if (
     userVal.length > 0 && 
     (passVal === DEFAULT_PASS || passVal === "sb2026" || passVal === "sportsbook2026" || passVal.length >= 4)
