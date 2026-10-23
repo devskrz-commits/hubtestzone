@@ -20,25 +20,39 @@ const ABSTRACT_WALLPAPERS = {
   'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
 };
 
-/* --- ENHANCED CORS-SAFE FETCH ENGINE --- */
+/* --- ENHANCED & STABLE PROXY FETCHING ENGINE --- */
 const fetchCorsSafe = async (targetUrl) => {
-  // Direct fetch fallback first
+  // Direct fetch try
   try {
-    const directRes = await fetch(targetUrl);
-    if (directRes.ok) return await directRes.json();
+    const res = await fetch(targetUrl);
+    if (res.ok) return await res.json();
   } catch (e) {}
 
-  const proxies = [
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-  ];
+  // 1. Try corsproxy.org
+  try {
+    const p1 = `https://corsproxy.org/?${encodeURIComponent(targetUrl)}`;
+    const res = await fetch(p1);
+    if (res.ok) return await res.json();
+  } catch (e) {}
 
-  for (const proxyFn of proxies) {
-    try {
-      const res = await fetch(proxyFn(targetUrl));
-      if (res.ok) return await res.json();
-    } catch (e) {}
-  }
+  // 2. Try AllOrigins JSON endpoint (bypasses raw header restrictions)
+  try {
+    const p2 = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+    const res = await fetch(p2);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.contents) {
+        return typeof data.contents === 'string' ? JSON.parse(data.contents) : data.contents;
+      }
+    }
+  } catch (e) {}
+
+  // 3. Fallback to CodeTabs CORS proxy
+  try {
+    const p3 = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
+    const res = await fetch(p3);
+    if (res.ok) return await res.json();
+  } catch (e) {}
 
   return null;
 };
@@ -134,7 +148,6 @@ function generateScriptedMarket(homeName, awayName, index) {
   return templates[index % templates.length];
 }
 
-/* ALL MAJOR LEAGUES & UEFA COMPETITIONS INCLUDED */
 const TOP_TIER_LEAGUES = [
   { rank: 1, key: "eng.1",             name: "Premier League",         code: "eng.1" },
   { rank: 2, key: "esp.1",             name: "La Liga",                code: "esp.1" },
@@ -164,20 +177,6 @@ function getLeagueDisplayName(key) {
   return lg ? lg.name : key.toUpperCase();
 }
 
-function getUpcomingDateQueries(daysAheadCount = 14) {
-  const dates = [];
-  const now = new Date();
-  for (let i = -1; i < daysAheadCount; i++) {
-    const d = new Date(now);
-    d.setDate(d.getDate() + i);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    dates.push(`${year}${month}${day}`);
-  }
-  return dates;
-}
-
 function loadCachedTopPicks() {
   try {
     const stored = localStorage.getItem('sbhub_toppicks_cache');
@@ -190,31 +189,21 @@ function loadCachedTopPicks() {
   }
 }
 
-/* FETCH REAL ESPN/FLASHSCORE FIXTURES IN REAL-TIME */
+/* FETCH FIXTURES WITH CHUNKED SEQUENTIAL REQUESTS TO AVOID CORS RATE-LIMITS */
 async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
 
   try {
     const seenMatchKeys = new Set();
-
-    const fetchPromises = [];
-    for (const league of PRIORITY_LEAGUES) {
-      // Direct call without date parameter returns the live/current matchday schedule
-      const defaultUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?limit=100`;
-      fetchPromises.push(
-        fetchCorsSafe(defaultUrl)
-          .then(data => ({ league, data }))
-          .catch(() => null)
-      );
-    }
-
-    const results = await Promise.all(fetchPromises);
     let apiPicks = [];
 
-    for (const resItem of results) {
-      if (!resItem || !resItem.data || !resItem.data.events) continue;
-      const { league, data } = resItem;
+    // Sequentially process leagues in small groups to prevent API/Proxy rate limiting
+    for (const league of PRIORITY_LEAGUES) {
+      const defaultUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?limit=100`;
+      const data = await fetchCorsSafe(defaultUrl);
+
+      if (!data || !data.events) continue;
 
       for (const evt of data.events) {
         const comp = evt.competitions?.[0];
@@ -246,7 +235,6 @@ async function fetchTopPicksAndBoosts() {
 
           const scriptedMarket = generateScriptedMarket(homeName, awayName, apiPicks.length);
 
-          // Standardize UEFA group
           let mappedLeagueKey = league.key;
           if (league.key.startsWith('uefa.')) mappedLeagueKey = 'uefa.champions';
 
@@ -967,21 +955,14 @@ async function fetchLeagueList(leagueList, dateQuery) {
     }
   });
 
-  const fetchPromises = Array.from(uniqueCodeToLeagues.entries()).map(([code, leagueObj]) => {
-    // Fetch live scoreboard endpoint directly
-    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
-    return fetchCorsSafe(url)
-      .then(data => data ? { code, leagueObj, data } : null)
-      .catch(() => null);
-  });
-
-  const results = await Promise.all(fetchPromises);
   let matches = [];
   const seenMatchKeys = new Set();
 
-  for (const item of results) {
-    if (!item || !item.data || !item.data.events) continue;
-    const { leagueObj, data } = item;
+  for (const [code, leagueObj] of uniqueCodeToLeagues.entries()) {
+    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
+    const data = await fetchCorsSafe(url);
+
+    if (!data || !data.events) continue;
 
     for (const evt of data.events) {
       if (matches.length >= 15) break;
