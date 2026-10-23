@@ -2,7 +2,7 @@
   --glass-opacity-val: 0.45;
   --glass-bg: rgba(255, 255, 255, 0.12);
   --glass-card-bg: rgba(15, 23, 42, var(--glass-opacity-val));
-  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, calc(var(--glass-opacity-val) * 0.7));
   --glass-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.2);
   --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   --card-blur: blur(35px) saturate(160%);
@@ -1502,9 +1502,10 @@ html.sbhub-authenticated #dashboardApp {
 .carousel-nav-btn.prev-btn { left: -12px; }
 .carousel-nav-btn.next-btn { right: -12px; }
 
+/* STRICT MAXIMUM 6 COLUMNS PER ROW LAYOUT */
 .top-picks-single-row {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
   gap: 10px !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1513,6 +1514,7 @@ html.sbhub-authenticated #dashboardApp {
 
 .boost-card {
   width: 100% !important;
+  max-width: 100% !important;
   min-width: 0 !important;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -1845,6 +1847,18 @@ body.light-theme .handover-manage-text { color: #1e293b !important; }
 
 .mobile-nav-header { display: none; }
 .sidebar-overlay { display: none; }
+
+@media (max-width: 1200px) {
+  .top-picks-single-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .top-picks-single-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
 
 @media (max-width: 768px) {
   body { padding: 10px; gap: 0; overflow-x: hidden; }
