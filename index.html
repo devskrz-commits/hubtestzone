@@ -14,7 +14,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=9.2.0">
+  <link rel="stylesheet" href="./styles.css?v=9.3.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,18 +22,15 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   
   <!-- App JS -->
-  <script src="./app.js?v=9.6.0" defer></script>
+  <script src="./app.js?v=9.7.0" defer></script>
 </head>
 <body id="pageBody">
 
-  <!-- ANIMATED PLASMA BACKGROUND CANVAS -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- FRONT SECURITY LOGIN OVERLAY MODAL -->
   <div id="authOverlay">
     <div class="login-container">
 
-      <!-- SITTING ROBOT STAGE -->
       <div class="sitting-robot-stage" id="sittingRobotStage">
         <div class="robot-body-wrapper" id="robotBodyWrapper">
           <div class="robot-antenna"></div>
@@ -51,7 +48,6 @@
         </div>
       </div>
 
-      <!-- SOLID LOGIN CARD -->
       <div class="login-card" id="loginCard">
         <div class="login-title">Security Gateway</div>
         <div class="login-subtitle">SPORTSBOOK HUB OPERATIONAL PORTAL</div>
@@ -91,10 +87,8 @@
     </div>
   </div>
 
-  <!-- DASHBOARD APP CONTAINER -->
   <div id="dashboardApp">
 
-    <!-- MOBILE NAVIGATION HEADER -->
     <div class="mobile-nav-header">
       <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation Menu">
         <i class="bx bx-menu"></i>
@@ -107,7 +101,6 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar(false)"></div>
 
-    <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar" id="mainSidebar">
       <div class="sidebar-menu-scroll">
         <div class="sidebar-header">
@@ -122,7 +115,6 @@
           <input type="text" placeholder="Search categories &amp; links...">
         </div>
 
-        <!-- INTERNAL -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-internal', this)">
             <div class="nav-main-left">
@@ -139,7 +131,6 @@
           </div>
         </div>
 
-        <!-- DAILY TASK -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-dailytask', this)">
             <div class="nav-main-left">
@@ -159,7 +150,6 @@
           </div>
         </div>
 
-        <!-- DAILY MONITORING -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-dailymonitoring', this)">
             <div class="nav-main-left">
@@ -178,7 +168,6 @@
           </div>
         </div>
 
-        <!-- BACK OFFICE -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-backoffice', this)">
             <div class="nav-main-left">
@@ -194,7 +183,6 @@
           </div>
         </div>
 
-        <!-- MULTI MONITOR -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-multimonitor', this)">
             <div class="nav-main-left">
@@ -211,7 +199,6 @@
           </div>
         </div>
 
-        <!-- BETRADAR -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-betradar', this)">
             <div class="nav-main-left">
@@ -226,7 +213,6 @@
           </div>
         </div>
 
-        <!-- OWN BRANDS -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-ownbrands', this)">
             <div class="nav-main-left">
@@ -246,7 +232,6 @@
           </div>
         </div>
 
-        <!-- PRICE REFERENCES -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-priceref', this)">
             <div class="nav-main-left">
@@ -271,7 +256,6 @@
           </div>
         </div>
 
-        <!-- PROCEDURES -->
         <div class="nav-group">
           <div class="nav-main-btn" onclick="toggleMenu('sub-procedures', this)">
             <div class="nav-main-left">
@@ -286,7 +270,6 @@
           </div>
         </div>
 
-        <!-- QUICK LAUNCH DOCK -->
         <div class="sidebar-quick-dock">
           <div class="quick-dock-title"><i class="bx bx-rocket"></i> QUICK LAUNCH</div>
           <div class="quick-dock-buttons">
@@ -309,7 +292,6 @@
 
       </div>
 
-      <!-- DOCKED ADMIN PROFILE PILL FOOTER -->
       <div class="sidebar-admin-footer">
         <div class="admin-top-pill">
           <div class="avatar-circle">AD</div>
@@ -321,10 +303,8 @@
       </div>
     </aside>
 
-    <!-- DASHBOARD WORKSPACE -->
     <main class="main-workspace">
 
-      <!-- TOP WIDE BANNER CARD -->
       <div class="glass-card top-banner-card">
         
         <div class="banner-top-row">
@@ -426,11 +406,21 @@
               </div>
             </div>
 
+            <!-- THEME CUSTOMIZER WITH GLASS OPACITY SLIDER -->
             <div class="dropdown-container">
               <button class="dropdown-btn" type="button" onclick="toggleDropdown('themeMenu')">
               <i class="bx bx-palette"></i> Theme <i class="bx bx-chevron-down"></i>
               </button>
               <div class="dropdown-menu" id="themeMenu">
+                <div class="dropdown-section-title">GLASS OPACITY CONTROL</div>
+                <div style="padding: 6px 8px; display: flex; flex-direction: column; gap: 4px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #ffffff;">
+                    <span>Glass Opacity</span>
+                    <span id="opacityValLabel">45%</span>
+                  </div>
+                  <input type="range" id="glassOpacitySlider" min="0.1" max="0.9" step="0.05" value="0.45" oninput="updateGlassOpacity(this.value)" style="width: 100%; cursor: pointer;">
+                </div>
+
                 <div class="dropdown-section-title">PLAIN COLORS</div>
                 <button class="menu-option" type="button" onclick="setGradient('plain-slate')"><span>Dark Slate</span><span class="color-dot" style="background: #0f172a;"></span></button>
                 <button class="menu-option" type="button" onclick="setGradient('plain-navy')"><span>Deep Navy</span><span class="color-dot" style="background: #0b1329;"></span></button>
@@ -461,7 +451,6 @@
 
       </div>
 
-      <!-- WIDGET: TOP PICKS / HOT BOOSTS (SINGLE ROW WITH PAGINATION ARROWS) -->
       <div class="glass-card compact-picks-widget" id="widget-top-picks">
         <div class="card-header">
           <span style="color: #ff4d4d; display: flex; align-items: center; gap: 8px;">
@@ -481,7 +470,6 @@
           <button class="boost-filter-btn" id="btn-boost-uefa.champions" onclick="filterTopPicks('uefa.champions', this)">UEFA</button>
         </div>
 
-        <!-- CAROUSEL WRAPPER WITH PAGINATION NAV ARROWS -->
         <div class="top-picks-carousel-wrapper">
           <button type="button" class="carousel-nav-btn prev-btn" id="topPicksPrevBtn" onclick="navigateTopPicks(-1)" title="Previous Page">
             <i class="bx bx-chevron-left"></i>
@@ -499,10 +487,8 @@
         </div>
       </div>
 
-      <!-- 3-COLUMN DASHBOARD GRID -->
       <div class="dashboard-grid">
 
-        <!-- COLUMN 1: BRAND DIRECTORY & DAILY TASKS -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
           
           <div class="glass-card" id="widget-brand-dock">
@@ -533,7 +519,6 @@
           </div>
         </div>
 
-        <!-- COLUMN 2: LIVE TIME-SLOT DUTIES -->
         <div class="glass-card" id="widget-duties-dock">
           <div class="card-header">
             <span style="color: #f97316;"><i class="bx bx-time"></i> LIVE TIME-SLOT DUTIES</span>
@@ -544,7 +529,6 @@
           </div>
         </div>
 
-        <!-- COLUMN 3: TOP GAMES -->
         <div class="glass-card" id="widget-games-dock">
           <div class="card-header">
             <span style="color: #38bdf8;"><i class="bx bx-play-circle"></i> TOP GAMES (DAILY MATCHDAY)</span>
@@ -565,7 +549,6 @@
     </main>
   </div>
 
-  <!-- INTERACTIVE URGENT HANDOVER MODAL -->
   <div id="handoverModal" class="handover-modal-overlay">
     <div class="handover-modal-card">
       <div class="handover-modal-header">
