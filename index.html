@@ -14,7 +14,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=9.1.0">
+  <link rel="stylesheet" href="./styles.css?v=9.2.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,7 +22,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   
   <!-- App JS -->
-  <script src="./app.js?v=9.5.0" defer></script>
+  <script src="./app.js?v=9.6.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -57,13 +57,11 @@
         <div class="login-subtitle">SPORTSBOOK HUB OPERATIONAL PORTAL</div>
         
         <form class="login-input-group" onsubmit="handleLogin(event)">
-          <!-- USERNAME INPUT FIELD -->
           <div class="field-wrapper">
             <label class="login-label" for="usernameInput">Username or email</label>
             <input type="text" id="usernameInput" class="login-input" value="sportsbook2026" required autocomplete="username">
           </div>
 
-          <!-- PASSWORD INPUT FIELD -->
           <div class="field-wrapper">
             <div class="field-label-row">
               <label class="login-label" for="passwordInput">Security Key</label>
@@ -77,7 +75,6 @@
             </div>
           </div>
 
-          <!-- REMEMBER ME CHECKBOX -->
           <div class="remember-row">
             <input type="checkbox" id="rememberMe" checked>
             <label for="rememberMe">Maintain active session</label>
@@ -85,7 +82,6 @@
 
           <div class="login-error" id="loginErrorMsg"></div>
 
-          <!-- SUBMIT BUTTON -->
           <button type="submit" class="login-btn">
             <i class="bx bx-key"></i> ACCESS DASHBOARD
           </button>
@@ -109,7 +105,6 @@
       </button>
     </div>
 
-    <!-- SIDEBAR BACKDROP OVERLAY FOR MOBILE -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar(false)"></div>
 
     <!-- SIDEBAR NAVIGATION -->
@@ -333,22 +328,17 @@
       <div class="glass-card top-banner-card">
         
         <div class="banner-top-row">
-          
           <div class="banner-top-left-group">
-            <!-- STATIC INLINE RED GLOWING JIRA PENDING TICKETS BANNER -->
             <div id="jiraAlertBanner" class="jira-static-alert-banner">
               <div class="jira-alert-badge">
                 <i class="bx bx-error-circle"></i> PENDING JIRA (&gt;24H)
               </div>
-              <div class="jira-ticket-pills-container" id="jiraPillsContainer">
-                <!-- Rendered Dynamically -->
-              </div>
+              <div class="jira-ticket-pills-container" id="jiraPillsContainer"></div>
               <a href="jira.html" target="_blank" rel="noreferrer" class="jira-open-btn">
                 View Tracker <i class="bx bx-right-arrow-alt"></i>
               </a>
             </div>
 
-            <!-- URGENT HANDOVER YELLOW GLOWING BANNER -->
             <div id="urgentHandoverBanner" class="urgent-handover-banner active">
               <div class="handover-header-row">
                 <div class="handover-alert-badge" id="handoverAlertBadge">
@@ -358,13 +348,10 @@
                   <i class="bx bx-plus-circle"></i> Manage Notes
                 </button>
               </div>
-              <div class="handover-pills-container" id="handoverPillsContainer">
-                <!-- Rendered Dynamically -->
-              </div>
+              <div class="handover-pills-container" id="handoverPillsContainer"></div>
             </div>
           </div>
 
-          <!-- PHILIPPINES WEATHER WIDGET -->
           <div class="weather-banner-widget">
             <div class="weather-banner-header">
               <span class="weather-banner-title">PHILIPPINES WEATHER</span>
@@ -388,10 +375,8 @@
               </div>
             </div>
           </div>
-
         </div>
 
-        <!-- BOTTOM ROW: WORLD CLOCKS & BANNER CONTROLS -->
         <div class="banner-bottom-row">
           <div class="world-clocks">
             <div class="clock-badge">
@@ -413,7 +398,6 @@
               <i class="bx bx-task"></i> Jira Tracker
             </a>
 
-            <!-- MANAGE WIDGETS DROPDOWN -->
             <div class="dropdown-container">
               <button class="dropdown-btn" type="button" onclick="toggleDropdown('widgetMenu')">
                 <i class="bx bx-slider-alt"></i> Widgets <i class="bx bx-chevron-down"></i>
@@ -442,7 +426,6 @@
               </div>
             </div>
 
-            <!-- THEME CUSTOMIZER DROPDOWN -->
             <div class="dropdown-container">
               <button class="dropdown-btn" type="button" onclick="toggleDropdown('themeMenu')">
               <i class="bx bx-palette"></i> Theme <i class="bx bx-chevron-down"></i>
@@ -466,7 +449,6 @@
               </div>
             </div>
 
-            <!-- ACTIVE TRADER COUNTER -->
             <div class="metric-pill">
               <i class="bx bx-user-check"></i>
               <div>
@@ -479,8 +461,8 @@
 
       </div>
 
-      <!-- WIDGET: TOP PICKS / HOT BOOSTS -->
-      <div class="glass-card" id="widget-top-picks">
+      <!-- WIDGET: TOP PICKS / HOT BOOSTS (SINGLE ROW WITH PAGINATION ARROWS) -->
+      <div class="glass-card compact-picks-widget" id="widget-top-picks">
         <div class="card-header">
           <span style="color: #ff4d4d; display: flex; align-items: center; gap: 8px;">
             <i class="bx bxs-flame" style="font-size: 18px;"></i> TOP PICKS / HOT BOOSTS
@@ -499,10 +481,21 @@
           <button class="boost-filter-btn" id="btn-boost-uefa.champions" onclick="filterTopPicks('uefa.champions', this)">UEFA</button>
         </div>
 
-        <div id="topPicksContainer" class="top-picks-grid-row">
-          <div style="text-align:center; padding:15px; width:100%;">
-            <i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i>
+        <!-- CAROUSEL WRAPPER WITH PAGINATION NAV ARROWS -->
+        <div class="top-picks-carousel-wrapper">
+          <button type="button" class="carousel-nav-btn prev-btn" id="topPicksPrevBtn" onclick="navigateTopPicks(-1)" title="Previous Page">
+            <i class="bx bx-chevron-left"></i>
+          </button>
+          
+          <div id="topPicksContainer" class="top-picks-single-row">
+            <div style="text-align:center; padding:15px; width:100%;">
+              <i class="bx bx-loader-alt bx-spin" style="font-size:20px; color:#38bdf8;"></i>
+            </div>
           </div>
+
+          <button type="button" class="carousel-nav-btn next-btn" id="topPicksNextBtn" onclick="navigateTopPicks(1)" title="Next Page">
+            <i class="bx bx-chevron-right"></i>
+          </button>
         </div>
       </div>
 
@@ -512,7 +505,6 @@
         <!-- COLUMN 1: BRAND DIRECTORY & DAILY TASKS -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
           
-          <!-- WIDGET: BRAND DIRECTORY -->
           <div class="glass-card" id="widget-brand-dock">
             <div class="card-header">
               <span style="color: #f59e0b;"><i class="bx bx-pin"></i> BRAND DIRECTORY DOCK</span>
@@ -528,7 +520,6 @@
             <div id="brandLinksContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
           </div>
 
-          <!-- WIDGET: DAILY TASK DOCK -->
           <div class="glass-card" id="widget-task-dock">
             <div class="card-header">
               <span style="color: #ef4444;"><i class="bx bx-list-ul"></i> DAILY TASK DOCK</span>
@@ -596,16 +587,12 @@
       </form>
 
       <div class="handover-modal-subtitle">ACTIVE HANDOVERS (Click <i class="bx bx-check"></i> when completed to delete)</div>
-      <div class="handover-items-list" id="handoverModalList">
-        <!-- Rendered Dynamically -->
-      </div>
+      <div class="handover-items-list" id="handoverModalList"></div>
     </div>
   </div>
 
-  <!-- REAL-TIME JIRA & URGENT HANDOVER SYNC SCRIPT -->
   <script>
     (function() {
-      /* --- JIRA SLA REAL-TIME ALERT --- */
       var JIRA_KEY = 'jira_tracked_tickets';
       var jiraChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('jira_sync_channel') : null;
 
@@ -680,7 +667,6 @@
       setInterval(checkJiraSLA, 10000);
     })();
 
-    /* --- URGENT HANDOVER MANAGER SYSTEM --- */
     var HANDOVER_STORAGE_KEY = 'sbhub_urgent_handovers';
     var handoverChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('handover_sync_channel') : null;
 
