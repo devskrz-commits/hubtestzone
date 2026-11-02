@@ -261,7 +261,9 @@ function loadCachedTopPicks() {
     if (stored) {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        cachedTopPicks = parsed;
+        // Exclude any cached games that have already started since being cached
+        const now = Date.now();
+        cachedTopPicks = parsed.filter(item => (item.kickOffTimestamp || 0) > now);
         renderFilteredTopPicks();
       }
     }
@@ -300,6 +302,8 @@ async function fetchTopPicksAndBoosts() {
   const container = document.getElementById('topPicksContainer');
   if (!container) return;
 
+  const now = Date.now();
+
   try {
     const leaguePromises = PRIORITY_LEAGUES.map(async (league) => {
       try {
@@ -310,6 +314,17 @@ async function fetchTopPicksAndBoosts() {
         for (const evt of data.events) {
           const comp = evt.competitions?.[0];
           if (!comp) continue;
+
+          // STRICT FILTER: Match must be scheduled/pre-game and not finished or live
+          const statusState = evt.status?.type?.state || comp.status?.type?.state;
+          const isCompleted = evt.status?.type?.completed || comp.status?.type?.completed;
+          if (isCompleted === true || statusState === 'post' || statusState === 'in') continue;
+
+          const evtDate = new Date(evt.date || comp.date);
+          const kickOffTimestamp = evtDate.getTime();
+
+          // Reject invalid timestamps or matches whose kickoff has already passed
+          if (isNaN(kickOffTimestamp) || kickOffTimestamp <= now) continue;
 
           const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
           const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
@@ -324,8 +339,7 @@ async function fetchTopPicksAndBoosts() {
             const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
             const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
 
-            const evtDate = new Date(evt.date || comp.date);
-            const kickOffStr = isNaN(evtDate.getTime()) ? "UPCOMING" : new Intl.DateTimeFormat('en-GB', {
+            const kickOffStr = new Intl.DateTimeFormat('en-GB', {
               timeZone: 'Asia/Manila',
               month: 'short',
               day: 'numeric',
@@ -341,7 +355,7 @@ async function fetchTopPicksAndBoosts() {
               id: evt.id || `${homeName}-${awayName}`,
               leagueKey: mappedLeagueKey,
               leagueRank: league.rank,
-              kickOffTimestamp: isNaN(evtDate.getTime()) ? Date.now() : evtDate.getTime(),
+              kickOffTimestamp,
               homeName,
               awayName,
               homeLogo,
@@ -373,10 +387,10 @@ async function fetchTopPicksAndBoosts() {
       }
     });
 
-    // Strictly sort all live fixtures chronologically by kickoff timestamp
-    apiPicks.sort((a, b) => (a.kickOffTimestamp || 0) - (b.kickOffTimestamp || 0));
+    // Chronological order: earliest upcoming kickoff first
+    apiPicks.sort((a, b) => a.kickOffTimestamp - b.kickOffTimestamp);
 
-    // Dynamic market script and badge assignment
+    // Assign procedural boost markets and badge dynamically
     apiPicks.forEach((pick, index) => {
       pick.market = generateScriptedMarket(pick.homeName, pick.awayName, index);
       pick.badge = (index % 2 === 0) ? "TOP PICK" : "HOT";
@@ -424,7 +438,7 @@ function navigateTopPicks(direction) {
 
   if (activePicks.length === 0) return;
 
-  activePicks.sort((a, b) => (a.kickOffTimestamp || 0) - (b.kickOffTimestamp || 0));
+  activePicks.sort((a, b) => a.kickOffTimestamp - b.kickOffTimestamp);
 
   const pageSize = getCardsPerPage();
   const maxPages = Math.ceil(activePicks.length / pageSize);
@@ -442,7 +456,10 @@ function renderFilteredTopPicks() {
   const nextBtn = document.getElementById('topPicksNextBtn');
   if (!container) return;
 
+  // Filter out any game that has passed since cached
+  const now = Date.now();
   let activePicks = cachedTopPicks.filter(pick => {
+    if (pick.kickOffTimestamp <= now) return false;
     if (currentFilterKey === 'uefa.champions' || currentFilterKey === 'uefa') {
       return pick.leagueKey.startsWith('uefa');
     }
@@ -455,13 +472,13 @@ function renderFilteredTopPicks() {
     container.innerHTML = `
       <div style="text-align:center; padding:20px; width:100%; font-size:11px; color:rgba(255,255,255,0.65);">
         <i class='bx bx-calendar-x' style='font-size:20px; display:block; margin-bottom:6px; color:#38bdf8;'></i>
-        No upcoming live fixtures found for ${getLeagueDisplayName(currentFilterKey)}.
+        No upcoming fixtures currently scheduled for ${getLeagueDisplayName(currentFilterKey)}.
       </div>
     `;
     return;
   }
 
-  activePicks.sort((a, b) => (a.kickOffTimestamp || 0) - (b.kickOffTimestamp || 0));
+  activePicks.sort((a, b) => a.kickOffTimestamp - b.kickOffTimestamp);
 
   const pageSize = getCardsPerPage();
   const maxPages = Math.ceil(activePicks.length / pageSize);
@@ -1039,7 +1056,7 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
-/* TOP GAMES DAILY FIXTURE FETCHING (LIVE ESPN API ONLY) */
+/* --- TOP GAMES DAILY FIXTURE FETCHING (UPCOMING ONLY) --- */
 function getGMT8DateObj(offsetDays = 0) {
   const now = new Date();
   const gmt8String = now.toLocaleString("en-US", { timeZone: "Asia/Manila" });
@@ -1088,10 +1105,12 @@ async function fetchLiveGames() {
     }
 
     if (!matches || matches.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No upcoming fixtures scheduled for ${dateLabelStr} (GMT+8).</div>`;
       return;
     }
 
+    // Sort ascending by kickoff time
+    matches.sort((a, b) => a.kickOffTimestamp - b.kickOffTimestamp);
     matches = matches.slice(0, 10);
 
     let gamesHtml = "";
@@ -1112,7 +1131,7 @@ async function fetchLiveGames() {
     container.innerHTML = gamesHtml;
 
   } catch (e) {
-    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No upcoming fixtures scheduled for ${dateLabelStr} (GMT+8).</div>`;
   }
 }
 
@@ -1126,6 +1145,7 @@ async function fetchLeagueList(leagueList, dateQuery) {
 
   let matches = [];
   const seenMatchKeys = new Set();
+  const now = Date.now();
 
   for (const [code, leagueObj] of uniqueCodeToLeagues.entries()) {
     try {
@@ -1139,6 +1159,17 @@ async function fetchLeagueList(leagueList, dateQuery) {
 
         const comp = evt.competitions?.[0];
         if (!comp) continue;
+
+        // FILTER: Discard completed, in-progress, or post-match events
+        const statusState = evt.status?.type?.state || comp.status?.type?.state;
+        const isCompleted = evt.status?.type?.completed || comp.status?.type?.completed;
+        if (isCompleted === true || statusState === 'post' || statusState === 'in') continue;
+
+        const dObj = new Date(evt.date || comp.date);
+        const matchTimestamp = dObj.getTime();
+
+        // If checking 'TODAY', ensure kickoff has not already passed
+        if (selectedGameDayOffset === 0 && !isNaN(matchTimestamp) && matchTimestamp <= now) continue;
 
         const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
         const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
@@ -1157,16 +1188,12 @@ async function fetchLeagueList(leagueList, dateQuery) {
           const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
           const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
 
-          let kickOffTime = "";
-          if (evt.date || comp.date) {
-            const dObj = new Date(evt.date || comp.date);
-            kickOffTime = isNaN(dObj.getTime()) ? "" : new Intl.DateTimeFormat('en-GB', {
-              timeZone: 'Asia/Manila',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false
-            }).format(dObj);
-          }
+          const kickOffTime = isNaN(matchTimestamp) ? "" : new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Manila',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }).format(dObj);
 
           const displayedLeagueName = data.leagues?.[0]?.name || leagueObj.name;
 
@@ -1176,6 +1203,7 @@ async function fetchLeagueList(leagueList, dateQuery) {
             homeLogo,
             awayLogo,
             leagueName: displayedLeagueName,
+            kickOffTimestamp: isNaN(matchTimestamp) ? Date.now() : matchTimestamp,
             kickOffTime
           });
         }
