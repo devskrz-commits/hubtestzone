@@ -261,7 +261,6 @@ function loadCachedTopPicks() {
     if (stored) {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Exclude any cached games that have already started since being cached
         const now = Date.now();
         cachedTopPicks = parsed.filter(item => (item.kickOffTimestamp || 0) > now);
         renderFilteredTopPicks();
@@ -270,32 +269,49 @@ function loadCachedTopPicks() {
   } catch (e) {}
 }
 
-function getUpcomingDateRange(daysAhead = 14) {
-  const now = new Date();
-  const format = (d) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}${m}${day}`;
-  };
-  const start = format(now);
-  const future = new Date(now);
-  future.setDate(future.getDate() + daysAhead);
-  const end = format(future);
-  return `${start}-${end}`;
-}
-
+/* ROBUST ESPN SCOREBOARD FETCHER (CURRENT MONTH + ACTIVE ROUND + NEXT MONTH LOOKAHEAD) */
 async function fetchLeagueScoreboard(league) {
-  const dateRange = getUpcomingDateRange(14);
-  const primaryUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${dateRange}&limit=50`;
-  let data = await fetchCorsSafe(primaryUrl);
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const currentMonthStr = `${y}${m}`;
 
-  if (!data || !data.events || data.events.length === 0) {
-    const roundUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?limit=50`;
-    data = await fetchCorsSafe(roundUrl);
+  // 1. Current full month (ESPN supports dates=YYYYMM up to 100 events)
+  const monthUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${currentMonthStr}&limit=100`;
+  // 2. Active gameweek round (catches cross-month active rounds)
+  const roundUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?limit=50`;
+
+  const fetchCalls = [fetchCorsSafe(monthUrl), fetchCorsSafe(roundUrl)];
+
+  // 3. If past the 15th, look ahead into the next calendar month so upcoming matches never run out
+  if (now.getDate() >= 15) {
+    const nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const nextY = nextDate.getFullYear();
+    const nextM = String(nextDate.getMonth() + 1).padStart(2, '0');
+    const nextMonthStr = `${nextY}${nextM}`;
+    fetchCalls.push(fetchCorsSafe(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.code}/scoreboard?dates=${nextMonthStr}&limit=100`));
   }
 
-  return data;
+  const results = await Promise.allSettled(fetchCalls);
+  const allEvents = [];
+  const seenIds = new Set();
+  let leagueMeta = null;
+
+  results.forEach(res => {
+    if (res.status === 'fulfilled' && res.value) {
+      if (!leagueMeta && res.value.leagues) leagueMeta = res.value.leagues;
+      if (Array.isArray(res.value.events)) {
+        res.value.events.forEach(evt => {
+          if (evt && evt.id && !seenIds.has(evt.id)) {
+            seenIds.add(evt.id);
+            allEvents.push(evt);
+          }
+        });
+      }
+    }
+  });
+
+  return { events: allEvents, leagues: leagueMeta };
 }
 
 async function fetchTopPicksAndBoosts() {
@@ -315,7 +331,7 @@ async function fetchTopPicksAndBoosts() {
           const comp = evt.competitions?.[0];
           if (!comp) continue;
 
-          // STRICT FILTER: Match must be scheduled/pre-game and not finished or live
+          // STRICT UPCOMING ONLY: Discard completed, in-progress, or finished events
           const statusState = evt.status?.type?.state || comp.status?.type?.state;
           const isCompleted = evt.status?.type?.completed || comp.status?.type?.completed;
           if (isCompleted === true || statusState === 'post' || statusState === 'in') continue;
@@ -323,11 +339,11 @@ async function fetchTopPicksAndBoosts() {
           const evtDate = new Date(evt.date || comp.date);
           const kickOffTimestamp = evtDate.getTime();
 
-          // Reject invalid timestamps or matches whose kickoff has already passed
+          // Reject matches whose kickoff has already passed
           if (isNaN(kickOffTimestamp) || kickOffTimestamp <= now) continue;
 
-          const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
-          const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
+          const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
+          const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
 
           if (homeTeam && awayTeam) {
             const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
@@ -429,7 +445,9 @@ function getCardsPerPage() {
 }
 
 function navigateTopPicks(direction) {
+  const now = Date.now();
   let activePicks = cachedTopPicks.filter(pick => {
+    if (pick.kickOffTimestamp <= now) return false;
     if (currentFilterKey === 'uefa.champions' || currentFilterKey === 'uefa') {
       return pick.leagueKey.startsWith('uefa');
     }
@@ -456,7 +474,6 @@ function renderFilteredTopPicks() {
   const nextBtn = document.getElementById('topPicksNextBtn');
   if (!container) return;
 
-  // Filter out any game that has passed since cached
   const now = Date.now();
   let activePicks = cachedTopPicks.filter(pick => {
     if (pick.kickOffTimestamp <= now) return false;
@@ -1056,7 +1073,7 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
-/* --- TOP GAMES DAILY FIXTURE FETCHING (UPCOMING ONLY) --- */
+/* --- TOP GAMES DAILY FIXTURE FETCHING (FLASHSCORE GMT+8 ACCURATE) --- */
 function getGMT8DateObj(offsetDays = 0) {
   const now = new Date();
   const gmt8String = now.toLocaleString("en-US", { timeZone: "Asia/Manila" });
@@ -1088,10 +1105,10 @@ async function fetchLiveGames() {
   if (labelEl) labelEl.textContent = `${dayTag} (${dateLabelStr})`;
 
   try {
-    let matches = await fetchLeagueList(TOP_TIER_LEAGUES, targetDateQuery);
+    let matches = await fetchLeagueList(TOP_TIER_LEAGUES, targetDateQuery, targetDateObj);
 
     if (!matches || matches.length < 3) {
-      const secondaryMatches = await fetchLeagueList(SECONDARY_LEAGUES, targetDateQuery);
+      const secondaryMatches = await fetchLeagueList(SECONDARY_LEAGUES, targetDateQuery, targetDateObj);
       if (secondaryMatches && secondaryMatches.length > 0) {
         const seenMatchKeys = new Set(matches ? matches.map(m => `${m.homeName}-${m.awayName}`) : []);
         for (const sm of secondaryMatches) {
@@ -1105,7 +1122,7 @@ async function fetchLiveGames() {
     }
 
     if (!matches || matches.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No upcoming fixtures scheduled for ${dateLabelStr} (GMT+8).</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
       return;
     }
 
@@ -1131,11 +1148,11 @@ async function fetchLiveGames() {
     container.innerHTML = gamesHtml;
 
   } catch (e) {
-    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No upcoming fixtures scheduled for ${dateLabelStr} (GMT+8).</div>`;
+    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
   }
 }
 
-async function fetchLeagueList(leagueList, dateQuery) {
+async function fetchLeagueList(leagueList, dateQuery, targetDateObj) {
   const uniqueCodeToLeagues = new Map();
   leagueList.forEach(league => {
     if (!uniqueCodeToLeagues.has(league.code)) {
@@ -1147,65 +1164,85 @@ async function fetchLeagueList(leagueList, dateQuery) {
   const seenMatchKeys = new Set();
   const now = Date.now();
 
+  const prevDateQuery = getFormattedDateQuery(selectedGameDayOffset - 1);
+  const targetIsoDay = `${targetDateObj.getFullYear()}-${String(targetDateObj.getMonth() + 1).padStart(2, '0')}-${String(targetDateObj.getDate()).padStart(2, '0')}`;
+
   for (const [code, leagueObj] of uniqueCodeToLeagues.entries()) {
     try {
-      const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`;
-      const data = await fetchCorsSafe(url);
+      // Query both the target day and the previous UTC day to account for midnight GMT+8 European evening kickoffs
+      const urls = [
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateQuery}`,
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${prevDateQuery}`
+      ];
 
-      if (!data || !data.events) continue;
+      const responses = await Promise.allSettled(urls.map(u => fetchCorsSafe(u)));
 
-      for (const evt of data.events) {
-        if (matches.length >= 15) break;
+      for (const res of responses) {
+        if (res.status !== 'fulfilled' || !res.value || !res.value.events) continue;
+        const data = res.value;
 
-        const comp = evt.competitions?.[0];
-        if (!comp) continue;
+        for (const evt of data.events) {
+          if (matches.length >= 15) break;
 
-        // FILTER: Discard completed, in-progress, or post-match events
-        const statusState = evt.status?.type?.state || comp.status?.type?.state;
-        const isCompleted = evt.status?.type?.completed || comp.status?.type?.completed;
-        if (isCompleted === true || statusState === 'post' || statusState === 'in') continue;
+          const comp = evt.competitions?.[0];
+          if (!comp) continue;
 
-        const dObj = new Date(evt.date || comp.date);
-        const matchTimestamp = dObj.getTime();
+          // FILTER: Discard completed, in-progress, or post-match events
+          const statusState = evt.status?.type?.state || comp.status?.type?.state;
+          const isCompleted = evt.status?.type?.completed || comp.status?.type?.completed;
+          if (isCompleted === true || statusState === 'post' || statusState === 'in') continue;
 
-        // If checking 'TODAY', ensure kickoff has not already passed
-        if (selectedGameDayOffset === 0 && !isNaN(matchTimestamp) && matchTimestamp <= now) continue;
+          const dObj = new Date(evt.date || comp.date);
+          const matchTimestamp = dObj.getTime();
+          if (isNaN(matchTimestamp)) continue;
 
-        const homeTeam = comp.competitors?.find(c => c.homeAway === 'home');
-        const awayTeam = comp.competitors?.find(c => c.homeAway === 'away');
-
-        if (homeTeam && awayTeam) {
-          const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
-          const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
-
-          const matchKey = evt.id || `${homeName}-${awayName}`;
-          if (seenMatchKeys.has(matchKey)) continue;
-          seenMatchKeys.add(matchKey);
-
-          const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
-          const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
-          
-          const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
-          const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
-
-          const kickOffTime = isNaN(matchTimestamp) ? "" : new Intl.DateTimeFormat('en-GB', {
+          // Check if match takes place on the target day in Asia/Manila (GMT+8)
+          const matchDayInManila = new Intl.DateTimeFormat('en-CA', {
             timeZone: 'Asia/Manila',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
           }).format(dObj);
 
-          const displayedLeagueName = data.leagues?.[0]?.name || leagueObj.name;
+          if (matchDayInManila !== targetIsoDay) continue;
+          if (selectedGameDayOffset === 0 && matchTimestamp <= now) continue;
 
-          matches.push({
-            homeName,
-            awayName,
-            homeLogo,
-            awayLogo,
-            leagueName: displayedLeagueName,
-            kickOffTimestamp: isNaN(matchTimestamp) ? Date.now() : matchTimestamp,
-            kickOffTime
-          });
+          const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
+          const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
+
+          if (homeTeam && awayTeam) {
+            const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+            const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+
+            const matchKey = evt.id || `${homeName}-${awayName}`;
+            if (seenMatchKeys.has(matchKey)) continue;
+            seenMatchKeys.add(matchKey);
+
+            const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
+            const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
+            
+            const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
+            const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
+
+            const kickOffTime = new Intl.DateTimeFormat('en-GB', {
+              timeZone: 'Asia/Manila',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }).format(dObj);
+
+            const displayedLeagueName = data.leagues?.[0]?.name || leagueObj.name;
+
+            matches.push({
+              homeName,
+              awayName,
+              homeLogo,
+              awayLogo,
+              leagueName: displayedLeagueName,
+              kickOffTimestamp: matchTimestamp,
+              kickOffTime
+            });
+          }
         }
       }
     } catch (err) {}
