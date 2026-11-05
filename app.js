@@ -269,7 +269,7 @@ function loadCachedTopPicks() {
   } catch (e) {}
 }
 
-/* ROBUST ESPN SCOREBOARD FETCHER (CURRENT MONTH + ACTIVE ROUND + NEXT MONTH LOOKAHEAD) */
+/* ROBUST ESPN SCOREBOARD FETCHER */
 async function fetchLeagueScoreboard(league) {
   const now = new Date();
   const y = now.getFullYear();
@@ -1066,90 +1066,31 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
-/* --- TOURNAMENT & LEAGUE NAME RESOLUTION ENGINE --- */
-function resolveLeagueName(evt, comp, fallbackLeagueName) {
-  // 1. Look for explicit tournament/league text directly inside the event
-  const candidates = [
-    evt?.league?.name,
-    evt?.season?.displayName,
-    evt?.season?.name,
-    comp?.league?.name,
-    comp?.type?.text,
-    comp?.notes?.[0]?.headline
-  ];
+/* ==========================================================================
+   TOP GAMES (DAILY MATCHDAY) STRICT REFERENCE PRIORITIZATION ENGINE
+   ========================================================================== */
 
-  for (const str of candidates) {
-    if (str && typeof str === 'string' && str.trim().length > 0 && str.toLowerCase() !== 'soccer') {
-      return str.trim();
-    }
-  }
+// PRIMARY TIER: User Reference Table + UEFA Competitions + MLS (Inter Miami Only)
+const PRIMARY_MATCHDAY_LEAGUES = [
+  { code: "uefa.champions",   name: "UEFA Champions League",  rank: 1 },
+  { code: "uefa.europa",      name: "UEFA Europa League",     rank: 2 },
+  { code: "uefa.europa.conf", name: "UEFA Conference League", rank: 3 },
+  { code: "uefa.nations",     name: "UEFA Nations League",    rank: 4 },
+  { code: "uefa.euro",        name: "European Championship",  rank: 5 },
+  { code: "eng.1",            name: "Premier League",         rank: 6 },
+  { code: "esp.1",            name: "La Liga",                rank: 7 },
+  { code: "ger.1",            name: "Bundesliga",             rank: 8 },
+  { code: "ita.1",            name: "Serie A",                rank: 9 },
+  { code: "fra.1",            name: "Ligue 1",                rank: 10 },
+  { code: "por.1",            name: "Portugal Liga",          rank: 11 },
+  { code: "ned.1",            name: "Netherlands Eredivisie", rank: 12 },
+  { code: "usa.1",            name: "MLS",                    rank: 13, requiresInterMiami: true }
+];
 
-  // 2. Decode ESPN competition slugs / league keys
-  const slugCandidates = [
-    evt?.league?.slug,
-    evt?.league?.abbreviation,
-    evt?.season?.slug,
-    fallbackLeagueName
-  ];
-
-  for (const slug of slugCandidates) {
-    if (!slug || typeof slug !== 'string') continue;
-    const s = slug.toLowerCase();
-
-    if (s.includes('afc.champions_league_two') || s.includes('afc.cup') || s.includes('acl2')) return 'AFC Champions League Two';
-    if (s.includes('afc.champions') || s.includes('acl')) return 'AFC Champions League Elite';
-    if (s.includes('uefa.champions')) return 'UEFA Champions League';
-    if (s.includes('uefa.europa.conf')) return 'UEFA Conference League';
-    if (s.includes('uefa.europa')) return 'UEFA Europa League';
-    if (s.includes('uefa.nations')) return 'UEFA Nations League';
-    if (s.includes('fifa.worldq') || s.includes('world.qual')) return 'World Cup Qualifiers';
-    if (s.includes('fifa.world')) return 'FIFA World Cup';
-    if (s.includes('eng.1')) return 'Premier League';
-    if (s.includes('esp.1')) return 'La Liga';
-    if (s.includes('ger.1')) return 'Bundesliga';
-    if (s.includes('ita.1')) return 'Serie A';
-    if (s.includes('fra.1')) return 'Ligue 1';
-    if (s.includes('eng.fa')) return 'FA Cup';
-    if (s.includes('eng.league_cup')) return 'Carabao Cup';
-    if (s.includes('esp.copa_del_rey')) return 'Copa del Rey';
-    if (s.includes('ita.coppa_italia')) return 'Coppa Italia';
-    if (s.includes('ger.dfb_pokal')) return 'DFB-Pokal';
-    if (s.includes('ned.1')) return 'Eredivisie';
-    if (s.includes('por.1')) return 'Primeira Liga';
-    if (s.includes('sau.1')) return 'Saudi Pro League';
-    if (s.includes('eng.2')) return 'Championship';
-    if (s.includes('usa.1')) return 'MLS';
-  }
-
-  // 3. Fallback check: if default was provided and isn't "Soccer", use it
-  if (fallbackLeagueName && fallbackLeagueName.toLowerCase() !== 'soccer') {
-    return fallbackLeagueName;
-  }
-
-  return 'International Soccer';
-}
-
-/* --- TOP GAMES DAILY FIXTURE FETCHING (FLASHSCORE & ESPN GMT+8 ACCURATE) --- */
-const MATCHDAY_LEAGUES = [
-  { rank: 1,  code: "uefa.champions",   name: "UEFA Champions League" },
-  { rank: 2,  code: "uefa.europa",      name: "UEFA Europa League" },
-  { rank: 3,  code: "uefa.europa.conf", name: "UEFA Conference League" },
-  { rank: 4,  code: "eng.1",            name: "Premier League" },
-  { rank: 5,  code: "esp.1",            name: "La Liga" },
-  { rank: 6,  code: "ger.1",            name: "Bundesliga" },
-  { rank: 7,  code: "ita.1",            name: "Serie A" },
-  { rank: 8,  code: "fra.1",            name: "Ligue 1" },
-  { rank: 9,  code: "uefa.nations",     name: "UEFA Nations League" },
-  { rank: 10, code: "eng.fa",           name: "FA Cup" },
-  { rank: 11, code: "eng.league_cup",   name: "Carabao Cup" },
-  { rank: 12, code: "esp.copa_del_rey", name: "Copa del Rey" },
-  { rank: 13, code: "ger.dfb_pokal",    name: "DFB-Pokal" },
-  { rank: 14, code: "ita.coppa_italia", name: "Coppa Italia" },
-  { rank: 15, code: "ned.1",            name: "Eredivisie" },
-  { rank: 16, code: "por.1",            name: "Primeira Liga" },
-  { rank: 17, code: "sau.1",            name: "Saudi Pro League" },
-  { rank: 18, code: "eng.2",            name: "Championship" },
-  { rank: 19, code: "usa.1",            name: "MLS" }
+// BACKUP TIER: Used only if Primary Tier matches are unavailable or scarce (< 4 games)
+const BACKUP_MATCHDAY_LEAGUES = [
+  { code: "fin.1",            name: "Veikkausliiga",          rank: 14 },
+  { code: "nor.1",            name: "Eliteserien",            rank: 15 }
 ];
 
 function getGMT8DateObj(offsetDays = 0) {
@@ -1168,6 +1109,143 @@ function getFormattedDateQuery(daysAhead) {
   return `${year}${month}${day}`;
 }
 
+// Strict check: Inter Miami must be playing for MLS fixtures
+function isInterMiamiParticipating(comp) {
+  const competitors = comp?.competitors || [];
+  return competitors.some(c => {
+    const name = (c.team?.displayName || c.team?.name || c.team?.shortDisplayName || '').toLowerCase();
+    const abbrev = (c.team?.abbreviation || '').toLowerCase();
+    return name.includes('inter miami') || name.includes('miami') || abbrev === 'mia';
+  });
+}
+
+// Resolves authentic league title from metadata without returning generic 'Soccer'
+function resolveExactLeagueName(evt, comp, leagueConfig) {
+  if (leagueConfig && leagueConfig.name && leagueConfig.name.toLowerCase() !== 'soccer') {
+    return leagueConfig.name;
+  }
+  const candidates = [
+    evt?.league?.name,
+    evt?.season?.displayName,
+    comp?.league?.name,
+    comp?.type?.text
+  ];
+  for (const name of candidates) {
+    if (name && typeof name === 'string' && name.trim().length > 0 && name.toLowerCase() !== 'soccer') {
+      return name.trim();
+    }
+  }
+  return leagueConfig?.name || "Top Division";
+}
+
+// Extracts valid matchday events from an ESPN league scoreboard payload
+function parseScoreboardEvents(data, leagueConfig, targetIsoDay) {
+  if (!data || !Array.isArray(data.events)) return [];
+  const eventsFound = [];
+
+  data.events.forEach(evt => {
+    const comp = evt.competitions?.[0];
+    if (!comp) return;
+
+    // MLS Filter: Only allow if INTER MIAMI is in the match
+    if (leagueConfig.requiresInterMiami && !isInterMiamiParticipating(comp)) {
+      return;
+    }
+
+    const dObj = new Date(evt.date || comp.date);
+    const matchTimestamp = dObj.getTime();
+    if (isNaN(matchTimestamp)) return;
+
+    const matchDayInManila = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(dObj);
+
+    const matchDayInUTC = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(dObj);
+
+    // Flashscore / GMT+8 Alignment:
+    // Matches on the target Manila date OR European evening matchday slate
+    const isManilaDay = (matchDayInManila === targetIsoDay);
+    const isEuroMatchday = (selectedGameDayOffset === 0 && matchDayInUTC === targetIsoDay);
+
+    if (!isManilaDay && !isEuroMatchday) return;
+
+    const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
+    const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
+    if (!homeTeam || !awayTeam) return;
+
+    const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+    const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+
+    const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
+    const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
+    const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
+    const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
+
+    const homeScore = homeTeam.score ?? '';
+    const awayScore = awayTeam.score ?? '';
+
+    const statusState = evt.status?.type?.state || comp.status?.type?.state || 'pre';
+    const statusDetail = evt.status?.type?.shortDetail || comp.status?.type?.shortDetail || '';
+
+    const kickOffTime = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Manila',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(dObj);
+
+    const leagueDisplayName = resolveExactLeagueName(evt, comp, leagueConfig);
+
+    eventsFound.push({
+      id: evt.id || `${homeName}-${awayName}`,
+      homeName,
+      awayName,
+      homeLogo,
+      awayLogo,
+      homeScore,
+      awayScore,
+      statusState,
+      statusDetail,
+      leagueName: leagueDisplayName,
+      kickOffTimestamp: matchTimestamp,
+      kickOffTime,
+      priorityRank: leagueConfig.rank
+    });
+  });
+
+  return eventsFound;
+}
+
+async function fetchLeagueFeed(leagueConfig, dateQueries) {
+  const fetchPromises = dateQueries.map(dq => 
+    fetchCorsSafe(`https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueConfig.code}/scoreboard?dates=${dq}`)
+  );
+  const results = await Promise.allSettled(fetchPromises);
+  const merged = { events: [] };
+  const seenIds = new Set();
+
+  results.forEach(res => {
+    if (res.status === 'fulfilled' && res.value && Array.isArray(res.value.events)) {
+      res.value.events.forEach(evt => {
+        if (evt && evt.id && !seenIds.has(evt.id)) {
+          seenIds.add(evt.id);
+          merged.events.push(evt);
+        }
+      });
+    }
+  });
+
+  return merged;
+}
+
 async function fetchLiveGames() {
   const container = document.getElementById("gamesContainer");
   if (!container) return;
@@ -1183,8 +1261,9 @@ async function fetchLiveGames() {
   const targetDateQuery = getFormattedDateQuery(selectedGameDayOffset);
   const prevDateQuery = getFormattedDateQuery(selectedGameDayOffset - 1);
   const nextDateQuery = getFormattedDateQuery(selectedGameDayOffset + 1);
+  const dateQueries = [targetDateQuery, prevDateQuery, nextDateQuery];
 
-  // Read session cache for seamless instant rendering
+  // Instant render from cache to eliminate UI flicker
   const cacheKey = `sbhub_daily_fixture_${targetIsoDay}`;
   const cachedData = sessionStorage.getItem(cacheKey);
   if (cachedData) {
@@ -1197,112 +1276,56 @@ async function fetchLiveGames() {
   }
 
   try {
-    const fetchEndpoints = [
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${targetDateQuery}`, defaultLeague: null },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${prevDateQuery}`, defaultLeague: null },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${nextDateQuery}`, defaultLeague: null },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=${targetDateQuery}`, defaultLeague: "UEFA Europa League" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=${targetDateQuery}`, defaultLeague: "UEFA Champions League" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Premier League" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "La Liga" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Bundesliga" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Serie A" },
-      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Ligue 1" }
-    ];
+    // 1. Fetch Primary Leagues (UEFA + Top Leagues + MLS if Inter Miami)
+    const primaryFetchPromises = PRIMARY_MATCHDAY_LEAGUES.map(async (league) => {
+      try {
+        const feed = await fetchLeagueFeed(league, dateQueries);
+        return parseScoreboardEvents(feed, league, targetIsoDay);
+      } catch (e) {
+        return [];
+      }
+    });
 
-    const responses = await Promise.allSettled(
-      fetchEndpoints.map(async ep => {
-        const val = await fetchCorsSafe(ep.url);
-        return { data: val, defaultLeague: ep.defaultLeague };
-      })
-    );
-
+    const primaryResults = await Promise.allSettled(primaryFetchPromises);
     const seenMatchKeys = new Set();
     let matches = [];
 
-    responses.forEach(res => {
-      if (res.status !== 'fulfilled' || !res.value || !res.value.data || !Array.isArray(res.value.data.events)) return;
-
-      const endpointData = res.value.data;
-      const endpointDefaultLeague = res.value.defaultLeague || endpointData.leagues?.[0]?.name;
-
-      endpointData.events.forEach(evt => {
-        const comp = evt.competitions?.[0];
-        if (!comp) return;
-
-        const dObj = new Date(evt.date || comp.date);
-        const matchTimestamp = dObj.getTime();
-        if (isNaN(matchTimestamp)) return;
-
-        const matchDayInManila = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'Asia/Manila',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        }).format(dObj);
-
-        const matchDayInUTC = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'UTC',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        }).format(dObj);
-
-        const isManilaDay = (matchDayInManila === targetIsoDay);
-        const isEuroSlate = (selectedGameDayOffset === 0 && matchDayInUTC === targetIsoDay);
-
-        if (!isManilaDay && !isEuroSlate) return;
-
-        const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
-        const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
-        if (!homeTeam || !awayTeam) return;
-
-        const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
-        const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
-
-        const matchKey = evt.id || `${homeName}-${awayName}`;
-        if (seenMatchKeys.has(matchKey)) return;
-        seenMatchKeys.add(matchKey);
-
-        const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
-        const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
-        const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
-        const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
-
-        const homeScore = homeTeam.score ?? '';
-        const awayScore = awayTeam.score ?? '';
-
-        const statusState = evt.status?.type?.state || comp.status?.type?.state || 'pre';
-        const statusDetail = evt.status?.type?.shortDetail || comp.status?.type?.shortDetail || '';
-
-        const kickOffTime = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Asia/Manila',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }).format(dObj);
-
-        // Intelligent tournament resolution
-        const finalTournamentName = resolveLeagueName(evt, comp, endpointDefaultLeague);
-        const leagueRankObj = MATCHDAY_LEAGUES.find(l => finalTournamentName.toLowerCase().includes(l.name.toLowerCase()));
-        const priorityRank = leagueRankObj ? leagueRankObj.rank : 99;
-
-        matches.push({
-          homeName,
-          awayName,
-          homeLogo,
-          awayLogo,
-          homeScore,
-          awayScore,
-          statusState,
-          statusDetail,
-          leagueName: finalTournamentName,
-          kickOffTimestamp: matchTimestamp,
-          kickOffTime,
-          priorityRank
+    primaryResults.forEach(res => {
+      if (res.status === 'fulfilled' && Array.isArray(res.value)) {
+        res.value.forEach(item => {
+          const key = item.id || `${item.homeName}-${item.awayName}`;
+          if (!seenMatchKeys.has(key)) {
+            seenMatchKeys.add(key);
+            matches.push(item);
+          }
         });
-      });
+      }
     });
+
+    // 2. BACKUP LOGIC: If fewer than 4 matches found, poll Finland & Norway
+    if (matches.length < 4) {
+      const backupFetchPromises = BACKUP_MATCHDAY_LEAGUES.map(async (league) => {
+        try {
+          const feed = await fetchLeagueFeed(league, dateQueries);
+          return parseScoreboardEvents(feed, league, targetIsoDay);
+        } catch (e) {
+          return [];
+        }
+      });
+
+      const backupResults = await Promise.allSettled(backupFetchPromises);
+      backupResults.forEach(res => {
+        if (res.status === 'fulfilled' && Array.isArray(res.value)) {
+          res.value.forEach(item => {
+            const key = item.id || `${item.homeName}-${item.awayName}`;
+            if (!seenMatchKeys.has(key)) {
+              seenMatchKeys.add(key);
+              matches.push(item);
+            }
+          });
+        }
+      });
+    }
 
     if (matches.length === 0) {
       if (!cachedData) {
@@ -1311,7 +1334,10 @@ async function fetchLiveGames() {
       return;
     }
 
-    // Sort priority: Live matches first -> Upcoming chronological -> Completed FT
+    // Sort order:
+    // 1. Live games in progress (in)
+    // 2. Upcoming matches (pre) sorted by Priority Rank, then chronological kickoff
+    // 3. Completed matches (post) pushed to bottom
     matches.sort((a, b) => {
       const stateWeight = (s) => (s === 'in' ? 0 : (s === 'pre' ? 1 : 2));
       const wDiff = stateWeight(a.statusState) - stateWeight(b.statusState);
@@ -1413,7 +1439,7 @@ function initDashboardApp() {
   fetchTopPicksAndBoosts();
   setInterval(fetchTopPicksAndBoosts, 2 * 60 * 1000);
 
-  // Matchday live score and fixture refresh interval (every 60 seconds)
+  // Auto-refresh daily matchday fixtures every 60 seconds
   setInterval(fetchLiveGames, 60 * 1000);
 
   listenToLiveDutyRoster();
