@@ -1066,6 +1066,69 @@ function renderLiveDutyWidget(rosterData) {
   calculateActiveTraders();
 }
 
+/* --- TOURNAMENT & LEAGUE NAME RESOLUTION ENGINE --- */
+function resolveLeagueName(evt, comp, fallbackLeagueName) {
+  // 1. Look for explicit tournament/league text directly inside the event
+  const candidates = [
+    evt?.league?.name,
+    evt?.season?.displayName,
+    evt?.season?.name,
+    comp?.league?.name,
+    comp?.type?.text,
+    comp?.notes?.[0]?.headline
+  ];
+
+  for (const str of candidates) {
+    if (str && typeof str === 'string' && str.trim().length > 0 && str.toLowerCase() !== 'soccer') {
+      return str.trim();
+    }
+  }
+
+  // 2. Decode ESPN competition slugs / league keys
+  const slugCandidates = [
+    evt?.league?.slug,
+    evt?.league?.abbreviation,
+    evt?.season?.slug,
+    fallbackLeagueName
+  ];
+
+  for (const slug of slugCandidates) {
+    if (!slug || typeof slug !== 'string') continue;
+    const s = slug.toLowerCase();
+
+    if (s.includes('afc.champions_league_two') || s.includes('afc.cup') || s.includes('acl2')) return 'AFC Champions League Two';
+    if (s.includes('afc.champions') || s.includes('acl')) return 'AFC Champions League Elite';
+    if (s.includes('uefa.champions')) return 'UEFA Champions League';
+    if (s.includes('uefa.europa.conf')) return 'UEFA Conference League';
+    if (s.includes('uefa.europa')) return 'UEFA Europa League';
+    if (s.includes('uefa.nations')) return 'UEFA Nations League';
+    if (s.includes('fifa.worldq') || s.includes('world.qual')) return 'World Cup Qualifiers';
+    if (s.includes('fifa.world')) return 'FIFA World Cup';
+    if (s.includes('eng.1')) return 'Premier League';
+    if (s.includes('esp.1')) return 'La Liga';
+    if (s.includes('ger.1')) return 'Bundesliga';
+    if (s.includes('ita.1')) return 'Serie A';
+    if (s.includes('fra.1')) return 'Ligue 1';
+    if (s.includes('eng.fa')) return 'FA Cup';
+    if (s.includes('eng.league_cup')) return 'Carabao Cup';
+    if (s.includes('esp.copa_del_rey')) return 'Copa del Rey';
+    if (s.includes('ita.coppa_italia')) return 'Coppa Italia';
+    if (s.includes('ger.dfb_pokal')) return 'DFB-Pokal';
+    if (s.includes('ned.1')) return 'Eredivisie';
+    if (s.includes('por.1')) return 'Primeira Liga';
+    if (s.includes('sau.1')) return 'Saudi Pro League';
+    if (s.includes('eng.2')) return 'Championship';
+    if (s.includes('usa.1')) return 'MLS';
+  }
+
+  // 3. Fallback check: if default was provided and isn't "Soccer", use it
+  if (fallbackLeagueName && fallbackLeagueName.toLowerCase() !== 'soccer') {
+    return fallbackLeagueName;
+  }
+
+  return 'International Soccer';
+}
+
 /* --- TOP GAMES DAILY FIXTURE FETCHING (FLASHSCORE & ESPN GMT+8 ACCURATE) --- */
 const MATCHDAY_LEAGUES = [
   { rank: 1,  code: "uefa.champions",   name: "UEFA Champions League" },
@@ -1135,28 +1198,35 @@ async function fetchLiveGames() {
 
   try {
     const fetchEndpoints = [
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${prevDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${nextDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=${targetDateQuery}`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard?dates=${targetDateQuery}`
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${targetDateQuery}`, defaultLeague: null },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${prevDateQuery}`, defaultLeague: null },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${nextDateQuery}`, defaultLeague: null },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=${targetDateQuery}`, defaultLeague: "UEFA Europa League" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=${targetDateQuery}`, defaultLeague: "UEFA Champions League" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Premier League" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "La Liga" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Bundesliga" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Serie A" },
+      { url: `https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard?dates=${targetDateQuery}`, defaultLeague: "Ligue 1" }
     ];
 
-    const responses = await Promise.allSettled(fetchEndpoints.map(url => fetchCorsSafe(url)));
+    const responses = await Promise.allSettled(
+      fetchEndpoints.map(async ep => {
+        const val = await fetchCorsSafe(ep.url);
+        return { data: val, defaultLeague: ep.defaultLeague };
+      })
+    );
+
     const seenMatchKeys = new Set();
     let matches = [];
 
     responses.forEach(res => {
-      if (res.status !== 'fulfilled' || !res.value || !Array.isArray(res.value.events)) return;
+      if (res.status !== 'fulfilled' || !res.value || !res.value.data || !Array.isArray(res.value.data.events)) return;
 
-      const leagueDefaultName = res.value.leagues?.[0]?.name || "";
+      const endpointData = res.value.data;
+      const endpointDefaultLeague = res.value.defaultLeague || endpointData.leagues?.[0]?.name;
 
-      res.value.events.forEach(evt => {
+      endpointData.events.forEach(evt => {
         const comp = evt.competitions?.[0];
         if (!comp) return;
 
@@ -1212,8 +1282,9 @@ async function fetchLiveGames() {
           hour12: false
         }).format(dObj);
 
-        const displayedLeague = leagueDefaultName || evt.league?.name || comp.league?.name || "Soccer";
-        const leagueRankObj = MATCHDAY_LEAGUES.find(l => displayedLeague.toLowerCase().includes(l.name.toLowerCase()));
+        // Intelligent tournament resolution
+        const finalTournamentName = resolveLeagueName(evt, comp, endpointDefaultLeague);
+        const leagueRankObj = MATCHDAY_LEAGUES.find(l => finalTournamentName.toLowerCase().includes(l.name.toLowerCase()));
         const priorityRank = leagueRankObj ? leagueRankObj.rank : 99;
 
         matches.push({
@@ -1225,7 +1296,7 @@ async function fetchLiveGames() {
           awayScore,
           statusState,
           statusDetail,
-          leagueName: displayedLeague,
+          leagueName: finalTournamentName,
           kickOffTimestamp: matchTimestamp,
           kickOffTime,
           priorityRank
