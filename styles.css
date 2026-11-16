@@ -1,5 +1,5 @@
 :root {
-  --bg-tint: rgba(15, 23, 42, 0.78);
+  --bg-tint: rgba(15, 23, 42, 0.88);
   --glass-opacity-val: 0.45;
   --glass-bg: rgba(255, 255, 255, 0.12);
   --glass-card-bg: rgba(15, 23, 42, var(--glass-opacity-val));
@@ -30,7 +30,7 @@ body {
       var(--bg-tint), 
       var(--bg-tint)
     ),
-    url("image_ef7dc5.jpg");
+    url("image_ef5c7b.jpg");
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
@@ -1856,7 +1856,7 @@ body.light-theme .top-banner-card {
 }
 
 body.light-theme { 
-  --bg-tint: rgba(255, 255, 255, 0.85);
+  --bg-tint: rgba(255, 255, 255, 0.90);
   color: #0f172a !important; 
 }
 body.light-theme .sidebar-header,
