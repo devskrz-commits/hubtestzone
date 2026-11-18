@@ -36,7 +36,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="./styles.css?v=11.0.0">
+  <link rel="stylesheet" href="./styles.css?v=12.0.0">
 
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,7 +44,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   
   <!-- App JS -->
-  <script src="./app.js?v=11.0.0" defer></script>
+  <script src="./app.js?v=12.0.0" defer></script>
 </head>
 <body id="pageBody">
 
@@ -448,6 +448,11 @@
                   </div>
                   <input type="range" id="glassOpacitySlider" min="0.1" max="0.9" step="0.05" value="0.45" oninput="updateGlassOpacity(this.value)" style="width: 100%; cursor: pointer;">
                 </div>
+
+                <div class="dropdown-section-title">CHRISTMAS HOLIDAY THEMES</div>
+                <button class="menu-option" type="button" onclick="setGradient('christmas-silent-night')"><span>🎄 Silent Night &amp; Pine</span><span class="color-dot" style="background: linear-gradient(135deg, #062118, #fbbf24);"></span></button>
+                <button class="menu-option" type="button" onclick="setGradient('christmas-crimson-gold')"><span>🎅 Crimson &amp; Gold Holiday</span><span class="color-dot" style="background: linear-gradient(135deg, #7f1d1d, #f59e0b);"></span></button>
+                <button class="menu-option" type="button" onclick="setGradient('christmas-north-pole')"><span>❄️ Frosty North Pole</span><span class="color-dot" style="background: linear-gradient(135deg, #07192d, #38bdf8);"></span></button>
 
                 <div class="dropdown-section-title">PLAIN COLORS</div>
                 <button class="menu-option" type="button" onclick="setGradient('plain-slate')"><span>Dark Slate</span><span class="color-dot" style="background: #0f172a;"></span></button>
