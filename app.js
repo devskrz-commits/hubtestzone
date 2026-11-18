@@ -53,11 +53,11 @@ const DEFAULT_PASS = "sb2026";
 /* --- SAFE LOGO FALLBACK SVG --- */
 const FALLBACK_LOGO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231e293b' stroke='%2338bdf8' stroke-width='4'/%3E%3Cpath d='M30 50 L70 50 M50 30 L50 70' stroke='%2338bdf8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
 
-/* --- ABSTRACT & CHRISTMAS HOLIDAY WALLPAPERS --- */
+/* --- ABSTRACT & DETAILED CHRISTMAS THEME WALLPAPERS WITH TREES & SNOWMEN --- */
 const ABSTRACT_WALLPAPERS = {
-  'christmas-silent-night': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3CradialGradient id='xmasNight' cx='50%25' cy='25%25' r='75%25'%3E%3Cstop offset='0%25' stop-color='%230c3b2e'/%3E%3Cstop offset='55%25' stop-color='%23051b15'/%3E%3Cstop offset='100%25' stop-color='%23020a08'/%3E%3C/radialGradient%3E%3CradialGradient id='starGlow' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fde047' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23fde047' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='snowHill1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e3a4c'/%3E%3Cstop offset='100%25' stop-color='%23091522'/%3E%3C/linearGradient%3E%3ClinearGradient id='snowHill2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232c5268'/%3E%3Cstop offset='100%25' stop-color='%230d2030'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23xmasNight)'/%3E%3Ccircle cx='1520' cy='210' r='220' fill='url(%23starGlow)'/%3E%3Cpath d='M1520 135 L1532 185 L1582 197 L1532 209 L1520 259 L1508 209 L1458 197 L1508 185 Z' fill='%23fef08a'/%3E%3Ccircle cx='280' cy='180' r='3' fill='%23fef08a' opacity='0.8'/%3E%3Ccircle cx='490' cy='120' r='2.5' fill='%23ffffff' opacity='0.7'/%3E%3Ccircle cx='780' cy='210' r='3.5' fill='%23fde047' opacity='0.75'/%3E%3Ccircle cx='1080' cy='140' r='2' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='1260' cy='260' r='3' fill='%23fde047' opacity='0.6'/%3E%3Ccircle cx='1760' cy='310' r='2.5' fill='%23ffffff' opacity='0.7'/%3E%3Cpath d='M-50 860 Q480 740 960 850 T1970 810 L1970 1100 L-50 1100 Z' fill='url(%23snowHill1)'/%3E%3Cpolygon points='180,840 245,630 310,840' fill='%2307241b'/%3E%3Cpolygon points='195,750 245,580 295,750' fill='%230b3327'/%3E%3Cpolygon points='330,855 385,680 440,855' fill='%23061d16'/%3E%3Cpolygon points='1540,835 1620,570 1700,835' fill='%2307241b'/%3E%3Cpolygon points='1560,730 1620,515 1680,730' fill='%230c3a2c'/%3E%3Cpolygon points='1710,845 1775,645 1840,845' fill='%23061d16'/%3E%3Cpath d='M-50 930 Q620 840 1240 940 T1970 890 L1970 1100 L-50 1100 Z' fill='url(%23snowHill2)' opacity='0.9'/%3E%3C/svg%3E",
-  'christmas-crimson-gold': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='crimsonBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233d080e'/%3E%3Cstop offset='50%25' stop-color='%23590d16'/%3E%3Cstop offset='100%25' stop-color='%2316261a'/%3E%3C/linearGradient%3E%3CradialGradient id='goldBokeh' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fbbf24' stop-opacity='0.35'/%3E%3Cstop offset='100%25' stop-color='%23fbbf24' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='goldRibbon' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23d97706' stop-opacity='0.25'/%3E%3Cstop offset='50%25' stop-color='%23fde047' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23b45309' stop-opacity='0.25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23crimsonBg)'/%3E%3Ccircle cx='320' cy='240' r='260' fill='url(%23goldBokeh)'/%3E%3Ccircle cx='1620' cy='780' r='340' fill='url(%23goldBokeh)'/%3E%3Ccircle cx='1180' cy='220' r='190' fill='url(%23goldBokeh)'/%3E%3Cpath d='M-100 680 Q520 420 1120 720 T2020 520 L2020 570 Q1120 770 520 470 T-100 730 Z' fill='url(%23goldRibbon)'/%3E%3Cpath d='M-100 780 Q620 540 1240 820 T2020 640 L2020 1120 L-100 1120 Z' fill='%23230509' opacity='0.65'/%3E%3Cg stroke='%23fde047' stroke-width='2' opacity='0.28'%3E%3Cpath d='M1650 180 L1650 280 M1600 230 L1700 230 M1615 195 L1685 265 M1685 195 L1615 265'/%3E%3Cpath d='M260 760 L260 840 M220 800 L300 800 M232 772 L288 828 M288 772 L232 828'/%3E%3C/g%3E%3C/svg%3E",
-  'christmas-north-pole': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='arcticSky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23040d1a'/%3E%3Cstop offset='60%25' stop-color='%230a233c'/%3E%3Cstop offset='100%25' stop-color='%230f3554'/%3E%3C/linearGradient%3E%3ClinearGradient id='auroraWave' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%2310b981' stop-opacity='0.32'/%3E%3Cstop offset='50%25' stop-color='%2338bdf8' stop-opacity='0.28'/%3E%3Cstop offset='100%25' stop-color='%23a855f7' stop-opacity='0.22'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23arcticSky)'/%3E%3Cpath d='M-100 320 Q450 120 980 340 T2020 220 L2020 460 Q980 560 450 340 T-100 500 Z' fill='url(%23auroraWave)'/%3E%3Cline x1='240' y1='0' x2='240' y2='170' stroke='%23fde047' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='240' cy='198' r='28' fill='%23dc2626' stroke='%23fde047' stroke-width='2.5' opacity='0.8'/%3E%3Cline x1='1680' y1='0' x2='1680' y2='130' stroke='%23fde047' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='1680' cy='154' r='24' fill='%2316a34a' stroke='%23fde047' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M-50 880 Q500 770 1050 880 T1970 830 L1970 1100 L-50 1100 Z' fill='%23163b59'/%3E%3Cpath d='M-50 950 Q650 870 1320 960 T1970 910 L1970 1100 L-50 1100 Z' fill='%231e4d70'/%3E%3C/svg%3E",
+  'christmas-silent-night': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3CradialGradient id='nightSky' cx='50%25' cy='20%25' r='80%25'%3E%3Cstop offset='0%25' stop-color='%23082f23'/%3E%3Cstop offset='50%25' stop-color='%23041611'/%3E%3Cstop offset='100%25' stop-color='%23020907'/%3E%3C/radialGradient%3E%3CradialGradient id='moonGlow' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fef08a' stop-opacity='0.9'/%3E%3Cstop offset='100%25' stop-color='%23fef08a' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='snowBank' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23134e3e'/%3E%3Cstop offset='100%25' stop-color='%23071c16'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23nightSky)'/%3E%3Ccircle cx='1560' cy='180' r='180' fill='url(%23moonGlow)'/%3E%3Ccircle cx='1560' cy='180' r='50' fill='%23fef08a'/%3E%3Ccircle cx='240' cy='140' r='2' fill='%23ffffff' opacity='0.7'/%3E%3Ccircle cx='480' cy='90' r='3' fill='%23fde047' opacity='0.8'/%3E%3Ccircle cx='760' cy='170' r='2.5' fill='%23ffffff' opacity='0.8'/%3E%3Ccircle cx='1120' cy='110' r='3' fill='%23fde047' opacity='0.7'/%3E%3Ccircle cx='1340' cy='220' r='2' fill='%23ffffff' opacity='0.6'/%3E%3Cpath d='M-50 850 Q500 720 1000 840 T1970 800 L1970 1120 L-50 1120 Z' fill='url(%23snowBank)'/%3E%3Cg fill='%23051f17'%3E%3Cpolygon points='160,860 220,620 280,860'/%3E%3Cpolygon points='175,760 220,570 265,760'/%3E%3Cpolygon points='290,875 350,670 410,875'/%3E%3Cpolygon points='1520,845 1600,560 1680,845'/%3E%3Cpolygon points='1540,730 1600,505 1660,730'/%3E%3Cpolygon points='1690,860 1760,650 1830,860'/%3E%3C/g%3E%3Cpath d='M-50 935 Q600 830 1250 940 T1970 890 L1970 1120 L-50 1120 Z' fill='%230f3d30' opacity='0.9'/%3E%3Ccircle cx='220' cy='585' r='6' fill='%23ef4444'/%3E%3Ccircle cx='205' cy='675' r='5' fill='%23fde047'/%3E%3Ccircle cx='235' cy='740' r='5' fill='%2338bdf8'/%3E%3Ccircle cx='1600' cy='530' r='6' fill='%23fde047'/%3E%3Ccircle cx='1585' cy='610' r='5' fill='%23ef4444'/%3E%3Ccircle cx='1618' cy='690' r='5' fill='%2338bdf8'/%3E%3C/svg%3E",
+  'christmas-crimson-gold': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='crimsonGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%234c050d'/%3E%3Cstop offset='50%25' stop-color='%237f1d1d'/%3E%3Cstop offset='100%25' stop-color='%23111e15'/%3E%3C/linearGradient%3E%3CradialGradient id='goldGlow' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23f59e0b' stop-opacity='0.4'/%3E%3Cstop offset='100%25' stop-color='%23f59e0b' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='goldRibbon' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23b45309' stop-opacity='0.3'/%3E%3Cstop offset='50%25' stop-color='%23fde047' stop-opacity='0.55'/%3E%3Cstop offset='100%25' stop-color='%2392400e' stop-opacity='0.3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23crimsonGrad)'/%3E%3Ccircle cx='280' cy='220' r='280' fill='url(%23goldGlow)'/%3E%3Ccircle cx='1640' cy='820' r='360' fill='url(%23goldGlow)'/%3E%3Cpath d='M-100 640 Q540 380 1140 680 T2020 480 L2020 540 Q1140 740 540 440 T-100 700 Z' fill='url(%23goldRibbon)'/%3E%3Cpath d='M-100 780 Q620 540 1240 820 T2020 640 L2020 1120 L-100 1120 Z' fill='%2328090d' opacity='0.75'/%3E%3Cg transform='translate(180, 780)'%3E%3Cpath d='M 15 15 C 25 -10 65 -10 75 15 Z' fill='%2316a34a' stroke='%23fde047' stroke-width='2'/%3E%3Ccircle cx='45' cy='2' r='8' fill='%23dc2626' stroke='%23fde047' stroke-width='2'/%3E%3Ccircle cx='25' cy='12' r='6' fill='%23fde047'/%3E%3Ccircle cx='65' cy='12' r='6' fill='%2338bdf8'/%3E%3C/g%3E%3Cg transform='translate(1640, 740)'%3E%3Cpath d='M 15 15 C 25 -10 65 -10 75 15 Z' fill='%2316a34a' stroke='%23fde047' stroke-width='2'/%3E%3Ccircle cx='45' cy='2' r='8' fill='%23dc2626' stroke='%23fde047' stroke-width='2'/%3E%3Ccircle cx='25' cy='12' r='6' fill='%23fde047'/%3E%3Ccircle cx='65' cy='12' r='6' fill='%2338bdf8'/%3E%3C/g%3E%3C/svg%3E",
+  'christmas-north-pole': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='polarSky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2305162a'/%3E%3Cstop offset='55%25' stop-color='%230b2c4d'/%3E%3Cstop offset='100%25' stop-color='%23164875'/%3E%3C/linearGradient%3E%3ClinearGradient id='auroraBorealis' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%2310b981' stop-opacity='0.38'/%3E%3Cstop offset='50%25' stop-color='%2338bdf8' stop-opacity='0.35'/%3E%3Cstop offset='100%25' stop-color='%23c084fc' stop-opacity='0.25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23polarSky)'/%3E%3Cpath d='M-100 280 Q480 100 1020 310 T2020 180 L2020 440 Q1020 540 480 310 T-100 460 Z' fill='url(%23auroraBorealis)'/%3E%3Cpath d='M-50 860 Q500 740 1020 860 T1970 810 L1970 1120 L-50 1120 Z' fill='%231d527a'/%3E%3Cpath d='M-50 940 Q620 860 1280 950 T1970 900 L1970 1120 L-50 1120 Z' fill='%23286b9e' opacity='0.85'/%3E%3Cg transform='translate(1500, 770)'%3E%3Ccircle cx='40' cy='75' r='35' fill='%23ffffff' stroke='%23cbd5e1' stroke-width='2'/%3E%3Ccircle cx='40' cy='32' r='25' fill='%23ffffff' stroke='%23cbd5e1' stroke-width='2'/%3E%3Ccircle cx='40' cy='1' r='20' fill='%23ffffff' stroke='%23cbd5e1' stroke-width='2'/%3E%3Crect x='25' y='-32' width='30' height='22' fill='%230f172a' rx='3'/%3E%3Crect x='15' y='-12' width='50' height='5' fill='%230f172a' rx='2'/%3E%3Cpath d='M 12 10 Q 40 22 68 10' stroke='%23dc2626' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 55 15 L 75 30' stroke='%23dc2626' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='40' cy='-2' r='2.5' fill='%230f172a'/%3E%3Ccircle cx='40' cy='7' r='2.5' fill='%230f172a'/%3E%3Cpolygon points='40,2 52,7 40,12' fill='%23f97316'/%3E%3Ccircle cx='40' cy='50' r='3.5' fill='%230f172a'/%3E%3Ccircle cx='40' cy='70' r='3.5' fill='%230f172a'/%3E%3Ccircle cx='40' cy='90' r='3.5' fill='%230f172a'/%3E%3Cpath d='M 12 55 Q -8 40 5 25' stroke='%2378350f' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 68 55 Q 88 40 75 25' stroke='%2378350f' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E",
   'blue-orange-wave': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23070c1b'/%3E%3Cpath d='M0 0 L1920 0 L1920 1080 L0 1080 Z' fill='%230b152d'/%3E%3Cpath d='M-100 300 Q400 100 960 500 T2020 400 L2020 1180 L-100 1180 Z' fill='%230f214a'/%3E%3Cpath d='M-100 500 Q500 800 1100 400 T2020 700 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad1)'/%3E%3Cpath d='M-100 750 Q600 450 1200 850 T2020 600 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad2)' opacity='0.95'/%3E%3Cdefs%3E%3ClinearGradient id='orangeGrad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23ff8c00'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffa000'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-glow': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23060a17'/%3E%3Ccircle cx='1600' cy='900' r='600' fill='url(%23glowOrange)' opacity='0.85'/%3E%3Ccircle cx='200' cy='200' r='500' fill='url(%23glowBlue)' opacity='0.6'/%3E%3Cpath d='M-100 800 Q800 300 2020 900 L2020 1180 L-100 1180 Z' fill='url(%23glowOrange2)' opacity='0.9'/%3E%3Cdefs%3E%3CradialGradient id='glowOrange' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff6600'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='glowBlue' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='glowOrange2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-halftone': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23080e21'/%3E%3Cpath d='M-100 -100 L1200 -100 L2020 1180 L-100 1180 Z' fill='%230d193d'/%3E%3Cpath d='M700 -100 L2020 -100 L2020 1180 L1400 1180 Z' fill='url(%23htGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='htGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23cc2200'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
@@ -66,7 +66,6 @@ const ABSTRACT_WALLPAPERS = {
   'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
 };
 
-/* --- FIREBASE INITIALIZATION --- */
 try {
   if (typeof firebase !== 'undefined') {
     const rosterFirebaseConfig = {
@@ -85,7 +84,6 @@ try {
   console.warn("Firebase offline or blocked.", e);
 }
 
-/* --- DYNAMIC SIDEBAR LIVE SEARCH SYSTEM --- */
 function handleSidebarSearch(query) {
   const cleanQuery = query.toLowerCase().trim();
   const navGroups = document.querySelectorAll('.sidebar .nav-group');
@@ -144,7 +142,6 @@ function handleSidebarSearch(query) {
   });
 }
 
-/* --- BRAND DIRECTORY TAB DATA --- */
 const brandTabData = {
   ibet: [
     { name: "IBET ADMIN", url: "https://mga-betbook.center/ibet/bets", desc: "Ibet Customer Info/Docs/Transactions" },
@@ -199,7 +196,6 @@ function switchBrandTab(tabName) {
   });
 }
 
-/* --- HIGH-RELIABILITY CORS FETCH SYSTEM --- */
 const fetchCorsSafe = async (targetUrl) => {
   try {
     const res = await fetch(targetUrl);
@@ -279,7 +275,6 @@ function loadCachedTopPicks() {
   } catch (e) {}
 }
 
-/* ROBUST ESPN SCOREBOARD FETCHER FOR TOP PICKS */
 async function fetchLeagueScoreboard(league) {
   const now = new Date();
   const y = now.getFullYear();
@@ -549,7 +544,6 @@ window.addEventListener('resize', () => {
   renderFilteredTopPicks();
 });
 
-/* --- ANIMATED PLASMA / SNOWFALL BACKGROUND CANVAS --- */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let width = 0, height = 0, particles = [];
@@ -573,10 +567,10 @@ class Particle {
     this.x = Math.random() * width;
     this.y = initial ? Math.random() * height : -10;
     if (isChristmasThemeActive) {
-      this.radius = Math.random() * (isMobileDevice() ? 2.2 : 3.2) + 1.2;
-      this.vx = (Math.random() - 0.5) * 0.6;
-      this.vy = Math.random() * 0.9 + 0.45;
-      this.alpha = Math.random() * 0.55 + 0.3;
+      this.radius = Math.random() * (isMobileDevice() ? 2.2 : 3.4) + 1.2;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = Math.random() * 0.9 + 0.4;
+      this.alpha = Math.random() * 0.6 + 0.3;
     } else {
       this.radius = Math.random() * (isMobileDevice() ? 1.5 : 2) + 1;
       this.vx = (Math.random() - 0.5) * (isMobileDevice() ? 0.4 : 0.8);
@@ -641,7 +635,6 @@ function animateCanvas() {
 }
 if (canvas) animateCanvas();
 
-/* --- SITTING ROBOT EYE & HEAD TRACKING --- */
 document.addEventListener('mousemove', (e) => {
   if (isMobileDevice()) return;
 
@@ -678,7 +671,6 @@ document.addEventListener('mousemove', (e) => {
   if (robotBodyWrapper) robotBodyWrapper.style.transform = `rotateY(${rotateY * 0.3}deg)`;
 });
 
-/* --- WORLD CLOCKS SYSTEM --- */
 function updateWorldClocks() {
   const now = new Date();
   const optionsGMT8 = { timeZone: 'Asia/Singapore', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -696,7 +688,6 @@ function updateWorldClocks() {
 setInterval(updateWorldClocks, 1000);
 updateWorldClocks();
 
-/* --- REAL-TIME PHILIPPINES (MANILA) WEATHER FORECAST --- */
 async function fetchManilaWeather() {
   const tempEl = document.getElementById('weatherTemp');
   const condEl = document.getElementById('weatherCond');
@@ -758,7 +749,6 @@ function parseWMOWeatherCode(code) {
   return { label: 'CLOUDY', icon: 'bx-cloud', color: '#38bdf8' };
 }
 
-/* --- AUTHENTICATION ENGINE --- */
 function togglePasswordVisibility() {
   const passInput = document.getElementById('passwordInput');
   const icon = document.getElementById('togglePassIcon');
@@ -844,7 +834,6 @@ function handleLogout() {
   }
 }
 
-/* --- UI TOGGLES & WIDGET MANAGEMENT --- */
 function toggleMenu(menuId, btnElement) {
   const targetMenu = document.getElementById(menuId);
   if (!targetMenu) return;
@@ -892,7 +881,6 @@ function restoreSavedWidgets() {
   } catch(e) {}
 }
 
-/* --- THEME SWITCHER ENGINE --- */
 function setGradient(theme) {
   const body = document.getElementById('pageBody');
   if (!body) return;
@@ -951,477 +939,6 @@ function setGradient(theme) {
   localStorage.setItem('sbhub_theme', theme);
 }
 
-/* --- REAL-TIME LIVE DUTY ROSTER WITH TRADER FILTER --- */
-function filterTraderDuty(traderName) {
-  activeTraderFilter = traderName.toUpperCase();
-  renderLiveDutyWidget(lastRosterSnapshotData);
-}
-
-function getGMT8IsoDate() {
-  const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  const year = nowManila.getFullYear();
-  const month = String(nowManila.getMonth() + 1).padStart(2, '0');
-  const day = String(nowManila.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function getCurrentSlotInfo() {
-  const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  const hours = nowManila.getHours();
-  if (hours >= 6 && hours < 9)    return { slotId: "slot_6_9", label: "7:00 - 9:00" };
-  if (hours >= 9 && hours < 12)  return { slotId: "slot_9_12", label: "9:00 - 12:00" };
-  if (hours >= 12 && hours < 15) return { slotId: "slot_12_15", label: "12:00 - 15:00" };
-  if (hours >= 15 && hours < 18) return { slotId: "slot_15_18", label: "15:00 - 18:00" };
-  if (hours >= 18 && hours < 21) return { slotId: "slot_18_21", label: "18:00 - 21:00" };
-  return { slotId: "slot_21_0", label: "21:00 - 00:00" };
-}
-
-function listenToLiveDutyRoster() {
-  if (!rosterDb) {
-    renderLiveDutyWidget(null);
-    return;
-  }
-  rosterDb.ref('roster_data').on('value', (snapshot) => {
-    renderLiveDutyWidget(snapshot.val());
-  }, (error) => {
-    renderLiveDutyWidget(null);
-  });
-}
-
-function renderLiveDutyWidget(rosterData) {
-  lastRosterSnapshotData = rosterData;
-  const container = document.getElementById("liveDutyContent");
-  if (!container) return;
-
-  const todayIso = getGMT8IsoDate();
-  const { slotId, label: slotLabel } = getCurrentSlotInfo();
-
-  if (!rosterData) {
-    const fallbackMembers = [
-      { id: 'ann', name: 'ANN', shift: '7-16', task: 'Monitoring Edge & IBET Markets' },
-      { id: 'dave', name: 'DAVE', shift: 'REST DAY', task: 'Rest day.' },
-      { id: 'ken', name: 'KEN', shift: 'REST DAY', task: 'Rest day.' },
-      { id: 'kriztel', name: 'KRIZTEL', shift: '12-21', task: 'Live Risk & Duty Operations' }
-    ];
-
-    const filteredMembers = fallbackMembers.filter(m => 
-      activeTraderFilter === 'ALL' || m.name === activeTraderFilter
-    );
-
-    let fallbackHtml = `
-      <div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-        <span>📅 ${todayIso}</span>
-        <span class="badge-time">⏰ ${slotLabel}</span>
-      </div>
-    `;
-
-    filteredMembers.forEach(m => {
-      fallbackHtml += `
-        <div class="duty-card">
-          <div class="duty-top">
-            <span>${m.name}</span>
-            <span class="badge-time">${m.shift}</span>
-          </div>
-          <div class="duty-desc">${m.task}</div>
-        </div>
-      `;
-    });
-
-    container.innerHTML = fallbackHtml;
-    calculateActiveTraders();
-    return;
-  }
-
-  let activeDayKey = Object.keys(rosterData).find(key => {
-    if (key === 'archives') return false;
-    const entry = rosterData[key];
-    return entry?.isoDate === todayIso || entry?.date === todayIso || key === todayIso || key.includes(todayIso);
-  });
-
-  if (!activeDayKey) {
-    const activeKeys = Object.keys(rosterData).filter(k => k !== 'archives');
-    activeKeys.sort((a, b) => {
-      const dateA = rosterData[b]?.isoDate || rosterData[b]?.date || b;
-      const dateB = rosterData[a]?.isoDate || rosterData[a]?.date || a;
-      return String(dateA).localeCompare(String(dateB));
-    });
-    activeDayKey = activeKeys[0];
-  }
-
-  const dayData = rosterData[activeDayKey];
-  const displayDate = dayData?.isoDate || dayData?.date || todayIso;
-  const teamMembers = [
-    { id: 'ann', name: 'ANN' }, { id: 'dave', name: 'DAVE' },
-    { id: 'ken', name: 'KEN' }, { id: 'kriztel', name: 'KRIZTEL' }
-  ];
-
-  const filteredTeam = teamMembers.filter(m => 
-    activeTraderFilter === 'ALL' || m.name === activeTraderFilter
-  );
-
-  let html = `
-    <div style="font-size:11px; font-weight:700; opacity:0.9; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-      <span>📅 ${displayDate}</span>
-      <span class="badge-time">⏰ ${slotLabel}</span>
-    </div>
-  `;
-
-  filteredTeam.forEach(m => {
-    const mGrid = dayData.grid ? dayData.grid[m.id] : null;
-    const shiftId = mGrid?.shift || 'shift-7-16';
-    const isRest = (shiftId === 'shift-rd' || shiftId === 'shift-vl' || shiftId === 'shift-sl');
-    const restLabel = shiftId === 'shift-vl' ? 'VACATION LEAVE' : (shiftId === 'shift-sl' ? 'SICK LEAVE' : 'REST DAY');
-
-    let rawTasks = (mGrid && mGrid.slots) ? mGrid.slots[slotId] || [] : [];
-    if (!Array.isArray(rawTasks)) rawTasks = [];
-    const tasks = rawTasks.map(item => (typeof item === 'string' ? { text: item, done: false } : { text: item.text || '', done: !!item.done }));
-
-    html += `
-      <div class="duty-card">
-        <div class="duty-top">
-          <span>${m.name}</span>
-          <span class="badge-time">${isRest ? restLabel : shiftId.replace('shift-', '')}</span>
-        </div>
-    `;
-
-    if (isRest) {
-      html += `<div class="duty-desc">Rest day.</div>`;
-    } else if (tasks.length === 0) {
-      html += `<div class="duty-desc">No assigned tasks in this slot.</div>`;
-    } else {
-      tasks.forEach(t => {
-        html += `<div class="duty-desc" style="display:flex; gap:4px; align-items:center;">
-          <i class='bx ${t.done ? 'bx-check-circle' : 'bx-time-five'}' style="color:${t.done ? '#34d399' : '#38bdf8'}"></i>
-          <span style="${t.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">${t.text}</span>
-        </div>`;
-      });
-    }
-    html += `</div>`;
-  });
-
-  container.innerHTML = html;
-  calculateActiveTraders();
-}
-
-/* ==========================================================================
-   AUTHENTIC TOURNAMENT NAME RESOLVER
-   ========================================================================== */
-function resolveCleanLeagueName(evt, comp) {
-  const candidates = [
-    evt?.league?.name,
-    evt?.season?.displayName,
-    comp?.league?.name,
-    comp?.type?.text
-  ];
-
-  for (const name of candidates) {
-    if (name && typeof name === 'string' && name.trim().length > 0 && name.toLowerCase() !== 'soccer') {
-      return name.trim();
-    }
-  }
-
-  const slug = (evt?.league?.slug || evt?.season?.slug || '').toLowerCase();
-  if (slug.includes('uefa.champions')) return 'UEFA Champions League';
-  if (slug.includes('uefa.europa.conf')) return 'UEFA Conference League';
-  if (slug.includes('uefa.europa')) return 'UEFA Europa League';
-  if (slug.includes('uefa.nations')) return 'UEFA Nations League';
-  if (slug.includes('eng.1')) return 'Premier League';
-  if (slug.includes('esp.1')) return 'La Liga';
-  if (slug.includes('ger.1')) return 'Bundesliga';
-  if (slug.includes('ita.1')) return 'Serie A';
-  if (slug.includes('fra.1')) return 'Ligue 1';
-  if (slug.includes('por.1')) return 'Portugal Liga';
-  if (slug.includes('ned.1')) return 'Eredivisie';
-  if (slug.includes('fin.1')) return 'Veikkausliiga';
-  if (slug.includes('nor.1')) return 'Eliteserien';
-  if (slug.includes('afc.champions_league_two') || slug.includes('acl2')) return 'AFC Champions League Two';
-  if (slug.includes('afc.champions')) return 'AFC Champions League Elite';
-  if (slug.includes('usa.1')) return 'MLS';
-
-  return 'International Soccer';
-}
-
-/* ==========================================================================
-   TOP GAMES (DAILY MATCHDAY) STRICT PRIORITIZATION LOGIC
-   ========================================================================== */
-function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
-  const l = (leagueTitle || '').toLowerCase();
-  const s = (slug || '').toLowerCase();
-  const h = (homeName || '').toLowerCase();
-  const a = (awayName || '').toLowerCase();
-
-  if (
-    s.includes('uefa.champions') || l.includes('champions league') ||
-    s.includes('uefa.europa.conf') || l.includes('conference league') ||
-    s.includes('uefa.europa') || l.includes('europa league') ||
-    s.includes('uefa.nations') || l.includes('nations league') ||
-    s.includes('uefa.euro') || l.includes('european championship') ||
-    l.includes('uefa')
-  ) {
-    return { tier: 1, rank: 1 };
-  }
-
-  if (s.includes('eng.1') || l.includes('premier league')) return { tier: 1, rank: 2 };
-  if (s.includes('esp.1') || l.includes('la liga') || l.includes('laliga')) return { tier: 1, rank: 3 };
-  if (s.includes('ger.1') || l.includes('bundesliga')) return { tier: 1, rank: 4 };
-  if (s.includes('ita.1') || l.includes('serie a')) return { tier: 1, rank: 5 };
-  if (s.includes('fra.1') || l.includes('ligue 1')) return { tier: 1, rank: 6 };
-  if (s.includes('por.1') || l.includes('primeira liga') || l.includes('portugal')) return { tier: 1, rank: 7 };
-  if (s.includes('ned.1') || l.includes('eredivisie')) return { tier: 1, rank: 8 };
-
-  const isMLS = s.includes('usa.1') || l.includes('mls') || l.includes('major league soccer');
-  if (isMLS) {
-    const hasMiami = h.includes('inter miami') || a.includes('inter miami') || h.includes('miami') || a.includes('miami');
-    if (hasMiami) return { tier: 2, rank: 9 };
-    return null;
-  }
-
-  if (s.includes('fin.1') || l.includes('veikkausliiga') || l.includes('finland')) return { tier: 3, rank: 10 };
-  if (s.includes('nor.1') || l.includes('eliteserien') || l.includes('norway')) return { tier: 3, rank: 11 };
-
-  if (
-    l.includes('afc champions') || s.includes('afc.champions') ||
-    l.includes('fa cup') || s.includes('eng.fa') ||
-    l.includes('copa del rey') || s.includes('esp.copa_del_rey')
-  ) {
-    return { tier: 4, rank: 12 };
-  }
-
-  return { tier: 5, rank: 20 };
-}
-
-function getGMT8DateObj(offsetDays = 0) {
-  const now = new Date();
-  const gmt8String = now.toLocaleString("en-US", { timeZone: "Asia/Manila" });
-  const gmt8Date = new Date(gmt8String);
-  gmt8Date.setDate(gmt8Date.getDate() + offsetDays);
-  return gmt8Date;
-}
-
-function getFormattedDateQuery(daysAhead) {
-  const d = getGMT8DateObj(daysAhead);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}${month}${day}`;
-}
-
-async function fetchLiveGames() {
-  const container = document.getElementById("gamesContainer");
-  if (!container) return;
-
-  const targetDateObj = getGMT8DateObj(selectedGameDayOffset);
-  const dateLabelStr = targetDateObj.toLocaleDateString("en-US", { month: 'short', day: 'numeric' }).toUpperCase();
-  
-  const dayTag = (selectedGameDayOffset === 0) ? `TODAY` : `DAY ${selectedGameDayOffset + 1}`;
-  const labelEl = document.getElementById("matchDayDisplay");
-  if (labelEl) labelEl.textContent = `${dayTag} (${dateLabelStr})`;
-
-  const targetIsoDay = `${targetDateObj.getFullYear()}-${String(targetDateObj.getMonth() + 1).padStart(2, '0')}-${String(targetDateObj.getDate()).padStart(2, '0')}`;
-  const targetDateQuery = getFormattedDateQuery(selectedGameDayOffset);
-  const prevDateQuery = getFormattedDateQuery(selectedGameDayOffset - 1);
-  const nextDateQuery = getFormattedDateQuery(selectedGameDayOffset + 1);
-
-  const cacheKey = `sbhub_daily_fixture_${targetIsoDay}`;
-  const cachedData = sessionStorage.getItem(cacheKey);
-  if (cachedData) {
-    try {
-      const parsed = JSON.parse(cachedData);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        renderDailyGamesCards(container, parsed);
-      }
-    } catch (e) {}
-  }
-
-  try {
-    const endpoints = [
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${targetDateQuery}&limit=250`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=${targetDateQuery}&limit=100`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa.conf/scoreboard?dates=${targetDateQuery}&limit=100`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${prevDateQuery}&limit=100`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${nextDateQuery}&limit=100`
-    ];
-
-    const results = await Promise.allSettled(endpoints.map(u => fetchCorsSafe(u)));
-    const seenMatchKeys = new Set();
-    const candidateMatches = [];
-
-    results.forEach(res => {
-      if (res.status !== 'fulfilled' || !res.value || !Array.isArray(res.value.events)) return;
-
-      res.value.events.forEach(evt => {
-        const comp = evt.competitions?.[0];
-        if (!comp) return;
-
-        const dObj = new Date(evt.date || comp.date);
-        const matchTimestamp = dObj.getTime();
-        if (isNaN(matchTimestamp)) return;
-
-        const matchDayInManila = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'Asia/Manila',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        }).format(dObj);
-
-        const matchDayInUTC = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'UTC',
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        }).format(dObj);
-
-        const isManilaMatchday = (matchDayInManila === targetIsoDay);
-        const isEuropeanSlate = (matchDayInUTC === targetIsoDay);
-
-        if (!isManilaMatchday && !isEuropeanSlate) return;
-
-        const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
-        const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
-        if (!homeTeam || !awayTeam) return;
-
-        const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
-        const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
-
-        const matchKey = evt.id || `${homeName}-${awayName}`;
-        if (seenMatchKeys.has(matchKey)) return;
-
-        const cleanLeague = resolveCleanLeagueName(evt, comp);
-        const slug = evt.league?.slug || evt.season?.slug || '';
-        const priorityMeta = classifyMatchPriority(homeName, awayName, cleanLeague, slug);
-
-        if (!priorityMeta) return;
-
-        seenMatchKeys.add(matchKey);
-
-        const rawHomeLogo = homeTeam.team?.logo || homeTeam.team?.logos?.[0]?.href;
-        const rawAwayLogo = awayTeam.team?.logo || awayTeam.team?.logos?.[0]?.href;
-        const homeLogo = (rawHomeLogo && !rawHomeLogo.includes('default.png')) ? rawHomeLogo : FALLBACK_LOGO;
-        const awayLogo = (rawAwayLogo && !rawAwayLogo.includes('default.png')) ? rawAwayLogo : FALLBACK_LOGO;
-
-        const homeScore = homeTeam.score ?? '';
-        const awayScore = awayTeam.score ?? '';
-
-        const statusState = evt.status?.type?.state || comp.status?.type?.state || 'pre';
-        const statusDetail = evt.status?.type?.shortDetail || comp.status?.type?.shortDetail || '';
-
-        const kickOffTime = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Asia/Manila',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }).format(dObj);
-
-        candidateMatches.push({
-          id: matchKey,
-          homeName,
-          awayName,
-          homeLogo,
-          awayLogo,
-          homeScore,
-          awayScore,
-          statusState,
-          statusDetail,
-          leagueName: cleanLeague,
-          kickOffTimestamp: matchTimestamp,
-          kickOffTime,
-          tier: priorityMeta.tier,
-          rank: priorityMeta.rank
-        });
-      });
-    });
-
-    if (candidateMatches.length === 0) {
-      if (!cachedData) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
-      }
-      return;
-    }
-
-    let selectedMatches = candidateMatches.filter(m => m.tier <= 2);
-    if (selectedMatches.length < 4) {
-      selectedMatches = candidateMatches.filter(m => m.tier <= 3);
-    }
-    if (selectedMatches.length < 4) {
-      selectedMatches = candidateMatches.filter(m => m.tier <= 4);
-    }
-    if (selectedMatches.length === 0) {
-      selectedMatches = candidateMatches;
-    }
-
-    selectedMatches.sort((a, b) => {
-      const stateWeight = (s) => (s === 'in' ? 0 : (s === 'pre' ? 1 : 2));
-      const wDiff = stateWeight(a.statusState) - stateWeight(b.statusState);
-      if (wDiff !== 0) return wDiff;
-      if (a.rank !== b.rank) return a.rank - b.rank;
-      return a.kickOffTimestamp - b.kickOffTimestamp;
-    });
-
-    const displaySlate = selectedMatches.slice(0, 10);
-    sessionStorage.setItem(cacheKey, JSON.stringify(displaySlate));
-    renderDailyGamesCards(container, displaySlate);
-
-  } catch (e) {
-    if (!cachedData) {
-      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No scheduled fixtures for ${dateLabelStr} (GMT+8).</div>`;
-    }
-  }
-}
-
-function renderDailyGamesCards(container, matches) {
-  let gamesHtml = "";
-  matches.forEach(item => {
-    let centerVsHtml = `<span class="vs-text">vs</span>`;
-    let timeStatusHtml = `<span style="color:#38bdf8;"><i class='bx bx-time-five'></i> ${item.kickOffTime}</span>`;
-
-    if (item.statusState === 'in') {
-      centerVsHtml = `<span class="vs-text" style="color:#ef4444; font-weight:700; font-size:13px;">${item.homeScore} - ${item.awayScore}</span>`;
-      timeStatusHtml = `<span style="color:#ef4444; font-weight:700;"><i class='bx bx-radio-circle-marked'></i> LIVE ${item.statusDetail}</span>`;
-    } else if (item.statusState === 'post') {
-      centerVsHtml = `<span class="vs-text" style="color:#38bdf8; font-weight:700; font-size:13px;">${item.homeScore} - ${item.awayScore}</span>`;
-      timeStatusHtml = `<span style="color:rgba(255,255,255,0.6); font-weight:600;">FT</span>`;
-    }
-
-    gamesHtml += `
-      <div class="top-game-card">
-        <div class="top-game-flags">
-          <img src="${item.homeLogo}" alt="${item.homeName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
-          ${centerVsHtml}
-          <img src="${item.awayLogo}" alt="${item.awayName}" class="team-flag-img" onerror="this.src='${FALLBACK_LOGO}'">
-        </div>
-        <div class="top-game-title">${item.homeName} <span class="vs-light">vs</span> ${item.awayName}</div>
-        <div class="top-game-league">${item.leagueName} &bull; ${timeStatusHtml}</div>
-      </div>
-    `;
-  });
-
-  container.innerHTML = gamesHtml;
-}
-
-function navigateMatchDay(dir) {
-  selectedGameDayOffset += dir;
-  if (selectedGameDayOffset < 0) selectedGameDayOffset = 6;
-  if (selectedGameDayOffset > 6) selectedGameDayOffset = 0;
-  fetchLiveGames();
-}
-
-function calculateActiveTraders() {
-  const dutyCards = document.querySelectorAll('.duty-card');
-  let activeCount = 0;
-  dutyCards.forEach(card => {
-    const timeBadge = card.querySelector('.badge-time');
-    if (timeBadge) {
-      const text = timeBadge.textContent.trim().toUpperCase();
-      if (!text.includes('OFF') && !text.includes('REST') && !text.includes('RD') && !text.includes('LEAVE')) {
-        activeCount++;
-      }
-    }
-  });
-  const el = document.getElementById('activeTraderCount');
-  if (el) el.textContent = activeCount + ' Working';
-}
-
-/* --- INITIALIZATION --- */
 function initDashboardApp() {
   const savedTheme = localStorage.getItem('sbhub_theme');
   if (savedTheme) {
@@ -1446,11 +963,8 @@ function initDashboardApp() {
   renderLiveDutyWidget(null);
   fetchLiveGames();
 
-  // Background Live Fetch Pipeline
   fetchTopPicksAndBoosts();
   setInterval(fetchTopPicksAndBoosts, 3 * 60 * 1000);
-
-  // Auto-refresh matchday slate every 60 seconds
   setInterval(fetchLiveGames, 60 * 1000);
 
   listenToLiveDutyRoster();
