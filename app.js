@@ -548,6 +548,171 @@ function renderFilteredTopPicks() {
   container.innerHTML = cardsHtml;
 }
 
+/* --- LIVE GAMES & DUTY ROSTER WIDGET FUNCTIONS --- */
+async function fetchLiveGames() {
+  const container = document.getElementById('liveGamesContainer');
+  if (!container) return;
+
+  try {
+    const now = new Date();
+    const targetDate = new Date(now.getTime() + (selectedGameDayOffset * 24 * 60 * 60 * 1000));
+    const y = targetDate.getFullYear();
+    const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const d = String(targetDate.getDate()).padStart(2, '0');
+    const dateStr = `${y}${m}${d}`;
+
+    const leagueCodes = ["eng.1", "esp.1", "ger.1", "ita.1", "fra.1", "uefa.champions"];
+    const promises = leagueCodes.map(code => 
+      fetchCorsSafe(`https://site.api.espn.com/apis/site/v2/sports/soccer/${code}/scoreboard?dates=${dateStr}&limit=50`)
+    );
+
+    const responses = await Promise.allSettled(promises);
+    let allMatches = [];
+    const seenIds = new Set();
+
+    responses.forEach(res => {
+      if (res.status === 'fulfilled' && res.value && Array.isArray(res.value.events)) {
+        res.value.events.forEach(evt => {
+          if (evt && evt.id && !seenIds.has(evt.id)) {
+            seenIds.add(evt.id);
+            const comp = evt.competitions?.[0];
+            if (comp) {
+              const homeTeam = comp.competitors?.find(c => c.homeAway === 'home') || comp.competitors?.[0];
+              const awayTeam = comp.competitors?.find(c => c.homeAway === 'away') || comp.competitors?.[1];
+              if (homeTeam && awayTeam) {
+                const homeName = homeTeam.team?.shortDisplayName || homeTeam.team?.displayName || "Home";
+                const awayName = awayTeam.team?.shortDisplayName || awayTeam.team?.displayName || "Away";
+                const homeLogo = homeTeam.team?.logo || FALLBACK_LOGO;
+                const awayLogo = awayTeam.team?.logo || FALLBACK_LOGO;
+                
+                const statusState = evt.status?.type?.state || 'pre';
+                const statusDetail = evt.status?.type?.detail || 'Scheduled';
+                const homeScore = homeTeam.score ?? '-';
+                const awayScore = awayTeam.score ?? '-';
+
+                allMatches.push({
+                  homeName, awayName, homeLogo, awayLogo,
+                  statusState, statusDetail, homeScore, awayScore,
+                  dateObj: new Date(evt.date || comp.date)
+                });
+              }
+            }
+          }
+        });
+      }
+    });
+
+    if (allMatches.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">No fixtures available for this date.</div>`;
+      return;
+    }
+
+    allMatches.sort((a, b) => a.dateObj - b.dateObj);
+
+    let html = '';
+    allMatches.slice(0, 8).forEach(m => {
+      const isLive = m.statusState === 'in';
+      const isPost = m.statusState === 'post';
+      html += `
+        <div class="match-row">
+          <div class="match-teams">
+            <span class="team-name"><img src="${m.homeLogo}" class="match-mini-flag" onerror="this.src='${FALLBACK_LOGO}'"/> ${m.homeName}</span>
+            <span class="match-score">${isLive || isPost ? `${m.homeScore} - ${m.awayScore}` : 'vs'}</span>
+            <span class="team-name right"><img src="${m.awayLogo}" class="match-mini-flag" onerror="this.src='${FALLBACK_LOGO}'"/> ${m.awayName}</span>
+          </div>
+          <div class="match-status-badge ${isLive ? 'live' : ''}">${m.statusDetail}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = `<div style="text-align:center; padding:20px; font-size:11px; color:rgba(255,255,255,0.65);">Failed to load matchday fixtures.</div>`;
+  }
+}
+
+function changeGameDay(offset) {
+  selectedGameDayOffset += offset;
+  const labelEl = document.getElementById('selectedGameDayLabel');
+  if (labelEl) {
+    if (selectedGameDayOffset === 0) labelEl.textContent = "TODAY (GMT+8)";
+    else if (selectedGameDayOffset === 1) labelEl.textContent = "TOMORROW (GMT+8)";
+    else if (selectedGameDayOffset === -1) labelEl.textContent = "YESTERDAY (GMT+8)";
+    else labelEl.textContent = `OFFSET: ${selectedGameDayOffset} DAYS`;
+  }
+  fetchLiveGames();
+}
+
+function listenToLiveDutyRoster() {
+  if (!rosterDb) {
+    renderLiveDutyWidget(null);
+    return;
+  }
+  try {
+    const rosterRef = rosterDb.ref('dutyRoster/current');
+    rosterRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      lastRosterSnapshotData = data;
+      renderLiveDutyWidget(data);
+      calculateActiveTraders();
+    }, (error) => {
+      renderLiveDutyWidget(null);
+    });
+  } catch (e) {
+    renderLiveDutyWidget(null);
+  }
+}
+
+function renderLiveDutyWidget(data) {
+  const container = document.getElementById('liveDutyContainer');
+  if (!container) return;
+
+  if (!data) {
+    container.innerHTML = `<div style="text-align:center; padding:15px; font-size:11px; color:rgba(255,255,255,0.6);">No active shift roster found in database.</div>`;
+    return;
+  }
+
+  const amTraders = Array.isArray(data.amTraders) ? data.amTraders : [];
+  const pmTraders = Array.isArray(data.pmTraders) ? data.pmTraders : [];
+
+  let html = `<div class="duty-shift-group"><div class="duty-shift-title">AM SHIFT (07:00 - 19:00)</div><div class="duty-names">`;
+  if (amTraders.length > 0) {
+    amTraders.forEach(t => {
+      html += `<span class="duty-badge am">${t.name || t}</span>`;
+    });
+  } else {
+    html += `<span style="font-size:11px; color:rgba(255,255,255,0.5);">No AM traders assigned</span>`;
+  }
+  html += `</div></div><div class="duty-shift-group" style="margin-top:10px;"><div class="duty-shift-title">PM SHIFT (19:00 - 07:00)</div><div class="duty-names">`;
+
+  if (pmTraders.length > 0) {
+    pmTraders.forEach(t => {
+      html += `<span class="duty-badge pm">${t.name || t}</span>`;
+    });
+  } else {
+    html += `<span style="font-size:11px; color:rgba(255,255,255,0.5);">No PM traders assigned</span>`;
+  }
+  html += `</div></div>`;
+  container.innerHTML = html;
+}
+
+function calculateActiveTraders() {
+  const badgeEl = document.getElementById('activeTraderBadge');
+  if (!badgeEl) return;
+
+  if (!lastRosterSnapshotData) {
+    badgeEl.textContent = "0 Working";
+    return;
+  }
+
+  const now = new Date();
+  const currentHour = now.getHours();
+  const isAmShift = currentHour >= 7 && currentHour < 19;
+  
+  const activeList = isAmShift ? (lastRosterSnapshotData.amTraders || []) : (lastRosterSnapshotData.pmTraders || []);
+  const count = activeList.length;
+  badgeEl.textContent = `${count} Working`;
+}
+
 window.addEventListener('resize', () => {
   renderFilteredTopPicks();
 });
@@ -956,12 +1121,12 @@ function initDashboardApp() {
     setGradient('blue-orange-wave');
   }
 
-  const savedGlassOpacity = localStorage.getItem('sbhub_glass_opacity'] || '0.45';
+  const savedGlassOpacity = localStorage.getItem('sbhub_glass_opacity') || '0.45';
   updateGlassOpacity(savedGlassOpacity);
   const sliderInput = document.getElementById('glassOpacitySlider');
   if (sliderInput) sliderInput.value = savedGlassOpacity;
 
-  if (localStorage.getItem('sbhub_auth'] === 'true' || sessionStorage.getItem('sbhub_auth'] === 'true') {
+  if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
     unlockDashboard();
   }
 
