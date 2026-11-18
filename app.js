@@ -66,6 +66,14 @@ const ABSTRACT_WALLPAPERS = {
   'blue-orange-sunset': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%2309122a'/%3E%3Cpath d='M-100 200 Q600 600 1200 100 T2020 300 L2020 1180 L-100 1180 Z' fill='%23102456'/%3E%3Cpath d='M-100 450 Q500 150 1100 650 T2020 500 L2020 1180 L-100 1180 Z' fill='url(%23sunsetGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='sunsetGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E"
 };
 
+/* --- PRELOAD WALLPAPER IMAGES INTO BROWSER CACHE TO PREVENT LOAD DELAYS --- */
+(function preloadWallpapers() {
+  ['cute-christmas-tree.jpg', 'gold.avif', 'frosty.jpg'].forEach(imgSrc => {
+    const img = new Image();
+    img.src = imgSrc;
+  });
+})();
+
 try {
   if (typeof firebase !== 'undefined') {
     const rosterFirebaseConfig = {
@@ -948,12 +956,12 @@ function initDashboardApp() {
     setGradient('blue-orange-wave');
   }
 
-  const savedGlassOpacity = localStorage.getItem('sbhub_glass_opacity') || '0.45';
+  const savedGlassOpacity = localStorage.getItem('sbhub_glass_opacity'] || '0.45';
   updateGlassOpacity(savedGlassOpacity);
   const sliderInput = document.getElementById('glassOpacitySlider');
   if (sliderInput) sliderInput.value = savedGlassOpacity;
 
-  if (localStorage.getItem('sbhub_auth') === 'true' || sessionStorage.getItem('sbhub_auth') === 'true') {
+  if (localStorage.getItem('sbhub_auth'] === 'true' || sessionStorage.getItem('sbhub_auth'] === 'true') {
     unlockDashboard();
   }
 
