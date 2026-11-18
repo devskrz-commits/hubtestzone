@@ -3,6 +3,7 @@ let selectedGameDayOffset = 0;
 let rosterDb = null;
 let activeTraderFilter = 'ALL';
 let lastRosterSnapshotData = null;
+let isChristmasThemeActive = false;
 
 const isMobileDevice = () => window.innerWidth <= 768;
 
@@ -39,6 +40,9 @@ function toggleMobileSidebar(forceState) {
     document.documentElement.classList.add('sbhub-authenticated');
   }
   const savedTheme = localStorage.getItem('sbhub_theme') || 'blue-orange-wave';
+  if (savedTheme.startsWith('christmas-')) {
+    isChristmasThemeActive = true;
+  }
   const savedGlassOpacity = localStorage.getItem('sbhub_glass_opacity') || '0.45';
   document.documentElement.style.setProperty('--glass-opacity-val', savedGlassOpacity);
 })();
@@ -49,8 +53,11 @@ const DEFAULT_PASS = "sb2026";
 /* --- SAFE LOGO FALLBACK SVG --- */
 const FALLBACK_LOGO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231e293b' stroke='%2338bdf8' stroke-width='4'/%3E%3Cpath d='M30 50 L70 50 M50 30 L50 70' stroke='%2338bdf8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
 
-/* --- ABSTRACT WALLPAPERS --- */
+/* --- ABSTRACT & CHRISTMAS HOLIDAY WALLPAPERS --- */
 const ABSTRACT_WALLPAPERS = {
+  'christmas-silent-night': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3CradialGradient id='xmasNight' cx='50%25' cy='25%25' r='75%25'%3E%3Cstop offset='0%25' stop-color='%230c3b2e'/%3E%3Cstop offset='55%25' stop-color='%23051b15'/%3E%3Cstop offset='100%25' stop-color='%23020a08'/%3E%3C/radialGradient%3E%3CradialGradient id='starGlow' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fde047' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23fde047' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='snowHill1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e3a4c'/%3E%3Cstop offset='100%25' stop-color='%23091522'/%3E%3C/linearGradient%3E%3ClinearGradient id='snowHill2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232c5268'/%3E%3Cstop offset='100%25' stop-color='%230d2030'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23xmasNight)'/%3E%3Ccircle cx='1520' cy='210' r='220' fill='url(%23starGlow)'/%3E%3Cpath d='M1520 135 L1532 185 L1582 197 L1532 209 L1520 259 L1508 209 L1458 197 L1508 185 Z' fill='%23fef08a'/%3E%3Ccircle cx='280' cy='180' r='3' fill='%23fef08a' opacity='0.8'/%3E%3Ccircle cx='490' cy='120' r='2.5' fill='%23ffffff' opacity='0.7'/%3E%3Ccircle cx='780' cy='210' r='3.5' fill='%23fde047' opacity='0.75'/%3E%3Ccircle cx='1080' cy='140' r='2' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='1260' cy='260' r='3' fill='%23fde047' opacity='0.6'/%3E%3Ccircle cx='1760' cy='310' r='2.5' fill='%23ffffff' opacity='0.7'/%3E%3Cpath d='M-50 860 Q480 740 960 850 T1970 810 L1970 1100 L-50 1100 Z' fill='url(%23snowHill1)'/%3E%3Cpolygon points='180,840 245,630 310,840' fill='%2307241b'/%3E%3Cpolygon points='195,750 245,580 295,750' fill='%230b3327'/%3E%3Cpolygon points='330,855 385,680 440,855' fill='%23061d16'/%3E%3Cpolygon points='1540,835 1620,570 1700,835' fill='%2307241b'/%3E%3Cpolygon points='1560,730 1620,515 1680,730' fill='%230c3a2c'/%3E%3Cpolygon points='1710,845 1775,645 1840,845' fill='%23061d16'/%3E%3Cpath d='M-50 930 Q620 840 1240 940 T1970 890 L1970 1100 L-50 1100 Z' fill='url(%23snowHill2)' opacity='0.9'/%3E%3C/svg%3E",
+  'christmas-crimson-gold': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='crimsonBg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233d080e'/%3E%3Cstop offset='50%25' stop-color='%23590d16'/%3E%3Cstop offset='100%25' stop-color='%2316261a'/%3E%3C/linearGradient%3E%3CradialGradient id='goldBokeh' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fbbf24' stop-opacity='0.35'/%3E%3Cstop offset='100%25' stop-color='%23fbbf24' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='goldRibbon' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23d97706' stop-opacity='0.25'/%3E%3Cstop offset='50%25' stop-color='%23fde047' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23b45309' stop-opacity='0.25'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23crimsonBg)'/%3E%3Ccircle cx='320' cy='240' r='260' fill='url(%23goldBokeh)'/%3E%3Ccircle cx='1620' cy='780' r='340' fill='url(%23goldBokeh)'/%3E%3Ccircle cx='1180' cy='220' r='190' fill='url(%23goldBokeh)'/%3E%3Cpath d='M-100 680 Q520 420 1120 720 T2020 520 L2020 570 Q1120 770 520 470 T-100 730 Z' fill='url(%23goldRibbon)'/%3E%3Cpath d='M-100 780 Q620 540 1240 820 T2020 640 L2020 1120 L-100 1120 Z' fill='%23230509' opacity='0.65'/%3E%3Cg stroke='%23fde047' stroke-width='2' opacity='0.28'%3E%3Cpath d='M1650 180 L1650 280 M1600 230 L1700 230 M1615 195 L1685 265 M1685 195 L1615 265'/%3E%3Cpath d='M260 760 L260 840 M220 800 L300 800 M232 772 L288 828 M288 772 L232 828'/%3E%3C/g%3E%3C/svg%3E",
+  'christmas-north-pole': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='arcticSky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23040d1a'/%3E%3Cstop offset='60%25' stop-color='%230a233c'/%3E%3Cstop offset='100%25' stop-color='%230f3554'/%3E%3C/linearGradient%3E%3ClinearGradient id='auroraWave' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%2310b981' stop-opacity='0.32'/%3E%3Cstop offset='50%25' stop-color='%2338bdf8' stop-opacity='0.28'/%3E%3Cstop offset='100%25' stop-color='%23a855f7' stop-opacity='0.22'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23arcticSky)'/%3E%3Cpath d='M-100 320 Q450 120 980 340 T2020 220 L2020 460 Q980 560 450 340 T-100 500 Z' fill='url(%23auroraWave)'/%3E%3Cline x1='240' y1='0' x2='240' y2='170' stroke='%23fde047' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='240' cy='198' r='28' fill='%23dc2626' stroke='%23fde047' stroke-width='2.5' opacity='0.8'/%3E%3Cline x1='1680' y1='0' x2='1680' y2='130' stroke='%23fde047' stroke-width='2' opacity='0.5'/%3E%3Ccircle cx='1680' cy='154' r='24' fill='%2316a34a' stroke='%23fde047' stroke-width='2.5' opacity='0.8'/%3E%3Cpath d='M-50 880 Q500 770 1050 880 T1970 830 L1970 1100 L-50 1100 Z' fill='%23163b59'/%3E%3Cpath d='M-50 950 Q650 870 1320 960 T1970 910 L1970 1100 L-50 1100 Z' fill='%231e4d70'/%3E%3C/svg%3E",
   'blue-orange-wave': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23070c1b'/%3E%3Cpath d='M0 0 L1920 0 L1920 1080 L0 1080 Z' fill='%230b152d'/%3E%3Cpath d='M-100 300 Q400 100 960 500 T2020 400 L2020 1180 L-100 1180 Z' fill='%230f214a'/%3E%3Cpath d='M-100 500 Q500 800 1100 400 T2020 700 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad1)'/%3E%3Cpath d='M-100 750 Q600 450 1200 850 T2020 600 L2020 1180 L-100 1180 Z' fill='url(%23orangeGrad2)' opacity='0.95'/%3E%3Cdefs%3E%3ClinearGradient id='orangeGrad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23ff8c00'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff3b00'/%3E%3Cstop offset='50%25' stop-color='%23ff7700'/%3E%3Cstop offset='100%25' stop-color='%23ffa000'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-glow': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23060a17'/%3E%3Ccircle cx='1600' cy='900' r='600' fill='url(%23glowOrange)' opacity='0.85'/%3E%3Ccircle cx='200' cy='200' r='500' fill='url(%23glowBlue)' opacity='0.6'/%3E%3Cpath d='M-100 800 Q800 300 2020 900 L2020 1180 L-100 1180 Z' fill='url(%23glowOrange2)' opacity='0.9'/%3E%3Cdefs%3E%3CradialGradient id='glowOrange' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23ff6600'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='glowBlue' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%231d4ed8'/%3E%3Cstop offset='100%25' stop-color='%23060a17' stop-opacity='0'/%3E%3C/radialGradient%3E%3ClinearGradient id='glowOrange2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23ff4500'/%3E%3Cstop offset='100%25' stop-color='%23ff9900'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
   'blue-orange-halftone': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080' preserveAspectRatio='none'%3E%3Crect width='1920' height='1080' fill='%23080e21'/%3E%3Cpath d='M-100 -100 L1200 -100 L2020 1180 L-100 1180 Z' fill='%230d193d'/%3E%3Cpath d='M700 -100 L2020 -100 L2020 1180 L1400 1180 Z' fill='url(%23htGrad)'/%3E%3Cdefs%3E%3ClinearGradient id='htGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff5500'/%3E%3Cstop offset='100%25' stop-color='%23cc2200'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E",
@@ -272,7 +279,7 @@ function loadCachedTopPicks() {
   } catch (e) {}
 }
 
-/* ROBUST ESPN SCOREBOARD FETCHER FOR TOP PICKS (STAGGERED TO PREVENT 429) */
+/* ROBUST ESPN SCOREBOARD FETCHER FOR TOP PICKS */
 async function fetchLeagueScoreboard(league) {
   const now = new Date();
   const y = now.getFullYear();
@@ -401,7 +408,6 @@ async function fetchTopPicksAndBoosts() {
       }
     });
 
-    // CACHE SAFETY: Never overwrite active memory if network returned empty!
     if (apiPicks.length > 0) {
       apiPicks.sort((a, b) => a.kickOffTimestamp - b.kickOffTimestamp);
       apiPicks.forEach((pick, index) => {
@@ -543,7 +549,7 @@ window.addEventListener('resize', () => {
   renderFilteredTopPicks();
 });
 
-/* --- ANIMATED PLASMA BACKGROUND CANVAS --- */
+/* --- ANIMATED PLASMA / SNOWFALL BACKGROUND CANVAS --- */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let width = 0, height = 0, particles = [];
@@ -561,32 +567,53 @@ window.addEventListener('resize', () => {
 
 class Particle {
   constructor() {
-    this.reset();
+    this.reset(true);
   }
-  reset() {
+  reset(initial = false) {
     this.x = Math.random() * width;
-    this.y = Math.random() * height;
-    this.radius = Math.random() * (isMobileDevice() ? 1.5 : 2) + 1;
-    this.vx = (Math.random() - 0.5) * (isMobileDevice() ? 0.4 : 0.8);
-    this.vy = (Math.random() - 0.5) * (isMobileDevice() ? 0.4 : 0.8);
-    this.alpha = Math.random() * 0.4 + 0.1;
+    this.y = initial ? Math.random() * height : -10;
+    if (isChristmasThemeActive) {
+      this.radius = Math.random() * (isMobileDevice() ? 2.2 : 3.2) + 1.2;
+      this.vx = (Math.random() - 0.5) * 0.6;
+      this.vy = Math.random() * 0.9 + 0.45;
+      this.alpha = Math.random() * 0.55 + 0.3;
+    } else {
+      this.radius = Math.random() * (isMobileDevice() ? 1.5 : 2) + 1;
+      this.vx = (Math.random() - 0.5) * (isMobileDevice() ? 0.4 : 0.8);
+      this.vy = (Math.random() - 0.5) * (isMobileDevice() ? 0.4 : 0.8);
+      this.alpha = Math.random() * 0.4 + 0.1;
+    }
   }
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < 0 || this.x > width) this.vx *= -1;
-    if (this.y < 0 || this.y > height) this.vy *= -1;
+    if (isChristmasThemeActive) {
+      this.x += this.vx + Math.sin(this.y * 0.015) * 0.25;
+      this.y += this.vy;
+      if (this.y > height + 10) this.reset(false);
+      if (this.x < -10) this.x = width + 10;
+      if (this.x > width + 10) this.x = -10;
+    } else {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > width) this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
   }
   draw() {
     if (!ctx) return;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(56, 189, 248, ${this.alpha})`;
-    if (!isMobileDevice()) {
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = '#00f2fe';
+    if (isChristmasThemeActive) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+      ctx.shadowBlur = isMobileDevice() ? 0 : 6;
+      ctx.shadowColor = '#ffffff';
     } else {
-      ctx.shadowBlur = 0;
+      ctx.fillStyle = `rgba(56, 189, 248, ${this.alpha})`;
+      if (!isMobileDevice()) {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00f2fe';
+      } else {
+        ctx.shadowBlur = 0;
+      }
     }
     ctx.fill();
   }
@@ -595,7 +622,9 @@ class Particle {
 function initParticles() {
   if (!canvas) return;
   particles = [];
-  const particleCount = isMobileDevice() ? 15 : 45;
+  const particleCount = isMobileDevice()
+    ? (isChristmasThemeActive ? 25 : 15)
+    : (isChristmasThemeActive ? 65 : 45);
   for (let i = 0; i < particleCount; i++) particles.push(new Particle());
 }
 
@@ -876,6 +905,12 @@ function setGradient(theme) {
     body.classList.remove('light-theme');
   }
 
+  const wasChristmas = isChristmasThemeActive;
+  isChristmasThemeActive = typeof theme === 'string' && theme.startsWith('christmas-');
+  if (wasChristmas !== isChristmasThemeActive) {
+    initParticles();
+  }
+
   if (ABSTRACT_WALLPAPERS[theme]) {
     backgroundStyle = `url("${ABSTRACT_WALLPAPERS[theme]}")`;
   } else if (typeof theme === 'string' && (theme.startsWith('http') || theme.startsWith('url(') || theme.startsWith('data:'))) {
@@ -1108,7 +1143,6 @@ function resolveCleanLeagueName(evt, comp) {
 
 /* ==========================================================================
    TOP GAMES (DAILY MATCHDAY) STRICT PRIORITIZATION LOGIC
-   Reference: European Championships + Top European Leagues + MLS(Miami) + Backups
    ========================================================================== */
 function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
   const l = (leagueTitle || '').toLowerCase();
@@ -1116,7 +1150,6 @@ function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
   const h = (homeName || '').toLowerCase();
   const a = (awayName || '').toLowerCase();
 
-  // Tier 1: UEFA Competitions & European Championships
   if (
     s.includes('uefa.champions') || l.includes('champions league') ||
     s.includes('uefa.europa.conf') || l.includes('conference league') ||
@@ -1128,7 +1161,6 @@ function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
     return { tier: 1, rank: 1 };
   }
 
-  // Tier 1: Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Portugal, Netherlands
   if (s.includes('eng.1') || l.includes('premier league')) return { tier: 1, rank: 2 };
   if (s.includes('esp.1') || l.includes('la liga') || l.includes('laliga')) return { tier: 1, rank: 3 };
   if (s.includes('ger.1') || l.includes('bundesliga')) return { tier: 1, rank: 4 };
@@ -1137,19 +1169,16 @@ function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
   if (s.includes('por.1') || l.includes('primeira liga') || l.includes('portugal')) return { tier: 1, rank: 7 };
   if (s.includes('ned.1') || l.includes('eredivisie')) return { tier: 1, rank: 8 };
 
-  // Tier 2: MLS (ONLY if Inter Miami is participating)
   const isMLS = s.includes('usa.1') || l.includes('mls') || l.includes('major league soccer');
   if (isMLS) {
     const hasMiami = h.includes('inter miami') || a.includes('inter miami') || h.includes('miami') || a.includes('miami');
     if (hasMiami) return { tier: 2, rank: 9 };
-    return null; // Reject all other MLS fixtures without Inter Miami
+    return null;
   }
 
-  // Tier 3: Backup Leagues (Finland Veikkausliiga, Norway Eliteserien)
   if (s.includes('fin.1') || l.includes('veikkausliiga') || l.includes('finland')) return { tier: 3, rank: 10 };
   if (s.includes('nor.1') || l.includes('eliteserien') || l.includes('norway')) return { tier: 3, rank: 11 };
 
-  // Tier 4: Prestigious Continental & Cup Matches (AFC Champions League, FA Cup, Copa del Rey)
   if (
     l.includes('afc champions') || s.includes('afc.champions') ||
     l.includes('fa cup') || s.includes('eng.fa') ||
@@ -1158,7 +1187,6 @@ function classifyMatchPriority(homeName, awayName, leagueTitle, slug) {
     return { tier: 4, rank: 12 };
   }
 
-  // Tier 5: General competitive football
   return { tier: 5, rank: 20 };
 }
 
@@ -1194,7 +1222,6 @@ async function fetchLiveGames() {
   const prevDateQuery = getFormattedDateQuery(selectedGameDayOffset - 1);
   const nextDateQuery = getFormattedDateQuery(selectedGameDayOffset + 1);
 
-  // Restore session cache immediately to avoid blank display while loading
   const cacheKey = `sbhub_daily_fixture_${targetIsoDay}`;
   const cachedData = sessionStorage.getItem(cacheKey);
   if (cachedData) {
@@ -1207,7 +1234,6 @@ async function fetchLiveGames() {
   }
 
   try {
-    // Ultra-reliable 4-request parallel batch (Global soccer + UEFA dedicated channels)
     const endpoints = [
       `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${targetDateQuery}&limit=250`,
       `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=${targetDateQuery}&limit=100`,
@@ -1231,7 +1257,6 @@ async function fetchLiveGames() {
         const matchTimestamp = dObj.getTime();
         if (isNaN(matchTimestamp)) return;
 
-        // Flashscore Manila Date & European UTC Date
         const matchDayInManila = new Intl.DateTimeFormat('en-CA', {
           timeZone: 'Asia/Manila',
           year: 'numeric',
@@ -1246,7 +1271,6 @@ async function fetchLiveGames() {
           day: '2-digit'
         }).format(dObj);
 
-        // Include match if it kicks off on this Manila calendar day OR is part of tonight's European evening matchday
         const isManilaMatchday = (matchDayInManila === targetIsoDay);
         const isEuropeanSlate = (matchDayInUTC === targetIsoDay);
 
@@ -1266,7 +1290,6 @@ async function fetchLiveGames() {
         const slug = evt.league?.slug || evt.season?.slug || '';
         const priorityMeta = classifyMatchPriority(homeName, awayName, cleanLeague, slug);
 
-        // Discard matches that don't pass priority filters (e.g. non-Miami MLS games)
         if (!priorityMeta) return;
 
         seenMatchKeys.add(matchKey);
@@ -1315,10 +1338,6 @@ async function fetchLiveGames() {
       return;
     }
 
-    // Dynamic Tier Filtering:
-    // Prioritize Tier 1 (UEFA + Top Leagues) and Tier 2 (MLS Inter Miami).
-    // If fewer than 4 matches, pull in Tier 3 (Finland Veikkausliiga & Norway Eliteserien).
-    // If still scarce, pull in Tier 4 (AFC Champions League / Cups).
     let selectedMatches = candidateMatches.filter(m => m.tier <= 2);
     if (selectedMatches.length < 4) {
       selectedMatches = candidateMatches.filter(m => m.tier <= 3);
@@ -1330,7 +1349,6 @@ async function fetchLiveGames() {
       selectedMatches = candidateMatches;
     }
 
-    // Sort order: Live matches first -> Upcoming chronological -> Full-Time finished
     selectedMatches.sort((a, b) => {
       const stateWeight = (s) => (s === 'in' ? 0 : (s === 'pre' ? 1 : 2));
       const wDiff = stateWeight(a.statusState) - stateWeight(b.statusState);
